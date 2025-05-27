@@ -1,0 +1,242 @@
+2025-05-25T12:37:25.667037Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo/cookies/1.cookie"), AnchoredSystemPathBuf(".turbo/cookies/.turbo-cookie")}
+2025-05-25T12:37:25.667048Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-25T12:37:30.767989Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("turbo.json")}
+2025-05-25T12:37:30.768011Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-25T12:37:33.067715Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("turbo.json")}
+2025-05-25T12:37:33.067722Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-25T12:37:37.767213Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo/cookies/2.cookie")}
+2025-05-25T12:37:37.767222Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-25T12:37:40.068938Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/vite.config.ts.timestamp-1748176660059-01ff88b443da1.mjs"), AnchoredSystemPathBuf("apps/home/vite.config.ts.timestamp-1748176660059-9729da87545a2.mjs")}
+2025-05-25T12:37:40.068985Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/home"), path: AnchoredSystemPathBuf("apps/home") }, WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T12:38:44.667396Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/core/vite.config.ts")}
+2025-05-25T12:38:44.667405Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/core"), path: AnchoredSystemPathBuf("apps/core") }}))
+2025-05-25T12:38:49.267968Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/pro/vite.config.ts")}
+2025-05-25T12:38:49.267976Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/pro"), path: AnchoredSystemPathBuf("apps/pro") }}))
+2025-05-25T12:38:54.167255Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/enterprise/vite.config.ts")}
+2025-05-25T12:38:54.167263Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/enterprise"), path: AnchoredSystemPathBuf("apps/enterprise") }}))
+2025-05-25T12:38:59.268038Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/survey/vite.config.ts")}
+2025-05-25T12:38:59.268045Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/survey"), path: AnchoredSystemPathBuf("apps/survey") }}))
+2025-05-25T12:40:21.369028Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/core/vite.config.ts")}
+2025-05-25T12:40:21.369038Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/core"), path: AnchoredSystemPathBuf("apps/core") }}))
+2025-05-25T12:40:28.169353Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/pro/vite.config.ts")}
+2025-05-25T12:40:28.169365Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/pro"), path: AnchoredSystemPathBuf("apps/pro") }}))
+2025-05-25T12:40:37.069117Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/enterprise/vite.config.ts")}
+2025-05-25T12:40:37.069127Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/enterprise"), path: AnchoredSystemPathBuf("apps/enterprise") }}))
+2025-05-25T12:40:43.769104Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/survey/vite.config.ts")}
+2025-05-25T12:40:43.769113Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/survey"), path: AnchoredSystemPathBuf("apps/survey") }}))
+2025-05-25T12:42:41.769371Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/README.md")}
+2025-05-25T12:42:41.769411Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-25T12:54:21.105298Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo/cookies/.turbo-cookie"), AnchoredSystemPathBuf(".turbo/cookies/1.cookie")}
+2025-05-25T12:54:21.105308Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-25T12:54:22.806044Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/vite.config.ts.timestamp-1748177662792-592248a270029.mjs"), AnchoredSystemPathBuf("apps/home/vite.config.ts.timestamp-1748177662794-0f3c727d99fe1.mjs")}
+2025-05-25T12:54:22.806056Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }, WorkspacePackage { name: Other("@novora/home"), path: AnchoredSystemPathBuf("apps/home") }}))
+2025-05-25T12:55:20.506020Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T12:55:20.506029Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T12:55:20.506140Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T12:55:21.605123Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T12:55:21.605132Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T12:55:21.605166Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T12:55:23.406052Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T12:55:23.406060Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T12:55:23.406094Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T12:56:46.506608Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T12:56:46.506617Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T12:56:46.506661Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T12:56:48.307480Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T12:56:48.307489Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T12:56:48.307533Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T12:57:07.607192Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T12:57:07.607202Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T12:57:12.307041Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T12:57:12.307051Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T12:57:12.307072Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T12:57:14.006651Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T12:57:14.006659Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T12:57:14.006679Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T12:57:45.007168Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T12:57:45.007211Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T12:57:45.012739Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T12:57:56.406971Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T12:57:56.407129Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T12:57:58.907070Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T12:57:58.907079Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T12:57:58.907098Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T12:58:00.506360Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T12:58:00.506369Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T12:58:00.519199Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T12:58:01.307166Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T12:58:01.307174Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T12:58:01.313255Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T12:58:57.808403Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T12:58:57.808412Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T12:58:57.810633Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:00:03.808887Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:00:03.808904Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:00:03.808925Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:03:55.895476Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("DATA SQL")}
+2025-05-25T13:03:55.895508Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-25T13:07:50.896253Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/prisma/schema.prisma")}
+2025-05-25T13:07:50.896262Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:08:14.996299Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:08:14.996402Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:08:15.005169Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:08:16.296088Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:08:16.296099Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:08:16.296121Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:08:17.496500Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:08:17.496508Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:08:17.503931Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:08:18.795433Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:08:18.795501Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:08:18.795524Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:08:19.596154Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:08:19.596164Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:08:19.598970Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:08:20.996133Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:08:20.996141Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:08:20.996162Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:09:28.596118Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:09:28.596135Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:09:28.596182Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:09:29.695620Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:09:29.695630Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:09:29.695650Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:09:30.795752Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:09:30.795761Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:09:30.795779Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:09:32.096018Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:09:32.096027Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:09:32.096047Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:09:33.496775Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:09:33.496786Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:09:33.496809Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:09:34.996450Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:09:34.996458Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:09:34.996474Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:09:37.096200Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:09:37.096212Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:09:37.096234Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:09:39.196665Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:09:39.196674Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:09:39.196692Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:10:57.797199Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:10:57.797208Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:10:57.797228Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:10:59.495818Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:10:59.495827Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:10:59.495845Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:11:01.795669Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:11:01.795678Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:11:01.795699Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:11:27.497952Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:11:27.497968Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:11:27.498084Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:11:28.797679Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:11:28.797687Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:11:28.797704Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:11:34.897554Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:11:34.897573Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:11:34.897599Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:12:55.597418Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/middleware/auth.ts")}
+2025-05-25T13:12:55.597433Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:12:55.597449Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:14:33.397654Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:14:33.397670Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:14:33.397733Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:14:35.098400Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:14:35.098408Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:14:40.898390Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:14:40.898399Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:14:40.898454Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:14:42.897620Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:14:42.897629Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:14:42.897686Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:16:54.898350Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/vite.config.ts.timestamp-1748179014813-72d34814733bf.mjs")}
+2025-05-25T13:16:54.898360Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:16:54.905183Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:18:05.397695Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:18:05.397707Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:18:18.598236Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/routes/users.ts")}
+2025-05-25T13:18:18.598244Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:18:48.797910Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/generated/prisma/runtime/library.js"), AnchoredSystemPathBuf("packages/api/generated/prisma/libquery_engine-darwin-arm64.dylib.node"), AnchoredSystemPathBuf("packages/api/generated"), AnchoredSystemPathBuf("packages/api/generated/prisma/runtime/library.d.ts"), AnchoredSystemPathBuf("packages/api/generated/prisma/runtime/wasm.js"), AnchoredSystemPathBuf("packages/api/generated/prisma"), AnchoredSystemPathBuf("packages/api/generated/prisma/index.js"), AnchoredSystemPathBuf("packages/api/generated/prisma/wasm.d.ts"), AnchoredSystemPathBuf("packages/api/generated/prisma/edge.js"), AnchoredSystemPathBuf("packages/api/generated/prisma/runtime/edge-esm.js"), AnchoredSystemPathBuf("packages/api/generated/prisma/schema.prisma"), AnchoredSystemPathBuf("packages/api/generated/prisma/default.d.ts"), AnchoredSystemPathBuf("packages/api/generated/prisma/index.d.ts"), AnchoredSystemPathBuf("packages/api/generated/prisma/client.d.ts"), AnchoredSystemPathBuf("packages/api/generated/prisma/runtime/react-native.js"), AnchoredSystemPathBuf("packages/api/generated/prisma/default.js"), AnchoredSystemPathBuf("packages/api/generated/prisma/runtime/index-browser.d.ts"), AnchoredSystemPathBuf("packages/api/generated/prisma/wasm.js"), AnchoredSystemPathBuf("packages/api/generated/prisma/edge.d.ts"), AnchoredSystemPathBuf("packages/api/generated/prisma/package.json"), AnchoredSystemPathBuf("packages/api/generated/prisma/runtime/edge.js"), AnchoredSystemPathBuf("packages/api/generated/prisma/runtime"), AnchoredSystemPathBuf("packages/api/generated/prisma/index-browser.js"), AnchoredSystemPathBuf("packages/api/generated/prisma/client.js"), AnchoredSystemPathBuf("packages/api/generated/prisma/runtime/index-browser.js")}
+2025-05-25T13:18:48.797921Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:19:21.799197Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/api/src/routes/users.ts")}
+2025-05-25T13:19:21.799216Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/api"), path: AnchoredSystemPathBuf("packages/api") }}))
+2025-05-25T13:19:26.299184Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo/cookies/2.cookie")}
+2025-05-25T13:19:26.299202Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-25T13:19:27.898994Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/home/vite.config.ts.timestamp-1748179167865-67539581f649b.mjs"), AnchoredSystemPathBuf("apps/admin/vite.config.ts.timestamp-1748179167864-aab2da272556a.mjs")}
+2025-05-25T13:19:27.899005Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }, WorkspacePackage { name: Other("@novora/home"), path: AnchoredSystemPathBuf("apps/home") }}))
+2025-05-25T13:20:14.275286Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/core/postcss.config.js")}
+2025-05-25T13:20:14.275295Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/core"), path: AnchoredSystemPathBuf("apps/core") }}))
+2025-05-25T13:20:18.074251Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/pro/postcss.config.js")}
+2025-05-25T13:20:18.074271Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/pro"), path: AnchoredSystemPathBuf("apps/pro") }}))
+2025-05-25T13:20:21.073361Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/enterprise/postcss.config.js")}
+2025-05-25T13:20:21.073376Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/enterprise"), path: AnchoredSystemPathBuf("apps/enterprise") }}))
+2025-05-25T13:20:24.172812Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/survey/postcss.config.js")}
+2025-05-25T13:20:24.172820Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/survey"), path: AnchoredSystemPathBuf("apps/survey") }}))
+2025-05-25T13:22:56.171298Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:22:56.171306Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:22:56.171343Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:22:57.671342Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:22:57.671350Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:22:57.671385Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:24:22.070954Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:24:22.070964Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:24:37.371048Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:24:37.371057Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:24:37.371094Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:24:40.170490Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:24:40.170504Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:24:40.170549Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:24:41.570331Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:24:41.570342Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:24:41.570376Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:24:43.070983Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:24:43.070992Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:24:43.071068Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:24:45.171021Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:24:45.171032Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:24:46.270617Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:24:46.270625Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:25:00.470632Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:25:00.470640Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:25:00.470675Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:25:04.370844Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:25:04.370852Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:25:04.370894Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:25:05.170471Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:25:05.170480Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:25:07.370937Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:25:07.370946Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:25:07.371000Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:25:09.469824Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:25:09.469832Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:25:09.471118Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:25:10.670393Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:25:10.670401Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:25:10.670441Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:25:13.670397Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:25:13.670406Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:25:13.670455Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:25:14.570917Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:25:14.570924Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:25:14.570976Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:26:56.269681Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/admin/src/services/api.ts")}
+2025-05-25T13:26:56.269698Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@novora/admin"), path: AnchoredSystemPathBuf("apps/admin") }}))
+2025-05-25T13:26:56.269736Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-25T13:27:33.970089Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("Admin Dashboard"), AnchoredSystemPathBuf("apps/home-page"), AnchoredSystemPathBuf("apps/core-dashboard"), AnchoredSystemPathBuf("User Dashbord"), AnchoredSystemPathBuf("Dashbord Core"), AnchoredSystemPathBuf("apps/user-dashboard"), AnchoredSystemPathBuf("apps/admin-dashboard"), AnchoredSystemPathBuf("apps/pro-dashboard"), AnchoredSystemPathBuf("Dashbord Enterprice"), AnchoredSystemPathBuf("Dashbord Pro"), AnchoredSystemPathBuf("Home page"), AnchoredSystemPathBuf("apps/enterprise-dashboard")}
+2025-05-25T13:27:33.970101Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-25T13:27:45.370095Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json")}
+2025-05-25T13:27:45.370114Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-25T14:01:01.933407Z  WARN turborepo_filewatch::globwatcher: encountered filewatching error, flushing all globs: channel lagged by 138
+2025-05-25T14:01:01.933917Z  WARN turborepo_filewatch::globwatcher: encountered filewatching error, flushing all globs: channel lagged by 18
+2025-05-25T14:01:01.988883Z  WARN turborepo_filewatch::globwatcher: encountered filewatching error, flushing all globs: channel lagged by 444
+2025-05-25T14:01:01.988896Z  WARN turborepo_filewatch::package_watcher: lagged behind 76 processing file watching events
+2025-05-25T14:01:01.989090Z  WARN turborepo_filewatch::package_watcher: lagged behind 1 processing file watching events
+2025-05-25T14:01:03.224143Z  WARN turborepo_filewatch::globwatcher: encountered filewatching error, flushing all globs: channel lagged by 99
+2025-05-25T14:01:04.906800Z  WARN turborepo_filewatch::package_watcher: lagged behind 8 processing file watching events
+2025-05-25T14:09:03.604690Z  WARN turborepo_filewatch::package_watcher: lagged behind 378 processing file watching events
+2025-05-25T14:09:03.625473Z  WARN turborepo_filewatch::package_watcher: lagged behind 156 processing file watching events
+2025-05-25T18:48:11.470205Z  WARN turborepo_filewatch::globwatcher: encountered filewatching error, flushing all globs: channel lagged by 15
+2025-05-25T18:48:11.470233Z  WARN turborepo_filewatch::package_watcher: lagged behind 48 processing file watching events
+2025-05-25T18:48:13.038560Z  WARN turborepo_filewatch::package_watcher: lagged behind 166 processing file watching events
