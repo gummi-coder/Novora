@@ -40,7 +40,7 @@
     "axios": "^1.9.0",
     "bcrypt": "^6.0.0",
     "crypto": "^1.0.1",
-    "csurf": "^1.11.0",
+    "csurf": "^1.2.2",
     "date-fns": "^3.6.0",
     "express-rate-limit": "^7.5.0",
     "fastify": "^4.26.1",
