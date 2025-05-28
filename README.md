@@ -1,6 +1,10 @@
 ## Keyra bakenda í gang
 uvicorn app.main:app
 
+## Keyra allt í gang
+cd backend && source venv/bin/activate && uvicorn app.main:app --reload &
+cd frontend && npm run dev &
+
 ## Lista upp Tree
 tree -I 'node_modules|.next|.git|bin|obj|*.db|*.log|coverage|dist|build|.turbo|.vscode|.idea|*.cache|packages|artifacts|TestResults|*.user|*.suo|venv|__pycache__'
 
