@@ -1,3 +1,8 @@
+## Keyra bakenda í gang
+uvicorn app.main:app
+
+
+
 # Employee Survey System
 
 A comprehensive employee survey system with a dashboard for administrators and a frontend application for employees.

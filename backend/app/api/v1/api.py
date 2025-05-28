@@ -1,32 +1,8 @@
 """
-Main API router with all migrated endpoints
+Main API router with clean FastAPI endpoints
 """
 from fastapi import APIRouter
-
-# Import migrated endpoints
-try:
-    from app.api.v1.endpoints import auth
-    auth_available = True
-except ImportError:
-    auth_available = False
-
-try:
-    from app.api.v1.endpoints import surveys
-    surveys_available = True
-except ImportError:
-    surveys_available = False
-
-try:
-    from app.api.v1.endpoints import responses
-    responses_available = True
-except ImportError:
-    responses_available = False
-
-try:
-    from app.api.v1.endpoints import analytics
-    analytics_available = True
-except ImportError:
-    analytics_available = False
+from app.api.v1.endpoints import auth, surveys, responses, analytics
 
 api_router = APIRouter()
 
@@ -35,24 +11,12 @@ api_router = APIRouter()
 async def health_check():
     return {
         "status": "healthy", 
-        "message": "Novora Survey Platform API",
-        "endpoints": {
-            "auth": auth_available,
-            "surveys": surveys_available, 
-            "responses": responses_available,
-            "analytics": analytics_available
-        }
+        "message": "Novora Survey Platform API - FastAPI Version",
+        "version": "1.0.0"
     }
 
-# Include available routers
-if auth_available:
-    api_router.include_router(auth.router, prefix="/auth", tags=["authentication"])
-
-if surveys_available:
-    api_router.include_router(surveys.router, prefix="/surveys", tags=["surveys"])
-
-if responses_available:
-    api_router.include_router(responses.router, prefix="/responses", tags=["responses"])
-
-if analytics_available:
-    api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
+# Include all endpoint routers
+api_router.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+api_router.include_router(surveys.router, prefix="/surveys", tags=["Surveys"])
+api_router.include_router(responses.router, prefix="/responses", tags=["Responses"])
+api_router.include_router(analytics.router, prefix="/analytics", tags=["Analytics"])
