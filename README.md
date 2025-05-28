@@ -1,7 +1,8 @@
 ## Keyra bakenda í gang
 uvicorn app.main:app
 
-
+## Lista upp Tree
+tree -I 'node_modules|.next|.git|bin|obj|*.db|*.log|coverage|dist|build|.turbo|.vscode|.idea|*.cache|packages|artifacts|TestResults|*.user|*.suo|venv|__pycache__'
 
 # Employee Survey System
 
