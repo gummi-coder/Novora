@@ -7,13 +7,14 @@ from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import verify_token
+from app.models.base import User
 
 security = HTTPBearer()
 
 def get_current_user(
     token: str = Depends(security),
     db: Session = Depends(get_db)
-):
+) -> User:
     """Get current authenticated user"""
     try:
         payload = verify_token(token.credentials)
@@ -23,24 +24,35 @@ def get_current_user(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid token"
             )
+        
         # Get user from database
-        # user = get_user_by_id(db, user_id)
-        # return user
-        return {"user_id": user_id}  # Placeholder
-    except Exception:
+        user = db.query(User).filter(User.id == int(user_id)).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found"
+            )
+        
+        if not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Inactive user"
+            )
+        
+        return user
+    except ValueError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token"
         )
 
 def get_current_admin_user(
-    current_user = Depends(get_current_user)
-):
+    current_user: User = Depends(get_current_user)
+) -> User:
     """Require admin privileges"""
-    # Check if user is admin
-    # if not current_user.is_admin:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_403_FORBIDDEN,
-    #         detail="Admin privileges required"
-    #     )
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin privileges required"
+        )
     return current_user

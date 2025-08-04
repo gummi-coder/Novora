@@ -1,20 +1,21 @@
 from datetime import datetime
-from app.core.database import db
+from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import relationship
+from app.core.database import Base
 
-class User(db.Model):
+class User(Base):
     __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256), nullable=False)
-    role = db.Column(db.String(20), nullable=False, default='core')  # core, pro, enterprise, admin
-    company_name = db.Column(db.String(120))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    last_login = db.Column(db.DateTime)
-    is_active = db.Column(db.Boolean, default=True)
-    is_email_verified = db.Column(db.Boolean, default=False)
-    failed_login_attempts = db.Column(db.Integer, default=0)
-    last_failed_login = db.Column(db.DateTime)
+    id = Column(Integer, primary_key=True)
+    email = Column(String(120), unique=True, nullable=False)
+    password_hash = Column(String(256), nullable=False)
+    role = Column(String(20), nullable=False, default='core')  # core, pro, enterprise, admin
+    company_name = Column(String(120))
+    created_at = Column(DateTime, default=datetime.utcnow)
+    last_login = Column(DateTime)
+    is_active = Column(Boolean, default=True)
+    is_email_verified = Column(Boolean, default=False)
+    failed_login_attempts = Column(Integer, default=0)
+    last_failed_login = Column(DateTime)
     
     # Relationships
     surveys = relationship("Survey", back_populates="creator")
@@ -24,64 +25,65 @@ class User(db.Model):
     reset_tokens = relationship("PasswordResetToken", back_populates="user", cascade="all, delete-orphan")
     sessions = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")
 
-class EmailVerificationToken(db.Model):
+class EmailVerificationToken(Base):
     __tablename__ = "email_verification_tokens"
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    token = db.Column(db.String(100), unique=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    expires_at = db.Column(db.DateTime, nullable=False)
-    is_used = db.Column(db.Boolean, default=False)
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    token = Column(String(100), unique=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=False)
+    is_used = Column(Boolean, default=False)
     
     # Relationships
     user = relationship("User", back_populates="verification_tokens")
 
-class PasswordResetToken(db.Model):
+class PasswordResetToken(Base):
     __tablename__ = "password_reset_tokens"
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    token = db.Column(db.String(100), unique=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    expires_at = db.Column(db.DateTime, nullable=False)
-    is_used = db.Column(db.Boolean, default=False)
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    token = Column(String(100), unique=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=False)
+    is_used = Column(Boolean, default=False)
     
     # Relationships
     user = relationship("User", back_populates="reset_tokens")
 
-class UserSession(db.Model):
+class UserSession(Base):
     __tablename__ = "user_sessions"
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    refresh_token = db.Column(db.String(100), unique=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    expires_at = db.Column(db.DateTime, nullable=False)
-    is_revoked = db.Column(db.Boolean, default=False)
-    ip_address = db.Column(db.String(45))  # IPv6 addresses can be up to 45 characters
-    user_agent = db.Column(db.String(200))
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    refresh_token = Column(String(100), unique=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=False)
+    is_revoked = Column(Boolean, default=False)
+    ip_address = Column(String(45))  # IPv6 addresses can be up to 45 characters
+    user_agent = Column(String(200))
     
     # Relationships
     user = relationship("User", back_populates="sessions")
 
-class Survey(db.Model):
+class Survey(Base):
     __tablename__ = "surveys"
-    id = db.Column(db.Integer, primary_key=True, index=True)
-    title = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text)
-    creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    status = db.Column(db.String(20), default='draft')  # draft, active, closed
-    start_date = db.Column(db.DateTime)
-    end_date = db.Column(db.DateTime)
-    is_anonymous = db.Column(db.Boolean, default=True)
-    allow_comments = db.Column(db.Boolean, default=False)
-    reminder_frequency = db.Column(db.String(20))  # daily, weekly, monthly
-    category = db.Column(db.String(50), default='general')
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(200), nullable=False)
+    description = Column(Text)
+    creator_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    status = Column(String(20), default='draft')  # draft, active, closed
+    start_date = Column(DateTime)
+    end_date = Column(DateTime)
+    is_anonymous = Column(Boolean, default=True)
+    allow_comments = Column(Boolean, default=False)
+    reminder_frequency = Column(String(20))  # daily, weekly, monthly
+    category = Column(String(50), default='general')
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
     creator = relationship("User", back_populates="surveys")
     questions = relationship("Question", back_populates="survey", cascade="all, delete-orphan")
     responses = relationship("Response", back_populates="survey", cascade="all, delete-orphan")
+    attachments = relationship("FileAttachment", back_populates="survey", cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
@@ -99,19 +101,20 @@ class Survey(db.Model):
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat(),
             'questions': [q.to_dict() for q in self.questions],
-            'response_count': len(self.responses)
+            'response_count': len(self.responses),
+            'attachments': [a.to_dict() for a in self.attachments]
         }
 
-class Question(db.Model):
+class Question(Base):
     __tablename__ = "questions"
-    id = db.Column(db.Integer, primary_key=True)
-    survey_id = db.Column(db.Integer, db.ForeignKey('surveys.id'), nullable=False)
-    text = db.Column(db.Text, nullable=False)
-    type = db.Column(db.String(20), nullable=False)  # text, multiple_choice, rating, etc.
-    required = db.Column(db.Boolean, default=False)
-    order = db.Column(db.Integer, default=0)
-    options = db.Column(db.JSON)  # For multiple choice questions
-    allow_comments = db.Column(db.Boolean, default=False)
+    id = Column(Integer, primary_key=True)
+    survey_id = Column(Integer, ForeignKey('surveys.id'), nullable=False)
+    text = Column(Text, nullable=False)
+    type = Column(String(20), nullable=False)  # text, multiple_choice, rating, etc.
+    required = Column(Boolean, default=False)
+    order = Column(Integer, default=0)
+    options = Column(JSON)  # For multiple choice questions
+    allow_comments = Column(Boolean, default=False)
     
     # Relationships
     survey = relationship("Survey", back_populates="questions")
@@ -129,17 +132,17 @@ class Question(db.Model):
             'allow_comments': self.allow_comments
         }
 
-class SurveyTemplate(db.Model):
+class SurveyTemplate(Base):
     __tablename__ = "survey_templates"
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text)
-    creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    questions = db.Column(db.JSON, nullable=False)  # Store questions as JSON
-    category = db.Column(db.String(50), default='general')
-    is_public = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id = Column(Integer, primary_key=True)
+    title = Column(String(200), nullable=False)
+    description = Column(Text)
+    creator_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    questions = Column(JSON, nullable=False)  # Store questions as JSON
+    category = Column(String(50), default='general')
+    is_public = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
     creator = relationship("User", back_populates="templates")
@@ -157,13 +160,13 @@ class SurveyTemplate(db.Model):
             'updated_at': self.updated_at.isoformat()
         }
 
-class Response(db.Model):
+class Response(Base):
     __tablename__ = "responses"
-    id = db.Column(db.Integer, primary_key=True)
-    survey_id = db.Column(db.Integer, db.ForeignKey('surveys.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Nullable for anonymous responses
-    submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
-    completed = db.Column(db.Boolean, default=True)
+    id = Column(Integer, primary_key=True)
+    survey_id = Column(Integer, ForeignKey('surveys.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=True)  # Nullable for anonymous responses
+    submitted_at = Column(DateTime, default=datetime.utcnow)
+    completed = Column(Boolean, default=True)
     
     # Relationships
     survey = relationship("Survey", back_populates="responses")
@@ -180,13 +183,13 @@ class Response(db.Model):
             'answers': [a.to_dict() for a in self.answers]
         }
 
-class Answer(db.Model):
+class Answer(Base):
     __tablename__ = "answers"
-    id = db.Column(db.Integer, primary_key=True)
-    response_id = db.Column(db.Integer, db.ForeignKey('responses.id'), nullable=False)
-    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
-    value = db.Column(db.Text, nullable=False)
-    comment = db.Column(db.Text)
+    id = Column(Integer, primary_key=True)
+    response_id = Column(Integer, ForeignKey('responses.id'), nullable=False)
+    question_id = Column(Integer, ForeignKey('questions.id'), nullable=False)
+    value = Column(Text, nullable=False)
+    comment = Column(Text)
     
     # Relationships
     response = relationship("Response", back_populates="answers")
@@ -199,4 +202,34 @@ class Answer(db.Model):
             'question_id': self.question_id,
             'value': self.value,
             'comment': self.comment
+        }
+
+class FileAttachment(Base):
+    __tablename__ = "file_attachments"
+    id = Column(Integer, primary_key=True)
+    survey_id = Column(Integer, ForeignKey('surveys.id'), nullable=False)
+    filename = Column(String(255), nullable=False)
+    original_filename = Column(String(255), nullable=False)
+    file_path = Column(String(500), nullable=False)
+    file_size = Column(Integer, nullable=False)  # Size in bytes
+    mime_type = Column(String(100), nullable=False)
+    uploaded_by = Column(Integer, ForeignKey('users.id'), nullable=False)
+    uploaded_at = Column(DateTime, default=datetime.utcnow)
+    description = Column(Text)
+    
+    # Relationships
+    survey = relationship("Survey", back_populates="attachments")
+    user = relationship("User")
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'survey_id': self.survey_id,
+            'filename': self.filename,
+            'original_filename': self.original_filename,
+            'file_size': self.file_size,
+            'mime_type': self.mime_type,
+            'uploaded_by': self.uploaded_by,
+            'uploaded_at': self.uploaded_at.isoformat(),
+            'description': self.description
         } 
