@@ -12,8 +12,10 @@ import SignUp from "./pages/auth/SignUp";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import CreateSurvey from "./pages/CreateSurvey";
+import QuestionBank from "./pages/QuestionBank";
 import SurveysList from "./pages/SurveysList";
 import SurveyResponse from "./pages/SurveyResponse";
+import SurveyPreview from "./pages/SurveyPreview";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,7 +37,9 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/surveys" element={<SurveysList />} />
           <Route path="/surveys/create" element={<CreateSurvey />} />
+          <Route path="/question-bank" element={<QuestionBank />} />
           <Route path="/survey/:surveyId" element={<SurveyResponse />} />
+          <Route path="/survey/preview" element={<SurveyPreview />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

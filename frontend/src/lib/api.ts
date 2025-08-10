@@ -138,7 +138,7 @@ export const api = {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password, name, role: 'user' }),
+      body: JSON.stringify({ email, password, company_name: name }),
     });
     return handleResponse<{ id: string; email: string; name: string }>(response);
   },
@@ -149,6 +149,66 @@ export const api = {
       headers: getAuthHeaders()
     });
     return handleResponse<{ id: string; email: string; name: string }>(response);
+  },
+
+  // Admin - Users
+  getAdminUsers: async (params?: { skip?: number; limit?: number; role?: string; is_active?: boolean; search?: string; }) => {
+    const sp = new URLSearchParams();
+    if (params?.skip != null) sp.append('skip', String(params.skip));
+    if (params?.limit != null) sp.append('limit', String(params.limit));
+    if (params?.role) sp.append('role', params.role);
+    if (params?.is_active != null) sp.append('is_active', String(params.is_active));
+    if (params?.search) sp.append('search', params.search);
+    const qs = sp.toString();
+    const response = await fetch(`${API_BASE}/admin/users${qs ? `?${qs}` : ''}`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse<Array<{
+      id: number;
+      email: string;
+      role: string;
+      company_name?: string;
+      is_active: boolean;
+      is_email_verified: boolean;
+      created_at: string;
+      last_login?: string;
+      failed_login_attempts: number;
+    }>>(response);
+  },
+
+  updateAdminUser: async (userId: number, updates: Partial<{ email: string; role: string; company_name: string; is_active: boolean; is_email_verified: boolean; }>) => {
+    const response = await fetch(`${API_BASE}/admin/users/${userId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(updates)
+    });
+    return handleResponse<any>(response);
+  },
+
+  deactivateAdminUser: async (userId: number) => {
+    const response = await fetch(`${API_BASE}/admin/users/${userId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    return handleResponse<{ message: string }>(response);
+  },
+
+  activateAdminUser: async (userId: number) => {
+    const response = await fetch(`${API_BASE}/admin/users/${userId}/activate`, {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
+    return handleResponse<{ message: string }>(response);
+  },
+
+  resendVerification: async (email: string) => {
+    const sp = new URLSearchParams();
+    sp.append('email', email);
+    const response = await fetch(`${API_BASE}/auth/resend-verification?${sp.toString()}`, {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
+    return handleResponse<{ message: string }>(response);
   },
 
   // Analytics endpoints

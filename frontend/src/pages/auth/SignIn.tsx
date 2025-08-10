@@ -20,6 +20,8 @@ import Footer from "@/components/Footer";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import { authService } from "@/services/auth";
 
+const API_ROOT = (import.meta as any).env?.VITE_API_URL || "http://127.0.0.1:8000";
+
 // Form schema validation
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -45,16 +47,12 @@ const SignIn = () => {
     setIsLoading(true);
     
     try {
-      const formData = new URLSearchParams();
-      formData.append('username', values.email);
-      formData.append('password', values.password);
-      
-      const response = await fetch('http://localhost:8000/auth/login', {
+      const response = await fetch(`${API_ROOT}/api/v1/auth/login`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: formData,
+        body: JSON.stringify({ email: values.email, password: values.password }),
       });
 
       const data = await response.json();
@@ -69,7 +67,7 @@ const SignIn = () => {
       document.cookie = `token=${data.access_token}; path=/; max-age=86400; SameSite=Lax`;
       
       // Get user info
-      const userResponse = await fetch('http://localhost:8000/auth/me', {
+      const userResponse = await fetch(`${API_ROOT}/api/v1/auth/me`, {
         headers: {
           'Authorization': `Bearer ${data.access_token}`,
         },

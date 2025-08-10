@@ -352,478 +352,538 @@ const OwnerSettings = () => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600 mt-1">Configure organization-wide settings and preferences</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Modern Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Configure organization-wide settings and preferences for optimal platform usage
+          </p>
         </div>
-      </div>
 
-      {/* Settings Tabs */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
-        {[
-          { id: 'alerts', label: 'Alert Rules', icon: Bell },
-          { id: 'surveys', label: 'Survey Settings', icon: FileText },
-          { id: 'roles', label: 'Role Management', icon: Users },
-          { id: 'branding', label: 'Company Branding', icon: Palette },
-          { id: 'okrs', label: 'Cultural OKRs', icon: Target }
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <tab.icon className="w-4 h-4" />
-            <span>{tab.label}</span>
-          </button>
-        ))}
-      </div>
+        {/* Enhanced Settings Tabs */}
+        <div className="flex space-x-1 bg-white p-2 rounded-xl shadow-sm border border-gray-200 mb-8">
+          {[
+            { id: 'alerts', label: 'Alert Rules', icon: Bell },
+            { id: 'surveys', label: 'Survey Settings', icon: FileText },
+            { id: 'roles', label: 'Role Management', icon: Users },
+            { id: 'branding', label: 'Company Branding', icon: Palette },
+            { id: 'okrs', label: 'Cultural OKRs', icon: Target }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center space-x-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                activeTab === tab.id
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
 
-      {/* Alert Rules Tab */}
-      {activeTab === 'alerts' && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Bell className="w-5 h-5" />
-                <span>Organization Alert Rules</span>
-              </div>
-              <Button onClick={handleAddAlertRule} className="flex items-center space-x-2">
-                <Plus className="w-4 h-4" />
-                <span>Add Rule</span>
-              </Button>
-            </CardTitle>
-            <CardDescription>Configure automated alerts for organization-wide events</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Rule Name</TableHead>
-                  <TableHead>Condition</TableHead>
-                  <TableHead>Threshold</TableHead>
-                  <TableHead>Notification</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {alertRules.map((rule) => (
-                  <TableRow key={rule.id}>
-                    <TableCell className="font-medium">{rule.name}</TableCell>
-                    <TableCell>{rule.condition}</TableCell>
-                    <TableCell>
-                      {rule.threshold} {rule.timeframe}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {rule.notificationType.charAt(0).toUpperCase() + rule.notificationType.slice(1)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={rule.isActive ? "default" : "secondary"}>
-                        {rule.isActive ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
-                            <span>Edit</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            <span>View Recipients</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            <span>Delete</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Survey Settings Tab */}
-      {activeTab === 'surveys' && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <FileText className="w-5 h-5" />
-              <span>Survey Customization Settings</span>
-            </CardTitle>
-            <CardDescription>Set defaults for all team surveys</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>Default Survey Frequency</Label>
-                <Select value={surveySettings.defaultFrequency} onValueChange={(value) => setSurveySettings({...surveySettings, defaultFrequency: value})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                    <SelectItem value="biweekly">Bi-weekly</SelectItem>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                    <SelectItem value="quarterly">Quarterly</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Default Number of Questions</Label>
-                <Input
-                  type="number"
-                  value={surveySettings.defaultQuestions}
-                  onChange={(e) => setSurveySettings({...surveySettings, defaultQuestions: parseInt(e.target.value)})}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Score Threshold for Alerts</Label>
-                <Input
-                  type="number"
-                  step="0.1"
-                  value={surveySettings.scoreThreshold}
-                  onChange={(e) => setSurveySettings({...surveySettings, scoreThreshold: parseFloat(e.target.value)})}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Participation Goal (%)</Label>
-                <Input
-                  type="number"
-                  value={surveySettings.participationGoal}
-                  onChange={(e) => setSurveySettings({...surveySettings, participationGoal: parseInt(e.target.value)})}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <Label>Survey Options</Label>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    checked={surveySettings.allowAnonymous}
-                    onCheckedChange={(checked) => setSurveySettings({...surveySettings, allowAnonymous: checked})}
-                  />
-                  <Label>Allow Anonymous Responses</Label>
+        {/* Enhanced Alert Rules Tab */}
+        {activeTab === 'alerts' && (
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center space-x-2 text-xl">
+                    <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                      <Bell className="w-5 h-5 text-red-600" />
+                    </div>
+                    <span>Organization Alert Rules</span>
+                  </CardTitle>
+                  <CardDescription className="mt-2">
+                    Configure automated alerts for organization-wide events and monitoring
+                  </CardDescription>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    checked={surveySettings.requireComments}
-                    onCheckedChange={(checked) => setSurveySettings({...surveySettings, requireComments: checked})}
-                  />
-                  <Label>Require Comments</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    checked={surveySettings.autoReminders}
-                    onCheckedChange={(checked) => setSurveySettings({...surveySettings, autoReminders: checked})}
-                  />
-                  <Label>Send Auto Reminders</Label>
-                </div>
-              </div>
-            </div>
-
-            <Button onClick={() => handleSaveSettings('Survey')} className="flex items-center space-x-2">
-              <Save className="w-4 h-4" />
-              <span>Save Survey Settings</span>
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Role Management Tab */}
-      {activeTab === 'roles' && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Users className="w-5 h-5" />
-                <span>Role Management</span>
-              </div>
-              <Button className="flex items-center space-x-2">
-                <UserPlus className="w-4 h-4" />
-                <span>Add Admin</span>
-              </Button>
-            </CardTitle>
-            <CardDescription>Assign and manage admin roles across teams</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Teams</TableHead>
-                  <TableHead>Permissions</TableHead>
-                  <TableHead>Last Active</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {adminRoles.map((admin) => (
-                  <TableRow key={admin.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{admin.name}</div>
-                        <div className="text-sm text-gray-500">{admin.email}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getRoleColor(admin.role)}>
-                        {admin.role.replace('_', ' ').toUpperCase()}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">{admin.teams.join(', ')}</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">{admin.permissions.length} permissions</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">{new Date(admin.lastActive).toLocaleDateString()}</div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={admin.status === 'active' ? "default" : "secondary"}>
-                        {admin.status.charAt(0).toUpperCase() + admin.status.slice(1)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
-                            <span>Edit Role</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Shield className="mr-2 h-4 w-4" />
-                            <span>Manage Permissions</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <UserMinus className="mr-2 h-4 w-4" />
-                            <span>Remove Access</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Company Branding Tab */}
-      {activeTab === 'branding' && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Palette className="w-5 h-5" />
-              <span>Company Branding</span>
-            </CardTitle>
-            <CardDescription>Customize the appearance and branding of surveys</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>Company Name</Label>
-                <Input
-                  value={brandingSettings.companyName}
-                  onChange={(e) => setBrandingSettings({...brandingSettings, companyName: e.target.value})}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Survey Theme</Label>
-                <Select value={brandingSettings.surveyTheme} onValueChange={(value) => setBrandingSettings({...brandingSettings, surveyTheme: value as any})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="professional">Professional</SelectItem>
-                    <SelectItem value="friendly">Friendly</SelectItem>
-                    <SelectItem value="modern">Modern</SelectItem>
-                    <SelectItem value="minimal">Minimal</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Primary Color</Label>
-                <div className="flex items-center space-x-2">
-                  <Input
-                    type="color"
-                    value={brandingSettings.primaryColor}
-                    onChange={(e) => setBrandingSettings({...brandingSettings, primaryColor: e.target.value})}
-                    className="w-16 h-10"
-                  />
-                  <Input
-                    value={brandingSettings.primaryColor}
-                    onChange={(e) => setBrandingSettings({...brandingSettings, primaryColor: e.target.value})}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Secondary Color</Label>
-                <div className="flex items-center space-x-2">
-                  <Input
-                    type="color"
-                    value={brandingSettings.secondaryColor}
-                    onChange={(e) => setBrandingSettings({...brandingSettings, secondaryColor: e.target.value})}
-                    className="w-16 h-10"
-                  />
-                  <Input
-                    value={brandingSettings.secondaryColor}
-                    onChange={(e) => setBrandingSettings({...brandingSettings, secondaryColor: e.target.value})}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Company Logo</Label>
-              <div className="flex items-center space-x-4">
-                <img
-                  src={brandingSettings.logo}
-                  alt="Company Logo"
-                  className="w-16 h-16 object-contain border rounded-lg"
-                />
-                <Button onClick={handleLogoUpload} variant="outline" className="flex items-center space-x-2">
-                  <Upload className="w-4 h-4" />
-                  <span>Upload New Logo</span>
+                <Button onClick={handleAddAlertRule} className="flex items-center space-x-2 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700">
+                  <Plus className="w-4 h-4" />
+                  <span>Add Rule</span>
                 </Button>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Email Signature</Label>
-              <Textarea
-                value={brandingSettings.emailSignature}
-                onChange={(e) => setBrandingSettings({...brandingSettings, emailSignature: e.target.value})}
-                rows={3}
-              />
-            </div>
-
-            <Button onClick={() => handleSaveSettings('Branding')} className="flex items-center space-x-2">
-              <Save className="w-4 h-4" />
-              <span>Save Branding Settings</span>
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Cultural OKRs Tab */}
-      {activeTab === 'okrs' && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Target className="w-5 h-5" />
-                <span>Cultural OKRs</span>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-hidden rounded-lg border border-gray-200">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead className="font-semibold text-gray-900">Rule Name</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Condition</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Threshold</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Notification</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Status</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {alertRules.map((rule, index) => (
+                      <TableRow 
+                        key={rule.id}
+                        className={`hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 ${
+                          index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                        }`}
+                      >
+                        <TableCell className="font-semibold text-gray-900">{rule.name}</TableCell>
+                        <TableCell className="text-gray-700">{rule.condition}</TableCell>
+                        <TableCell>
+                          <div className="text-lg font-bold text-gray-900">
+                            {rule.threshold} {rule.timeframe}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="font-medium">
+                            {rule.notificationType.charAt(0).toUpperCase() + rule.notificationType.slice(1)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={rule.isActive ? "default" : "secondary"} className="px-3 py-1 font-medium">
+                            {rule.isActive ? 'Active' : 'Inactive'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                              <DropdownMenuItem className="cursor-pointer">
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>Edit</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="cursor-pointer">
+                                <Eye className="mr-2 h-4 w-4" />
+                                <span>View Recipients</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="cursor-pointer">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                <span>Delete</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
-              <Button onClick={handleAddOKR} className="flex items-center space-x-2">
-                <Plus className="w-4 h-4" />
-                <span>Add OKR</span>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Enhanced Survey Settings Tab */}
+        {activeTab === 'surveys' && (
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <span>Survey Customization Settings</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Set defaults for all team surveys and customize survey behavior
+                </CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label className="font-semibold text-gray-900">Default Survey Frequency</Label>
+                  <Select value={surveySettings.defaultFrequency} onValueChange={(value) => setSurveySettings({...surveySettings, defaultFrequency: value})}>
+                    <SelectTrigger className="hover:border-blue-300 transition-colors duration-200">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="quarterly">Quarterly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="font-semibold text-gray-900">Default Number of Questions</Label>
+                  <Input
+                    type="number"
+                    value={surveySettings.defaultQuestions}
+                    onChange={(e) => setSurveySettings({...surveySettings, defaultQuestions: parseInt(e.target.value)})}
+                    className="hover:border-blue-300 transition-colors duration-200"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="font-semibold text-gray-900">Score Threshold for Alerts</Label>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    value={surveySettings.scoreThreshold}
+                    onChange={(e) => setSurveySettings({...surveySettings, scoreThreshold: parseFloat(e.target.value)})}
+                    className="hover:border-blue-300 transition-colors duration-200"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="font-semibold text-gray-900">Participation Goal (%)</Label>
+                  <Input
+                    type="number"
+                    value={surveySettings.participationGoal}
+                    onChange={(e) => setSurveySettings({...surveySettings, participationGoal: parseInt(e.target.value)})}
+                    className="hover:border-blue-300 transition-colors duration-200"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <Label className="font-semibold text-gray-900">Survey Options</Label>
+                <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      checked={surveySettings.allowAnonymous}
+                      onCheckedChange={(checked) => setSurveySettings({...surveySettings, allowAnonymous: checked})}
+                    />
+                    <Label className="font-medium">Allow Anonymous Responses</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      checked={surveySettings.requireComments}
+                      onCheckedChange={(checked) => setSurveySettings({...surveySettings, requireComments: checked})}
+                    />
+                    <Label className="font-medium">Require Comments</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      checked={surveySettings.autoReminders}
+                      onCheckedChange={(checked) => setSurveySettings({...surveySettings, autoReminders: checked})}
+                    />
+                    <Label className="font-medium">Send Auto Reminders</Label>
+                  </div>
+                </div>
+              </div>
+
+              <Button onClick={() => handleSaveSettings('Survey')} className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                <Save className="w-4 h-4" />
+                <span>Save Survey Settings</span>
               </Button>
-            </CardTitle>
-            <CardDescription>Define cultural themes and targets per quarter</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {culturalOKRs.map((okr) => (
-                <Card key={okr.id} className="border-l-4 border-l-blue-500">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <CardTitle className="text-lg">{okr.quarter}</CardTitle>
-                        <CardDescription className="text-base font-medium">{okr.theme}</CardDescription>
-                      </div>
-                      <Badge className={getStatusColor(okr.status)}>
-                        {okr.status.charAt(0).toUpperCase() + okr.status.slice(1)}
-                      </Badge>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Enhanced Role Management Tab */}
+        {activeTab === 'roles' && (
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center space-x-2 text-xl">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                      <Users className="w-5 h-5 text-green-600" />
                     </div>
-                    <p className="text-sm text-gray-600">{okr.description}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {okr.targets.map((target, index) => (
-                          <div key={index} className="p-4 border rounded-lg">
-                            <div className="text-sm font-medium text-gray-700">{target.metric}</div>
-                            <div className="flex items-center justify-between mt-2">
-                              <div className="text-2xl font-bold text-blue-600">{target.current}</div>
-                              <div className="text-sm text-gray-500">/ {target.target}{target.unit}</div>
+                    <span>Role Management</span>
+                  </CardTitle>
+                  <CardDescription className="mt-2">
+                    Assign and manage admin roles across teams with granular permissions
+                  </CardDescription>
+                </div>
+                <Button className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700">
+                  <UserPlus className="w-4 h-4" />
+                  <span>Add Admin</span>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-hidden rounded-lg border border-gray-200">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead className="font-semibold text-gray-900">Name</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Role</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Teams</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Permissions</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Last Active</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Status</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {adminRoles.map((admin, index) => (
+                      <TableRow 
+                        key={admin.id}
+                        className={`hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 ${
+                          index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                        }`}
+                      >
+                        <TableCell>
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                              <span className="text-sm font-semibold text-gray-600">
+                                {admin.name.charAt(0)}
+                              </span>
                             </div>
-                            <div className="mt-2">
-                              <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div 
-                                  className="bg-blue-600 h-2 rounded-full" 
-                                  style={{ width: `${Math.min((target.current / target.target) * 100, 100)}%` }}
-                                ></div>
-                              </div>
+                            <div>
+                              <div className="font-semibold text-gray-900">{admin.name}</div>
+                              <div className="text-sm text-gray-500">{admin.email}</div>
                             </div>
                           </div>
-                        ))}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={`${getRoleColor(admin.role)} px-3 py-1 font-medium`}>
+                            {admin.role.replace('_', ' ').toUpperCase()}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm text-gray-700">{admin.teams.join(', ')}</div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-lg font-bold text-gray-900">{admin.permissions.length} permissions</div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm font-medium">{new Date(admin.lastActive).toLocaleDateString()}</div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={admin.status === 'active' ? "default" : "secondary"} className="px-3 py-1 font-medium">
+                            {admin.status.charAt(0).toUpperCase() + admin.status.slice(1)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                              <DropdownMenuItem className="cursor-pointer">
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>Edit Role</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="cursor-pointer">
+                                <Shield className="mr-2 h-4 w-4" />
+                                <span>Manage Permissions</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="cursor-pointer">
+                                <UserMinus className="mr-2 h-4 w-4" />
+                                <span>Remove Access</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Enhanced Company Branding Tab */}
+        {activeTab === 'branding' && (
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <Palette className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <span>Company Branding</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Customize the appearance and branding of surveys and communications
+                </CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label className="font-semibold text-gray-900">Company Name</Label>
+                  <Input
+                    value={brandingSettings.companyName}
+                    onChange={(e) => setBrandingSettings({...brandingSettings, companyName: e.target.value})}
+                    className="hover:border-blue-300 transition-colors duration-200"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="font-semibold text-gray-900">Survey Theme</Label>
+                  <Select value={brandingSettings.surveyTheme} onValueChange={(value) => setBrandingSettings({...brandingSettings, surveyTheme: value as any})}>
+                    <SelectTrigger className="hover:border-blue-300 transition-colors duration-200">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="professional">Professional</SelectItem>
+                      <SelectItem value="friendly">Friendly</SelectItem>
+                      <SelectItem value="modern">Modern</SelectItem>
+                      <SelectItem value="minimal">Minimal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="font-semibold text-gray-900">Primary Color</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      type="color"
+                      value={brandingSettings.primaryColor}
+                      onChange={(e) => setBrandingSettings({...brandingSettings, primaryColor: e.target.value})}
+                      className="w-16 h-10 rounded-lg"
+                    />
+                    <Input
+                      value={brandingSettings.primaryColor}
+                      onChange={(e) => setBrandingSettings({...brandingSettings, primaryColor: e.target.value})}
+                      className="hover:border-blue-300 transition-colors duration-200"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="font-semibold text-gray-900">Secondary Color</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      type="color"
+                      value={brandingSettings.secondaryColor}
+                      onChange={(e) => setBrandingSettings({...brandingSettings, secondaryColor: e.target.value})}
+                      className="w-16 h-10 rounded-lg"
+                    />
+                    <Input
+                      value={brandingSettings.secondaryColor}
+                      onChange={(e) => setBrandingSettings({...brandingSettings, secondaryColor: e.target.value})}
+                      className="hover:border-blue-300 transition-colors duration-200"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label className="font-semibold text-gray-900">Company Logo</Label>
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={brandingSettings.logo}
+                    alt="Company Logo"
+                    className="w-16 h-16 object-contain border rounded-lg shadow-sm"
+                  />
+                  <Button onClick={handleLogoUpload} variant="outline" className="flex items-center space-x-2 hover:bg-gray-50">
+                    <Upload className="w-4 h-4" />
+                    <span>Upload New Logo</span>
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label className="font-semibold text-gray-900">Email Signature</Label>
+                <Textarea
+                  value={brandingSettings.emailSignature}
+                  onChange={(e) => setBrandingSettings({...brandingSettings, emailSignature: e.target.value})}
+                  rows={3}
+                  className="hover:border-blue-300 transition-colors duration-200"
+                />
+              </div>
+
+              <Button onClick={() => handleSaveSettings('Branding')} className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                <Save className="w-4 h-4" />
+                <span>Save Branding Settings</span>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Enhanced Cultural OKRs Tab */}
+        {activeTab === 'okrs' && (
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center space-x-2 text-xl">
+                    <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                      <Target className="w-5 h-5 text-orange-600" />
+                    </div>
+                    <span>Cultural OKRs</span>
+                  </CardTitle>
+                  <CardDescription className="mt-2">
+                    Define cultural themes and targets per quarter with progress tracking
+                  </CardDescription>
+                </div>
+                <Button onClick={handleAddOKR} className="flex items-center space-x-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700">
+                  <Plus className="w-4 h-4" />
+                  <span>Add OKR</span>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {culturalOKRs.map((okr) => (
+                  <Card key={okr.id} className="border-l-4 border-l-blue-500 hover:shadow-lg transition-all duration-200">
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <CardTitle className="text-lg text-gray-900">{okr.quarter}</CardTitle>
+                          <CardDescription className="text-base font-semibold text-gray-700">{okr.theme}</CardDescription>
+                        </div>
+                        <Badge className={`${getStatusColor(okr.status)} px-3 py-1 font-medium`}>
+                          {okr.status.charAt(0).toUpperCase() + okr.status.slice(1)}
+                        </Badge>
                       </div>
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span>Duration: {new Date(okr.startDate).toLocaleDateString()} - {new Date(okr.endDate).toLocaleDateString()}</span>
-                        <div className="flex items-center space-x-2">
-                          <Button variant="outline" size="sm">
-                            <Edit className="w-3 h-3 mr-1" />
-                            Edit
-                          </Button>
-                          <Button variant="outline" size="sm">
-                            <TrendingUp className="w-3 h-3 mr-1" />
-                            Track Progress
-                          </Button>
+                      <p className="text-sm text-gray-600">{okr.description}</p>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {okr.targets.map((target, index) => (
+                            <div key={index} className="p-4 border border-gray-200 rounded-lg hover:shadow-sm transition-all duration-200 bg-gradient-to-r from-gray-50 to-blue-50">
+                              <div className="text-sm font-semibold text-gray-700">{target.metric}</div>
+                              <div className="flex items-center justify-between mt-2">
+                                <div className="text-2xl font-bold text-blue-600">{target.current}</div>
+                                <div className="text-sm text-gray-500">/ {target.target}{target.unit}</div>
+                              </div>
+                              <div className="mt-2">
+                                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                  <div 
+                                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-300" 
+                                    style={{ width: `${Math.min((target.current / target.target) * 100, 100)}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span>Duration: {new Date(okr.startDate).toLocaleDateString()} - {new Date(okr.endDate).toLocaleDateString()}</span>
+                          <div className="flex items-center space-x-2">
+                            <Button variant="outline" size="sm" className="hover:bg-gray-50">
+                              <Edit className="w-3 h-3 mr-1" />
+                              Edit
+                            </Button>
+                            <Button variant="outline" size="sm" className="hover:bg-gray-50">
+                              <TrendingUp className="w-3 h-3 mr-1" />
+                              Track Progress
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };

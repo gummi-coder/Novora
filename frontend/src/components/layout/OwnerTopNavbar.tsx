@@ -82,26 +82,28 @@ const OwnerTopNavbar = ({
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-      <div className="flex items-center justify-between px-6 py-3 h-16">
-        {/* Left side: Company Name / Owner View */}
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2">
-            <Building className="w-6 h-6 text-blue-600" />
+    <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-lg">
+      <div className="flex items-center justify-between px-6 py-4 h-16">
+        {/* Enhanced Left side: Company Name / Owner View */}
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Building className="w-6 h-6 text-white" />
+            </div>
             <div>
-              <h1 className="text-lg font-semibold text-gray-900">{companyName}</h1>
-              <p className="text-xs text-gray-500">Owner View</p>
+              <h1 className="text-lg font-bold text-gray-900">{companyName}</h1>
+              <p className="text-xs text-gray-600 font-medium">Owner View</p>
             </div>
           </div>
         </div>
 
-        {/* Right side: Controls */}
+        {/* Enhanced Right side: Controls */}
         <div className="flex items-center space-x-4">
-          {/* Date Range Selector */}
-          <div className="flex items-center space-x-2">
-            <Calendar className="w-4 h-4 text-gray-500" />
+          {/* Enhanced Date Range Selector */}
+          <div className="flex items-center space-x-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+            <Calendar className="w-4 h-4 text-gray-600" />
             <Select value={dateRange} onValueChange={handleDateRangeChange}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-40 border-0 bg-transparent focus:ring-0">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -116,12 +118,12 @@ const OwnerTopNavbar = ({
             </Select>
           </div>
 
-          {/* Notification Icon */}
+          {/* Enhanced Notification Icon */}
           <div className="relative">
             <Button
               variant="ghost"
               size="sm"
-              className="relative p-2"
+              className="relative p-2 hover:bg-gray-100 rounded-lg transition-all duration-200"
               onClick={() => toast({
                 title: "Notifications",
                 description: `${notifications} organization-wide alerts`,
@@ -131,7 +133,7 @@ const OwnerTopNavbar = ({
               {notifications > 0 && (
                 <Badge 
                   variant="destructive" 
-                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs font-bold shadow-sm"
                 >
                   {notifications > 9 ? '9+' : notifications}
                 </Badge>
@@ -139,47 +141,75 @@ const OwnerTopNavbar = ({
             </Button>
           </div>
 
-          {/* Create Survey Button */}
+          {/* Enhanced Create Survey Button */}
           <Button
             onClick={handleCreateSurvey}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
             size="sm"
           >
             <Plus className="w-4 h-4 mr-2" />
             Create Survey
           </Button>
 
-          {/* Owner Avatar Menu */}
+          {/* Enhanced Owner Avatar Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
-                  <User className="w-4 h-4 text-blue-600" />
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-gray-100 transition-all duration-200">
+                <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full border-2 border-white shadow-sm">
+                  <User className="w-5 h-5 text-purple-600" />
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Owner</p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    owner@novora.com
-                  </p>
+            <DropdownMenuContent className="w-64 p-2" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal p-3">
+                <div className="flex flex-col space-y-2">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full flex items-center justify-center">
+                      <User className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold leading-none text-gray-900">Owner</p>
+                      <p className="text-xs leading-none text-gray-500 mt-1">
+                        owner@novora.com
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSwitchToAdmin}>
-                <Shield className="mr-2 h-4 w-4" />
-                <span>Switch to Admin View</span>
+              <DropdownMenuItem 
+                onClick={handleSwitchToAdmin}
+                className="p-3 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+              >
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                  <Shield className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <span className="font-medium">Switch to Admin View</span>
+                  <p className="text-xs text-gray-500">Team management</p>
+                </div>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
+              <DropdownMenuItem className="p-3 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                  <Settings className="h-4 w-4 text-green-600" />
+                </div>
+                <div>
+                  <span className="font-medium">Settings</span>
+                  <p className="text-xs text-gray-500">Configure preferences</p>
+                </div>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
+              <DropdownMenuItem 
+                onClick={handleLogout}
+                className="p-3 hover:bg-red-50 rounded-lg transition-colors duration-200 text-red-600 hover:text-red-700"
+              >
+                <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                  <LogOut className="h-4 w-4 text-red-600" />
+                </div>
+                <div>
+                  <span className="font-medium">Log out</span>
+                  <p className="text-xs text-red-500">Sign out of your account</p>
+                </div>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

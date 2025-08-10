@@ -345,334 +345,417 @@ const AdminActivity = () => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Activity</h1>
-          <p className="text-gray-600 mt-1">Ensure Admins/HR are reviewing, responding, and engaging</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Modern Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Activity</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Ensure Admins/HR are reviewing, responding, and engaging effectively
+          </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={handleRefresh} className="flex items-center space-x-2">
-            <RefreshCw className="w-4 h-4" />
-            <span>Refresh</span>
-          </Button>
-          <Button onClick={handleExport} className="flex items-center space-x-2">
-            <Download className="w-4 h-4" />
-            <span>Export Report</span>
-          </Button>
+
+        {/* Enhanced Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Total Admins</CardTitle>
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <Users className="h-4 w-4 text-blue-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{totalAdmins}</div>
+              <div className="text-sm text-gray-500 mt-1">
+                Managing {adminActivities.reduce((sum, admin) => sum + admin.teamsManaged.length, 0)} teams
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Active Admins</CardTitle>
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <UserCheck className="h-4 w-4 text-green-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{activeAdmins}</div>
+              <div className="text-sm text-gray-500 mt-1">
+                {Math.round((activeAdmins / totalAdmins) * 100)}% of total
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Overloaded</CardTitle>
+              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                <AlertTriangle className="h-4 w-4 text-orange-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{overloadedAdmins}</div>
+              <div className="text-sm text-gray-500 mt-1">
+                Need support
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Avg Response Time</CardTitle>
+              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                <Clock className="h-4 w-4 text-purple-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{avgResponseTime.toFixed(1)}h</div>
+              <div className="text-sm text-gray-500 mt-1">
+                Across all admins
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Admins</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalAdmins}</div>
-            <div className="text-sm text-muted-foreground">
-              Managing {adminActivities.reduce((sum, admin) => sum + admin.teamsManaged.length, 0)} teams
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Admins</CardTitle>
-            <UserCheck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{activeAdmins}</div>
-            <div className="text-sm text-muted-foreground">
-              {Math.round((activeAdmins / totalAdmins) * 100)}% of total
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Overloaded</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{overloadedAdmins}</div>
-            <div className="text-sm text-muted-foreground">
-              Need support
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Response Time</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{avgResponseTime.toFixed(1)}h</div>
-            <div className="text-sm text-muted-foreground">
-              Across all admins
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search admins..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+        {/* Enhanced Filters */}
+        <Card className="mb-8 hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Filter className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <span>Search & Filters</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Find and filter admin activity by various criteria
+                </CardDescription>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button variant="outline" onClick={handleRefresh} className="flex items-center space-x-2 hover:bg-gray-50">
+                  <RefreshCw className="w-4 h-4" />
+                  <span>Refresh</span>
+                </Button>
+                <Button onClick={handleExport} className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                  <Download className="w-4 h-4" />
+                  <span>Export Report</span>
+                </Button>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant={filterStatus === 'all' ? "default" : "outline"}
-                onClick={() => setFilterStatus('all')}
-              >
-                All
-              </Button>
-              <Button
-                variant={filterStatus === 'active' ? "default" : "outline"}
-                onClick={() => setFilterStatus('active')}
-              >
-                Active
-              </Button>
-              <Button
-                variant={filterStatus === 'overloaded' ? "default" : "outline"}
-                onClick={() => setFilterStatus('overloaded')}
-              >
-                Overloaded
-              </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search admins..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 hover:border-blue-300 transition-colors duration-200"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant={filterStatus === 'all' ? "default" : "outline"}
+                  onClick={() => setFilterStatus('all')}
+                  className={filterStatus === 'all' ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700' : 'hover:bg-gray-50'}
+                >
+                  All
+                </Button>
+                <Button
+                  variant={filterStatus === 'active' ? "default" : "outline"}
+                  onClick={() => setFilterStatus('active')}
+                  className={filterStatus === 'active' ? 'bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700' : 'hover:bg-gray-50'}
+                >
+                  Active
+                </Button>
+                <Button
+                  variant={filterStatus === 'overloaded' ? "default" : "outline"}
+                  onClick={() => setFilterStatus('overloaded')}
+                  className={filterStatus === 'overloaded' ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700' : 'hover:bg-gray-50'}
+                >
+                  Overloaded
+                </Button>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Admin Activity Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Users className="w-5 h-5" />
-            <span>Admin Activity Overview</span>
-          </CardTitle>
-          <CardDescription>
-            {filteredAdmins.length} of {totalAdmins} admins
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Admin</TableHead>
-                  <TableHead>Last Login</TableHead>
-                  <TableHead>Teams Managed</TableHead>
-                  <TableHead>Reviews This Month</TableHead>
-                  <TableHead>Alerts Responded</TableHead>
-                  <TableHead>Response Rate</TableHead>
-                  <TableHead>Avg Response Time</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredAdmins.map((admin) => (
-                  <TableRow key={admin.id} className="hover:bg-gray-50">
-                    <TableCell>
-                      <div>
-                        <div className="font-semibold">{admin.name}</div>
-                        <div className="text-sm text-gray-500">{admin.email}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">{formatTimeAgo(admin.lastLogin)}</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        {admin.teamsManaged.join(', ')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm font-medium">{admin.reviewsThisMonth}</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        {admin.alertsResponded}/{admin.totalAlerts}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm font-medium">
-                        {getResponseRate(admin.alertsResponded, admin.totalAlerts)}%
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">{admin.avgResponseTime}h</div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(admin.status)}>
-                        <div className="flex items-center space-x-1">
-                          {getStatusIcon(admin.status)}
-                          <span>{admin.status.charAt(0).toUpperCase() + admin.status.slice(1)}</span>
-                        </div>
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            <span>View Details</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <MessageSquare className="mr-2 h-4 w-4" />
-                            <span>Send Message</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Calendar className="mr-2 h-4 w-4" />
-                            <span>Schedule Review</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
+        {/* Enhanced Admin Activity Table */}
+        <Card className="mb-8 hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <Users className="w-5 h-5 text-green-600" />
+                  </div>
+                  <span>Admin Activity Overview</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  {filteredAdmins.length} of {totalAdmins} admins
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-hidden rounded-lg border border-gray-200">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="font-semibold text-gray-900">Admin</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Last Login</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Teams Managed</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Reviews This Month</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Alerts Responded</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Response Rate</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Avg Response Time</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Status</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Actions</TableHead>
                   </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredAdmins.map((admin, index) => (
+                    <TableRow 
+                      key={admin.id} 
+                      className={`hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      }`}
+                    >
+                      <TableCell>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-semibold text-gray-600">
+                              {admin.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">{admin.name}</div>
+                            <div className="text-sm text-gray-500">{admin.email}</div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm font-medium">{formatTimeAgo(admin.lastLogin)}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm text-gray-700">
+                          {admin.teamsManaged.join(', ')}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-lg font-bold text-gray-900">{admin.reviewsThisMonth}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-lg font-bold text-gray-900">
+                          {admin.alertsResponded}/{admin.totalAlerts}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <div className="text-lg font-bold text-gray-900">
+                            {getResponseRate(admin.alertsResponded, admin.totalAlerts)}%
+                          </div>
+                          <div className="w-16 bg-gray-200 rounded-full h-2 overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all duration-300" 
+                              style={{ width: `${getResponseRate(admin.alertsResponded, admin.totalAlerts)}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-lg font-bold text-gray-900">{admin.avgResponseTime}h</div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`${getStatusColor(admin.status)} px-3 py-1 font-medium`}>
+                          <div className="flex items-center space-x-1">
+                            {getStatusIcon(admin.status)}
+                            <span>{admin.status.charAt(0).toUpperCase() + admin.status.slice(1)}</span>
+                          </div>
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem className="cursor-pointer">
+                              <Eye className="mr-2 h-4 w-4" />
+                              <span>View Details</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">
+                              <MessageSquare className="mr-2 h-4 w-4" />
+                              <span>Send Message</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">
+                              <Calendar className="mr-2 h-4 w-4" />
+                              <span>Schedule Review</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Enhanced Heatmap of Admin Activity */}
+        <Card className="mb-8 hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <Activity className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <span>Admin Activity Heatmap</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Weekly activity levels per admin with engagement insights
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={heatmapData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                <XAxis dataKey="week" stroke="#6b7280" />
+                <YAxis stroke="#6b7280" />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'white',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="sarah" fill="#3b82f6" name="Sarah" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="mike" fill="#10b981" name="Mike" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="lisa" fill="#f59e0b" name="Lisa" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="david" fill="#8b5cf6" name="David" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="alex" fill="#ef4444" name="Alex" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Enhanced Flagged Feedback & Open Alerts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Enhanced Flagged Feedback */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center space-x-2 text-xl">
+                    <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                      <AlertTriangle className="w-5 h-5 text-orange-600" />
+                    </div>
+                    <span>Flagged Feedback</span>
+                  </CardTitle>
+                  <CardDescription className="mt-2">
+                    Not reviewed yet - requires attention
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {flaggedFeedback.map((feedback) => (
+                  <div key={feedback.id} className="p-4 border border-gray-200 rounded-lg hover:shadow-sm transition-all duration-200 bg-gradient-to-r from-gray-50 to-orange-50">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Badge className={`${getSeverityColor(feedback.severity)} px-3 py-1 font-medium`}>
+                            {feedback.severity.toUpperCase()}
+                          </Badge>
+                          <span className="text-sm font-semibold text-gray-900">{feedback.team}</span>
+                        </div>
+                        <p className="text-sm text-gray-700 mb-2">{feedback.feedback}</p>
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <span>Flagged: {new Date(feedback.flaggedDate).toLocaleDateString()}</span>
+                          {feedback.assignedTo && (
+                            <span>Assigned to: {feedback.assignedTo}</span>
+                          )}
+                        </div>
+                      </div>
+                      <Badge variant={feedback.status === 'pending' ? 'destructive' : 'secondary'} className="px-3 py-1 font-medium">
+                        {feedback.status.charAt(0).toUpperCase() + feedback.status.slice(1)}
+                      </Badge>
+                    </div>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+              </div>
+            </CardContent>
+          </Card>
 
-      {/* Heatmap of Admin Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Activity className="w-5 h-5" />
-            <span>Admin Activity Heatmap</span>
-          </CardTitle>
-          <CardDescription>Weekly activity levels per admin</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={heatmapData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="week" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="sarah" fill="#3b82f6" name="Sarah" />
-              <Bar dataKey="mike" fill="#10b981" name="Mike" />
-              <Bar dataKey="lisa" fill="#f59e0b" name="Lisa" />
-              <Bar dataKey="david" fill="#8b5cf6" name="David" />
-              <Bar dataKey="alex" fill="#ef4444" name="Alex" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      {/* Flagged Feedback & Open Alerts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Flagged Feedback */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <AlertTriangle className="w-5 h-5" />
-              <span>Flagged Feedback</span>
-            </CardTitle>
-            <CardDescription>Not reviewed yet</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {flaggedFeedback.map((feedback) => (
-                <div key={feedback.id} className="p-4 border rounded-lg">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Badge className={getSeverityColor(feedback.severity)}>
-                          {feedback.severity.toUpperCase()}
-                        </Badge>
-                        <span className="text-sm font-medium">{feedback.team}</span>
-                      </div>
-                      <p className="text-sm text-gray-700 mb-2">{feedback.feedback}</p>
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span>Flagged: {new Date(feedback.flaggedDate).toLocaleDateString()}</span>
-                        {feedback.assignedTo && (
-                          <span>Assigned to: {feedback.assignedTo}</span>
-                        )}
-                      </div>
+          {/* Enhanced Open Alerts */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center space-x-2 text-xl">
+                    <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                      <Bell className="w-5 h-5 text-red-600" />
                     </div>
-                    <Badge variant={feedback.status === 'pending' ? 'destructive' : 'secondary'}>
-                      {feedback.status.charAt(0).toUpperCase() + feedback.status.slice(1)}
-                    </Badge>
-                  </div>
+                    <span>Open Alerts</span>
+                  </CardTitle>
+                  <CardDescription className="mt-2">
+                    No action taken yet - requires immediate attention
+                  </CardDescription>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Open Alerts */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Bell className="w-5 h-5" />
-              <span>Open Alerts</span>
-            </CardTitle>
-            <CardDescription>No action taken yet</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {openAlerts.map((alert) => (
-                <div key={alert.id} className="p-4 border rounded-lg">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Badge className={getPriorityColor(alert.priority)}>
-                          {alert.priority.toUpperCase()}
-                        </Badge>
-                        <span className="text-sm font-medium">{alert.team}</span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {openAlerts.map((alert) => (
+                  <div key={alert.id} className="p-4 border border-gray-200 rounded-lg hover:shadow-sm transition-all duration-200 bg-gradient-to-r from-gray-50 to-red-50">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Badge className={`${getPriorityColor(alert.priority)} px-3 py-1 font-medium`}>
+                            {alert.priority.toUpperCase()}
+                          </Badge>
+                          <span className="text-sm font-semibold text-gray-900">{alert.team}</span>
+                        </div>
+                        <p className="text-sm font-semibold mb-1 text-gray-900">{alert.alertType}</p>
+                        <p className="text-sm text-gray-700 mb-2">{alert.description}</p>
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <span>Open for {alert.daysOpen} days</span>
+                          {alert.assignedTo && (
+                            <span>Assigned to: {alert.assignedTo}</span>
+                          )}
+                        </div>
                       </div>
-                      <p className="text-sm font-medium mb-1">{alert.alertType}</p>
-                      <p className="text-sm text-gray-700 mb-2">{alert.description}</p>
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span>Open for {alert.daysOpen} days</span>
-                        {alert.assignedTo && (
-                          <span>Assigned to: {alert.assignedTo}</span>
-                        )}
-                      </div>
+                      <Button variant="outline" size="sm" className="hover:bg-red-50 hover:border-red-200">
+                        Assign
+                      </Button>
                     </div>
-                    <Button variant="outline" size="sm">
-                      Assign
-                    </Button>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

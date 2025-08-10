@@ -43,6 +43,13 @@ import OwnerSettings from "@/components/dashboard/owner/Settings";
 import AdminTopNavbar from "@/components/layout/AdminTopNavbar";
 import AdminSidebar from "@/components/layout/AdminSidebar";
 import AdminDashboard from "@/components/dashboard/admin/AdminDashboard";
+import TeamTrends from "@/components/dashboard/admin/TeamTrends";
+import AdminFeedback from "@/components/dashboard/admin/Feedback";
+import AdminAlerts from "@/components/dashboard/admin/Alerts";
+import AdminSurveys from "@/components/dashboard/admin/Surveys";
+import AdminReports from "@/components/dashboard/admin/Reports";
+import AdminSettings from "@/components/dashboard/admin/Settings";
+import Employees from "@/components/dashboard/admin/Employees";
 import { api } from "@/lib/api";
 
 interface User {
@@ -189,17 +196,19 @@ const Dashboard = () => {
         case 'dashboard':
           return <AdminDashboard />;
         case 'team-trends':
-          return <div>Team Trends - Coming Soon</div>;
+          return <TeamTrends />;
         case 'feedback':
-          return <div>Feedback - Coming Soon</div>;
+          return <AdminFeedback />;
         case 'alerts':
-          return <div>Alerts - Coming Soon</div>;
+          return <AdminAlerts />;
+        case 'employees':
+          return <Employees />;
         case 'surveys':
-          return <div>Surveys - Coming Soon</div>;
+          return <AdminSurveys />;
         case 'reports':
-          return <div>Reports - Coming Soon</div>;
+          return <AdminReports />;
         case 'settings':
-          return <div>Settings - Coming Soon</div>;
+          return <AdminSettings />;
         case 'my-teams':
           return <div>My Teams - Coming Soon</div>;
         default:
@@ -284,7 +293,7 @@ const Dashboard = () => {
           teams={["Sales", "Marketing"]}
           notifications={notifications}
           onDateRangeChange={setDateRange}
-          onCreateSurvey={() => navigate('/create-survey')}
+          onCreateSurvey={() => navigate('/surveys/create')}
           onLogout={handleLogout}
         />
       ) : (user?.role === 'owner') ? (
@@ -292,7 +301,7 @@ const Dashboard = () => {
           companyName={user?.company_name || "Novora"}
           notifications={notifications}
           onDateRangeChange={setDateRange}
-          onCreateSurvey={() => navigate('/create-survey')}
+          onCreateSurvey={() => navigate('/surveys/create')}
           onSwitchToAdmin={() => {
             // For now, just show a toast. In a real app, this would switch views
             toast({
@@ -346,7 +355,7 @@ const Dashboard = () => {
               </Button>
 
               {/* Create Survey button */}
-              <Link to="/create-survey">
+              <Link to="/surveys/create">
                 <Button className="flex items-center space-x-2">
                   <Plus className="w-4 h-4" />
                   <span>Create Survey</span>

@@ -265,313 +265,382 @@ const AdoptionUsage = () => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Adoption & Usage</h1>
-          <p className="text-gray-600 mt-1">Track rollout, engagement, and usage health</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Modern Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Adoption & Usage</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Track rollout, engagement, and usage health across your organization
+          </p>
         </div>
-        <Button onClick={handleExport} className="flex items-center space-x-2">
-          <Download className="w-4 h-4" />
-          <span>Export Report</span>
-        </Button>
-      </div>
 
-      {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Active Teams */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Teams</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.activeTeams}/{metrics.totalTeams}</div>
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <Progress value={activeTeamsPercentage} className="w-16" />
-              <span>{activeTeamsPercentage}%</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Participation Rate */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Participation Rate</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.participationRate}%</div>
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <Progress value={metrics.participationRate} className="w-16" />
-              <span>Org-wide</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Survey Delivery Rate */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Survey Delivery</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.surveyDeliveryRate}%</div>
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <Progress value={metrics.surveyDeliveryRate} className="w-16" />
-              <span>Success rate</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Average Time in Use */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Time in Use</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.avgTimeInUse} months</div>
-            <div className="text-sm text-muted-foreground">
-              Across active teams
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Time in Use Graph */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <TrendingUp className="w-5 h-5" />
-              <span>Time in Use Trend</span>
-            </CardTitle>
-            <CardDescription>Active teams over time</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={timeInUseData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis domain={[0, metrics.totalTeams]} />
-                <Tooltip 
-                  formatter={(value: number) => [value, 'Teams']}
-                  labelFormatter={(label) => `Month: ${label}`}
-                />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="activeTeams" 
-                  stroke="#3b82f6" 
-                  strokeWidth={3}
-                  dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-                  name="Active Teams"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Admin Coverage Map */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <UserCheck className="w-5 h-5" />
-              <span>Admin Coverage</span>
-            </CardTitle>
-            <CardDescription>Teams with/without HR/admin assigned</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={adminCoverageData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {adminCoverageData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="mt-4 text-center">
-              <div className="text-sm text-gray-600">
-                {teamsWithoutAdmin} teams need admin assignment
+        {/* Enhanced Key Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {/* Active Teams */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Active Teams</CardTitle>
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <Users className="h-4 w-4 text-blue-600" />
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{metrics.activeTeams}/{metrics.totalTeams}</div>
+              <div className="flex items-center space-x-2 text-sm mt-1">
+                <Progress value={activeTeamsPercentage} className="w-16" />
+                <span className="text-gray-500">{activeTeamsPercentage}%</span>
+              </div>
+            </CardContent>
+          </Card>
 
-      {/* Team Usage Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <BarChart3 className="w-5 h-5" />
-            <span>Team Usage Details</span>
-          </CardTitle>
-          <CardDescription>Last activity and admin coverage per team</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Team</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Participation</TableHead>
-                  <TableHead>Time in Use</TableHead>
-                  <TableHead>Survey Delivery</TableHead>
-                  <TableHead>Admin</TableHead>
-                  <TableHead>Last Activity</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {teamUsage.map((team) => (
-                  <TableRow key={team.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium">{team.name}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(team.status)}>
-                        <div className="flex items-center space-x-1">
-                          {getStatusIcon(team.status)}
-                          <span>{team.status.charAt(0).toUpperCase() + team.status.slice(1)}</span>
+          {/* Participation Rate */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Participation Rate</CardTitle>
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <TrendingUp className="h-4 w-4 text-green-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{metrics.participationRate}%</div>
+              <div className="flex items-center space-x-2 text-sm mt-1">
+                <Progress value={metrics.participationRate} className="w-16" />
+                <span className="text-gray-500">Org-wide</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Survey Delivery Rate */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Survey Delivery</CardTitle>
+              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                <Calendar className="h-4 w-4 text-purple-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{metrics.surveyDeliveryRate}%</div>
+              <div className="flex items-center space-x-2 text-sm mt-1">
+                <Progress value={metrics.surveyDeliveryRate} className="w-16" />
+                <span className="text-gray-500">Success rate</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Average Time in Use */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Avg Time in Use</CardTitle>
+              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                <Clock className="h-4 w-4 text-orange-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{metrics.avgTimeInUse} months</div>
+              <div className="text-sm text-gray-500 mt-1">
+                Across active teams
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Enhanced Charts Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Time in Use Graph */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center space-x-2 text-xl">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <span>Time in Use Trend</span>
+                  </CardTitle>
+                  <CardDescription className="mt-2">
+                    Active teams over time with adoption insights
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={timeInUseData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                  <XAxis dataKey="month" stroke="#6b7280" />
+                  <YAxis domain={[0, metrics.totalTeams]} stroke="#6b7280" />
+                  <Tooltip 
+                    formatter={(value: number) => [value, 'Teams']}
+                    labelFormatter={(label) => `Month: ${label}`}
+                    contentStyle={{
+                      backgroundColor: 'white',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="activeTeams" 
+                    stroke="#3b82f6" 
+                    strokeWidth={3}
+                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                    name="Active Teams"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Admin Coverage Map */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center space-x-2 text-xl">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                      <UserCheck className="w-5 h-5 text-green-600" />
+                    </div>
+                    <span>Admin Coverage</span>
+                  </CardTitle>
+                  <CardDescription className="mt-2">
+                    Teams with/without HR/admin assigned
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={adminCoverageData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {adminCoverageData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'white',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="mt-4 text-center p-3 bg-gradient-to-r from-red-50 to-orange-50 rounded-lg border border-red-200">
+                <div className="text-sm font-medium text-red-700">
+                  {teamsWithoutAdmin} teams need admin assignment
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Enhanced Team Usage Table */}
+        <Card className="mb-8 hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <BarChart3 className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <span>Team Usage Details</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Last activity and admin coverage per team
+                </CardDescription>
+              </div>
+              <Button onClick={handleExport} className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                <Download className="w-4 h-4" />
+                <span>Export Report</span>
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-hidden rounded-lg border border-gray-200">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="font-semibold text-gray-900">Team</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Status</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Participation</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Time in Use</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Survey Delivery</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Admin</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Last Activity</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {teamUsage.map((team, index) => (
+                    <TableRow 
+                      key={team.id} 
+                      className={`hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      }`}
+                    >
+                      <TableCell className="font-medium">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-semibold text-gray-600">
+                              {team.name.charAt(0)}
+                            </span>
+                          </div>
+                          <span className="font-semibold text-gray-900">{team.name}</span>
                         </div>
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <div className="text-sm font-medium">{team.participationRate}%</div>
-                        <div className="w-16 bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full" 
-                            style={{ width: `${team.participationRate}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">{team.timeInUse} months</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">{team.surveyDeliveryRate}%</div>
-                    </TableCell>
-                    <TableCell>
-                      {team.hasAdmin ? (
-                        <div className="flex items-center space-x-2">
-                          <UserCheck className="w-4 h-4 text-green-600" />
-                          <div className="text-sm">
-                            <div className="font-medium">{team.adminName}</div>
-                            <div className="text-gray-500">Assigned</div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`${getStatusColor(team.status)} px-3 py-1 font-medium`}>
+                          <div className="flex items-center space-x-1">
+                            {getStatusIcon(team.status)}
+                            <span>{team.status.charAt(0).toUpperCase() + team.status.slice(1)}</span>
+                          </div>
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-3">
+                          <div className="text-lg font-bold text-gray-900">{team.participationRate}%</div>
+                          <div className="w-20 bg-gray-200 rounded-full h-2 overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all duration-300" 
+                              style={{ width: `${team.participationRate}%` }}
+                            ></div>
                           </div>
                         </div>
-                      ) : (
-                        <div className="flex items-center space-x-2">
-                          <UserX className="w-4 h-4 text-red-600" />
-                          <div className="text-sm text-red-600 font-medium">Unassigned</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-lg font-bold text-gray-900">{team.timeInUse} months</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-lg font-bold text-gray-900">{team.surveyDeliveryRate}%</div>
+                      </TableCell>
+                      <TableCell>
+                        {team.hasAdmin ? (
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                              <UserCheck className="w-4 h-4 text-green-600" />
+                            </div>
+                            <div className="text-sm">
+                              <div className="font-semibold text-gray-900">{team.adminName}</div>
+                              <div className="text-gray-500">Assigned</div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                              <UserX className="w-4 h-4 text-red-600" />
+                            </div>
+                            <div className="text-sm text-red-600 font-semibold">Unassigned</div>
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm text-gray-600 font-medium">
+                          {formatTimeAgo(team.lastActivity)}
                         </div>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm text-gray-600">
-                        {formatTimeAgo(team.lastActivity)}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Button variant="ghost" size="sm" className="flex items-center space-x-1">
-                        <Eye className="w-4 h-4" />
-                        <span>View</span>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Teams Without Admin */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <UserX className="w-5 h-5 text-red-600" />
-              <span>Teams Without Admin</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-red-600">{teamsWithoutAdmin}</div>
-            <p className="text-sm text-gray-600 mt-2">
-              Need HR/admin assignment
-            </p>
-            <Button variant="outline" size="sm" className="mt-4">
-              Assign Admins
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Inactive Teams */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <XCircle className="w-5 h-5 text-gray-600" />
-              <span>Inactive Teams</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-gray-600">
-              {teamUsage.filter(team => !team.isActive).length}
+                      </TableCell>
+                      <TableCell>
+                        <Button variant="ghost" size="sm" className="flex items-center space-x-1 hover:bg-gray-100">
+                          <Eye className="w-4 h-4" />
+                          <span>View</span>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
-            <p className="text-sm text-gray-600 mt-2">
-              Not using platform
-            </p>
-            <Button variant="outline" size="sm" className="mt-4">
-              Re-engage
-            </Button>
           </CardContent>
         </Card>
 
-        {/* At-Risk Teams */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <AlertTriangle className="w-5 h-5 text-yellow-600" />
-              <span>At-Risk Teams</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-yellow-600">
-              {teamUsage.filter(team => team.status === 'at-risk').length}
-            </div>
-            <p className="text-sm text-gray-600 mt-2">
-              Need attention
-            </p>
-            <Button variant="outline" size="sm" className="mt-4">
-              Review
-            </Button>
-          </CardContent>
-        </Card>
+        {/* Enhanced Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Teams Without Admin */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2 text-xl">
+                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                  <UserX className="w-5 h-5 text-red-600" />
+                </div>
+                <span>Teams Without Admin</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-red-600">{teamsWithoutAdmin}</div>
+              <p className="text-sm text-gray-600 mt-2">
+                Need HR/admin assignment
+              </p>
+              <Button variant="outline" size="sm" className="mt-4 hover:bg-red-50 hover:border-red-200">
+                Assign Admins
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Inactive Teams */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2 text-xl">
+                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                  <XCircle className="w-5 h-5 text-gray-600" />
+                </div>
+                <span>Inactive Teams</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-gray-600">
+                {teamUsage.filter(team => !team.isActive).length}
+              </div>
+              <p className="text-sm text-gray-600 mt-2">
+                Not using platform
+              </p>
+              <Button variant="outline" size="sm" className="mt-4 hover:bg-gray-50">
+                Re-engage
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* At-Risk Teams */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2 text-xl">
+                <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                </div>
+                <span>At-Risk Teams</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-yellow-600">
+                {teamUsage.filter(team => team.status === 'at-risk').length}
+              </div>
+              <p className="text-sm text-gray-600 mt-2">
+                Need attention
+              </p>
+              <Button variant="outline" size="sm" className="mt-4 hover:bg-yellow-50 hover:border-yellow-200">
+                Review
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

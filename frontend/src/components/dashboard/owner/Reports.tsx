@@ -354,350 +354,414 @@ const Reports = () => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Reports</h1>
-          <p className="text-gray-600 mt-1">Export/share insights with leadership</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Modern Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Reports</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Export and share insights with leadership through comprehensive reporting tools
+          </p>
         </div>
-      </div>
 
-      {/* Report Generation */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <FileText className="w-5 h-5" />
-            <span>Generate Reports</span>
-          </CardTitle>
-          <CardDescription>Create and download culture reports</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Report Template Selection */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label>Report Template</Label>
-              <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a report template" />
-                </SelectTrigger>
-                <SelectContent>
-                  {reportTemplates.map((template) => (
-                    <SelectItem key={template.id} value={template.id}>
-                      <div className="flex items-center space-x-2">
-                        {getFormatIcon(template.format)}
-                        <span>{template.name}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Export Format</Label>
-              <Select value={selectedFormat} onValueChange={(value: any) => setSelectedFormat(value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pdf">PDF Report</SelectItem>
-                  <SelectItem value="csv">CSV Data</SelectItem>
-                  <SelectItem value="slides">PowerPoint Slides</SelectItem>
-                  <SelectItem value="all">All Formats</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Report Options */}
-          <div className="space-y-4">
-            <Label>Report Options</Label>
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={includeCharts}
-                  onCheckedChange={setIncludeCharts}
-                />
-                <Label>Include Charts & Visualizations</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={includeComments}
-                  onCheckedChange={setIncludeComments}
-                />
-                <Label>Include Anonymous Comments</Label>
+        {/* Enhanced Report Generation */}
+        <Card className="mb-8 hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <span>Generate Reports</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Create and download culture reports with customizable options
+                </CardDescription>
               </div>
             </div>
-          </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Report Template Selection */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <Label className="font-semibold text-gray-900">Report Template</Label>
+                <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                  <SelectTrigger className="hover:border-blue-300 transition-colors duration-200">
+                    <SelectValue placeholder="Select a report template" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {reportTemplates.map((template) => (
+                      <SelectItem key={template.id} value={template.id}>
+                        <div className="flex items-center space-x-2">
+                          {getFormatIcon(template.format)}
+                          <span>{template.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-          {/* Generate Button */}
-          <Button 
-            onClick={handleGenerateReport} 
-            disabled={!selectedTemplate || loading}
-            className="flex items-center space-x-2"
-          >
-            <Download className="w-4 h-4" />
-            <span>{loading ? 'Generating...' : 'Generate Report'}</span>
-          </Button>
-        </CardContent>
-      </Card>
+              <div className="space-y-3">
+                <Label className="font-semibold text-gray-900">Export Format</Label>
+                <Select value={selectedFormat} onValueChange={(value: any) => setSelectedFormat(value)}>
+                  <SelectTrigger className="hover:border-blue-300 transition-colors duration-200">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pdf">PDF Report</SelectItem>
+                    <SelectItem value="csv">CSV Data</SelectItem>
+                    <SelectItem value="slides">PowerPoint Slides</SelectItem>
+                    <SelectItem value="all">All Formats</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
-      {/* Report Templates Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <BarChart3 className="w-5 h-5" />
-            <span>Available Report Templates</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Template</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Format</TableHead>
-                <TableHead>Last Generated</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {reportTemplates.map((template) => (
-                <TableRow key={template.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-semibold">{template.name}</div>
-                      <div className="text-sm text-gray-500">{template.description}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
-                      {template.type.charAt(0).toUpperCase() + template.type.slice(1)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      {getFormatIcon(template.format)}
-                      <span className="text-sm">{template.format.toUpperCase()}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">{new Date(template.lastGenerated).toLocaleDateString()}</div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={getStatusColor(template.status)}>
-                      <div className="flex items-center space-x-1">
-                        {getStatusIcon(template.status)}
-                        <span>{template.status.charAt(0).toUpperCase() + template.status.slice(1)}</span>
-                      </div>
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Download className="mr-2 h-4 w-4" />
-                          <span>Download Latest</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Share2 className="mr-2 h-4 w-4" />
-                          <span>Create Share Link</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Mail className="mr-2 h-4 w-4" />
-                          <span>Email to Executives</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+            {/* Report Options */}
+            <div className="space-y-4">
+              <Label className="font-semibold text-gray-900">Report Options</Label>
+              <div className="flex items-center space-x-8 p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={includeCharts}
+                    onCheckedChange={setIncludeCharts}
+                  />
+                  <Label className="font-medium">Include Charts & Visualizations</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={includeComments}
+                    onCheckedChange={setIncludeComments}
+                  />
+                  <Label className="font-medium">Include Anonymous Comments</Label>
+                </div>
+              </div>
+            </div>
 
-      {/* Share Links */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Share2 className="w-5 h-5" />
-            <span>Public Share Links</span>
-          </CardTitle>
-          <CardDescription>Create and manage public share links for reports</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Create New Share Link */}
-          <div className="flex items-center space-x-4">
-            <Input
-              placeholder="Enter share link name..."
-              value={newShareLinkName}
-              onChange={(e) => setNewShareLinkName(e.target.value)}
-              className="flex-1"
-            />
-            <Button onClick={handleCreateShareLink} className="flex items-center space-x-2">
-              <Link className="w-4 h-4" />
-              <span>Create Link</span>
+            {/* Generate Button */}
+            <Button 
+              onClick={handleGenerateReport} 
+              disabled={!selectedTemplate || loading}
+              className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
+              <Download className="w-4 h-4" />
+              <span>{loading ? 'Generating...' : 'Generate Report'}</span>
             </Button>
-          </div>
+          </CardContent>
+        </Card>
 
-          {/* Share Links Table */}
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>URL</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Expires</TableHead>
-                <TableHead>Views</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {shareLinks.map((link) => (
-                <TableRow key={link.id}>
-                  <TableCell className="font-medium">{link.name}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-600 truncate max-w-48">{link.url}</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleCopyLink(link.url)}
-                      >
-                        <Copy className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">{new Date(link.createdAt).toLocaleDateString()}</div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      {link.expiresAt ? new Date(link.expiresAt).toLocaleDateString() : 'Never'}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">{link.views} views</div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={link.isActive ? "default" : "secondary"}>
-                      {link.isActive ? 'Active' : 'Expired'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleCopyLink(link.url)}
-                      >
-                        <Copy className="w-3 h-3" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => window.open(link.url, '_blank')}
-                      >
-                        <ExternalLink className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+        {/* Enhanced Report Templates Table */}
+        <Card className="mb-8 hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <BarChart3 className="w-5 h-5 text-green-600" />
+                  </div>
+                  <span>Available Report Templates</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Pre-configured templates for different reporting needs
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-hidden rounded-lg border border-gray-200">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="font-semibold text-gray-900">Template</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Type</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Format</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Last Generated</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Status</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {reportTemplates.map((template, index) => (
+                    <TableRow 
+                      key={template.id}
+                      className={`hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      }`}
+                    >
+                      <TableCell>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                            {getFormatIcon(template.format)}
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">{template.name}</div>
+                            <div className="text-sm text-gray-500">{template.description}</div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="font-medium">
+                          {template.type.charAt(0).toUpperCase() + template.type.slice(1)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          {getFormatIcon(template.format)}
+                          <span className="text-sm font-medium">{template.format.toUpperCase()}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm font-medium">{new Date(template.lastGenerated).toLocaleDateString()}</div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`${getStatusColor(template.status)} px-3 py-1 font-medium`}>
+                          <div className="flex items-center space-x-1">
+                            {getStatusIcon(template.status)}
+                            <span>{template.status.charAt(0).toUpperCase() + template.status.slice(1)}</span>
+                          </div>
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem className="cursor-pointer">
+                              <Download className="mr-2 h-4 w-4" />
+                              <span>Download Latest</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">
+                              <Share2 className="mr-2 h-4 w-4" />
+                              <span>Create Share Link</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">
+                              <Mail className="mr-2 h-4 w-4" />
+                              <span>Email to Executives</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Email to Executives */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Mail className="w-5 h-5" />
-            <span>Email to Executives</span>
-          </CardTitle>
-          <CardDescription>Send reports directly to board members and executives</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Executive Selection */}
-          <div className="space-y-4">
-            <Label>Select Recipients</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {executiveContacts.map((executive) => (
-                <div
-                  key={executive.id}
-                  className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                    selectedExecutives.includes(executive.id)
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                  onClick={() => toggleExecutiveSelection(executive.id)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium">{executive.name}</div>
-                      <div className="text-sm text-gray-600">{executive.role} • {executive.department}</div>
-                      <div className="text-sm text-gray-500">{executive.email}</div>
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      Last sent: {new Date(executive.lastSent).toLocaleDateString()}
+        {/* Enhanced Share Links */}
+        <Card className="mb-8 hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <Share2 className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <span>Public Share Links</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Create and manage public share links for reports with analytics
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Create New Share Link */}
+            <div className="flex items-center space-x-4">
+              <Input
+                placeholder="Enter share link name..."
+                value={newShareLinkName}
+                onChange={(e) => setNewShareLinkName(e.target.value)}
+                className="flex-1 hover:border-blue-300 transition-colors duration-200"
+              />
+              <Button onClick={handleCreateShareLink} className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                <Link className="w-4 h-4" />
+                <span>Create Link</span>
+              </Button>
+            </div>
+
+            {/* Enhanced Share Links Table */}
+            <div className="overflow-hidden rounded-lg border border-gray-200">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="font-semibold text-gray-900">Name</TableHead>
+                    <TableHead className="font-semibold text-gray-900">URL</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Created</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Expires</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Views</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Status</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {shareLinks.map((link, index) => (
+                    <TableRow 
+                      key={link.id}
+                      className={`hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      }`}
+                    >
+                      <TableCell className="font-semibold text-gray-900">{link.name}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-gray-600 truncate max-w-48">{link.url}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleCopyLink(link.url)}
+                            className="hover:bg-gray-100"
+                          >
+                            <Copy className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm font-medium">{new Date(link.createdAt).toLocaleDateString()}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm font-medium">
+                          {link.expiresAt ? new Date(link.expiresAt).toLocaleDateString() : 'Never'}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-lg font-bold text-gray-900">{link.views} views</div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={link.isActive ? "default" : "secondary"} className="px-3 py-1 font-medium">
+                          {link.isActive ? 'Active' : 'Expired'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleCopyLink(link.url)}
+                            className="hover:bg-gray-100"
+                          >
+                            <Copy className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.open(link.url, '_blank')}
+                            className="hover:bg-gray-100"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Enhanced Email to Executives */}
+        <Card className="hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                    <Mail className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <span>Email to Executives</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Send reports directly to board members and executives with custom messaging
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Enhanced Executive Selection */}
+            <div className="space-y-4">
+              <Label className="font-semibold text-gray-900">Select Recipients</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {executiveContacts.map((executive) => (
+                  <div
+                    key={executive.id}
+                    className={`p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
+                      selectedExecutives.includes(executive.id)
+                        ? 'border-blue-500 bg-gradient-to-r from-blue-50 to-purple-50 shadow-md'
+                        : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                    }`}
+                    onClick={() => toggleExecutiveSelection(executive.id)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                          <span className="text-sm font-semibold text-gray-600">
+                            {executive.name.charAt(0)}
+                          </span>
+                        </div>
+                        <div>
+                          <div className="font-semibold text-gray-900">{executive.name}</div>
+                          <div className="text-sm text-gray-600">{executive.role} • {executive.department}</div>
+                          <div className="text-sm text-gray-500">{executive.email}</div>
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        Last sent: {new Date(executive.lastSent).toLocaleDateString()}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Email Content */}
-          <div className="space-y-4">
-            <div>
-              <Label>Subject</Label>
-              <Input
-                placeholder="Enter email subject..."
-                value={emailSubject}
-                onChange={(e) => setEmailSubject(e.target.value)}
-              />
+            {/* Enhanced Email Content */}
+            <div className="space-y-4">
+              <div>
+                <Label className="font-semibold text-gray-900">Subject</Label>
+                <Input
+                  placeholder="Enter email subject..."
+                  value={emailSubject}
+                  onChange={(e) => setEmailSubject(e.target.value)}
+                  className="hover:border-blue-300 transition-colors duration-200"
+                />
+              </div>
+              <div>
+                <Label className="font-semibold text-gray-900">Message</Label>
+                <Textarea
+                  placeholder="Enter your message..."
+                  value={emailMessage}
+                  onChange={(e) => setEmailMessage(e.target.value)}
+                  rows={4}
+                  className="hover:border-blue-300 transition-colors duration-200"
+                />
+              </div>
             </div>
-            <div>
-              <Label>Message</Label>
-              <Textarea
-                placeholder="Enter your message..."
-                value={emailMessage}
-                onChange={(e) => setEmailMessage(e.target.value)}
-                rows={4}
-              />
-            </div>
-          </div>
 
-          {/* Send Button */}
-          <Button 
-            onClick={handleSendEmail}
-            disabled={selectedExecutives.length === 0 || !emailSubject.trim() || !emailMessage.trim()}
-            className="flex items-center space-x-2"
-          >
-            <Send className="w-4 h-4" />
-            <span>Send to {selectedExecutives.length} Executive(s)</span>
-          </Button>
-        </CardContent>
-      </Card>
+            {/* Enhanced Send Button */}
+            <Button 
+              onClick={handleSendEmail}
+              disabled={selectedExecutives.length === 0 || !emailSubject.trim() || !emailMessage.trim()}
+              className="flex items-center space-x-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700"
+            >
+              <Send className="w-4 h-4" />
+              <span>Send to {selectedExecutives.length} Executive(s)</span>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

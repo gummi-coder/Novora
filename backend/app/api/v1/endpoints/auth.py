@@ -38,6 +38,8 @@ class LoginResponse(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
+    email: str
+    user_id: int
     user: dict  # Will contain user info that frontend expects
 
 class RegisterResponse(BaseModel):
@@ -106,6 +108,8 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
         access_token=access_token,
         refresh_token=refresh_token,
         token_type="bearer",
+        email=user.email,
+        user_id=user.id,
         user={
             "id": str(user.id),
             "email": user.email,
@@ -360,6 +364,7 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
         "firstName": current_user.email.split('@')[0].title(),
         "lastName": "",
         "role": current_user.role,
+        "is_active": current_user.is_active,
         "status": "active" if current_user.is_active else "inactive",
         "createdAt": current_user.created_at.isoformat(),
         "updatedAt": current_user.created_at.isoformat()

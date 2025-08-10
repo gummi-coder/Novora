@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -63,6 +64,7 @@ interface RecentActivity {
 
 const AdminDashboard = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<AdminStats>({
     totalTeams: 2,
@@ -222,211 +224,280 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="text-gray-600 mt-1">Overview of your teams and surveys</p>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Modern Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Comprehensive overview of your teams, surveys, and organizational health metrics
+          </p>
+        </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Teams */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Teams Managed</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalTeams}</div>
-            <div className="text-sm text-muted-foreground">
-              Active teams
-            </div>
-          </CardContent>
-        </Card>
+        {/* Enhanced Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {/* Teams */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Teams Managed</CardTitle>
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <Users className="h-4 w-4 text-blue-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{stats.totalTeams}</div>
+              <div className="text-sm text-gray-500 mt-1">
+                Active teams
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Active Surveys */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Surveys</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.activeSurveys}</div>
-            <div className="text-sm text-muted-foreground">
-              Currently running
-            </div>
-          </CardContent>
-        </Card>
+          {/* Active Surveys */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Active Surveys</CardTitle>
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <BarChart3 className="h-4 w-4 text-green-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{stats.activeSurveys}</div>
+              <div className="text-sm text-gray-500 mt-1">
+                Currently running
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Average Score */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Score</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.avgScore}/10</div>
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              {stats.scoreChange > 0 ? (
-                <TrendingUp className="h-4 w-4 text-green-600" />
-              ) : (
-                <TrendingDown className="h-4 w-4 text-red-600" />
-              )}
-              <span className={stats.scoreChange > 0 ? 'text-green-600' : 'text-red-600'}>
-                {stats.scoreChange > 0 ? '+' : ''}{stats.scoreChange} from last month
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Average Score */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Average Score</CardTitle>
+              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                <Target className="h-4 w-4 text-purple-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{stats.avgScore}/10</div>
+              <div className="flex items-center space-x-2 text-sm mt-1">
+                {stats.scoreChange > 0 ? (
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 text-red-600" />
+                )}
+                <span className={stats.scoreChange > 0 ? 'text-green-600' : 'text-red-600'}>
+                  {stats.scoreChange > 0 ? '+' : ''}{stats.scoreChange} from last month
+                </span>
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Alerts */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Alerts</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.alertsCount}</div>
-            <div className="text-sm text-muted-foreground">
-              Require attention
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          {/* Alerts */}
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Active Alerts</CardTitle>
+              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                <AlertTriangle className="h-4 w-4 text-orange-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">{stats.alertsCount}</div>
+              <div className="text-sm text-gray-500 mt-1">
+                Require attention
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Team Performance */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Users className="w-5 h-5" />
-            <span>Team Performance</span>
-          </CardTitle>
-          <CardDescription>Overview of your managed teams</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {teamPerformance.map((team) => (
-              <div key={team.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-4">
-                  <div>
-                    <div className="font-semibold">{team.name}</div>
-                    <div className="text-sm text-gray-500">
-                      {team.responses} responses • {team.alerts} alerts
-                    </div>
+        {/* Enhanced Team Performance */}
+        <Card className="mb-8 hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Users className="w-5 h-5 text-blue-600" />
                   </div>
-                </div>
-                
-                <div className="flex items-center space-x-6">
-                  {/* Score */}
-                  <div className="text-center">
-                    <div className="text-lg font-bold">{team.score}/10</div>
-                    <div className="flex items-center space-x-1 text-sm">
-                      {team.change > 0 ? (
-                        <TrendingUp className="w-3 h-3 text-green-600" />
-                      ) : (
-                        <TrendingDown className="w-3 h-3 text-red-600" />
-                      )}
-                      <span className={team.change > 0 ? 'text-green-600' : 'text-red-600'}>
-                        {team.change > 0 ? '+' : ''}{team.change}
+                  <span>Team Performance</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Overview of your managed teams and their engagement metrics
+                </CardDescription>
+              </div>
+              <Button variant="outline" size="sm">
+                View All Teams
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {teamPerformance.map((team) => (
+                <div key={team.id} className="flex items-center justify-between p-6 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                      <span className="text-lg font-semibold text-gray-600">
+                        {team.name.charAt(0)}
                       </span>
                     </div>
-                  </div>
-
-                  {/* Participation */}
-                  <div className="text-center">
-                    <div className="text-lg font-bold">{team.participation}%</div>
-                    <div className="text-sm text-gray-500">Participation</div>
-                  </div>
-
-                  {/* Status */}
-                  <Badge className={getStatusColor(team.status)}>
-                    <div className="flex items-center space-x-1">
-                      {getStatusIcon(team.status)}
-                      <span>{team.status.charAt(0).toUpperCase() + team.status.slice(1)}</span>
+                    <div>
+                      <div className="font-semibold text-gray-900">{team.name}</div>
+                      <div className="text-sm text-gray-500 flex items-center space-x-2">
+                        <span>{team.responses} responses</span>
+                        <span>•</span>
+                        <span>{team.alerts} alerts</span>
+                      </div>
                     </div>
-                  </Badge>
+                  </div>
+                  
+                  <div className="flex items-center space-x-8">
+                    {/* Score */}
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-gray-900">{team.score}/10</div>
+                      <div className="flex items-center space-x-1 text-sm mt-1">
+                        {team.change > 0 ? (
+                          <TrendingUp className="w-3 h-3 text-green-600" />
+                        ) : (
+                          <TrendingDown className="w-3 h-3 text-red-600" />
+                        )}
+                        <span className={team.change > 0 ? 'text-green-600' : 'text-red-600'}>
+                          {team.change > 0 ? '+' : ''}{team.change}
+                        </span>
+                      </div>
+                    </div>
 
-                  {/* Actions */}
-                  <Button variant="outline" size="sm">
-                    View Details
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+                    {/* Participation */}
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-gray-900">{team.participation}%</div>
+                      <div className="text-sm text-gray-500">Participation</div>
+                    </div>
 
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Activity className="w-5 h-5" />
-            <span>Recent Activity</span>
-          </CardTitle>
-          <CardDescription>Latest updates from your teams</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {recentActivity.map((activity) => (
-              <div key={activity.id} className="flex items-start space-x-3 p-3 border rounded-lg">
-                <div className="flex-shrink-0 mt-1">
-                  {getActivityIcon(activity.type)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <div className="font-medium text-sm">{activity.description}</div>
-                    <Badge className={getPriorityColor(activity.priority)}>
-                      {activity.priority.charAt(0).toUpperCase() + activity.priority.slice(1)}
+                    {/* Status */}
+                    <Badge className={`${getStatusColor(team.status)} px-3 py-1`}>
+                      <div className="flex items-center space-x-1">
+                        {getStatusIcon(team.status)}
+                        <span className="font-medium">{team.status.charAt(0).toUpperCase() + team.status.slice(1)}</span>
+                      </div>
                     </Badge>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-500 mt-1">
-                    <span>{activity.team}</span>
-                    <span>•</span>
-                    <span>{formatTimeAgo(activity.timestamp)}</span>
+
+                    {/* Actions */}
+                    <Button variant="outline" size="sm" className="hover:bg-blue-50 hover:border-blue-200">
+                      View Details
+                    </Button>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>Common tasks for managing your teams</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button className="flex items-center space-x-2 h-auto p-4">
-              <BarChart3 className="w-5 h-5" />
-              <div className="text-left">
-                <div className="font-medium">Create Survey</div>
-                <div className="text-sm text-gray-500">New survey for teams</div>
+        {/* Enhanced Recent Activity */}
+        <Card className="mb-8 hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <Activity className="w-5 h-5 text-green-600" />
+                  </div>
+                  <span>Recent Activity</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Latest updates and important events from your teams
+                </CardDescription>
               </div>
-            </Button>
-            
-            <Button variant="outline" className="flex items-center space-x-2 h-auto p-4">
-              <MessageSquare className="w-5 h-5" />
-              <div className="text-left">
-                <div className="font-medium">Review Feedback</div>
-                <div className="text-sm text-gray-500">Check recent comments</div>
+              <Button variant="outline" size="sm">
+                View All Activity
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {recentActivity.map((activity) => (
+                <div key={activity.id} className="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                      {getActivityIcon(activity.type)}
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="font-medium text-gray-900">{activity.description}</div>
+                      <Badge className={`${getPriorityColor(activity.priority)} px-2 py-1`}>
+                        {activity.priority.charAt(0).toUpperCase() + activity.priority.slice(1)}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-500">
+                      <span className="font-medium">{activity.team}</span>
+                      <span>•</span>
+                      <span>{formatTimeAgo(activity.timestamp)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Enhanced Quick Actions */}
+        <Card className="hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <Target className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <span>Quick Actions</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Common tasks and shortcuts for managing your teams effectively
+                </CardDescription>
               </div>
-            </Button>
-            
-            <Button variant="outline" className="flex items-center space-x-2 h-auto p-4">
-              <AlertTriangle className="w-5 h-5" />
-              <div className="text-left">
-                <div className="font-medium">View Alerts</div>
-                <div className="text-sm text-gray-500">Address team issues</div>
-              </div>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Button 
+                className="flex items-center space-x-4 h-auto p-6 hover:shadow-md transition-all duration-200 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" 
+                onClick={() => navigate('/surveys/create')}
+              >
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-left">
+                  <div className="font-medium text-white">Create Survey</div>
+                  <div className="text-sm text-white/80">New survey for teams</div>
+                </div>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="flex items-center space-x-4 h-auto p-6 hover:shadow-md transition-all duration-200 hover:bg-gray-50"
+              >
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="text-left">
+                  <div className="font-medium text-gray-900">Review Feedback</div>
+                  <div className="text-sm text-gray-500">Check recent comments</div>
+                </div>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="flex items-center space-x-4 h-auto p-6 hover:shadow-md transition-all duration-200 hover:bg-gray-50"
+              >
+                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5 text-orange-600" />
+                </div>
+                <div className="text-left">
+                  <div className="font-medium text-gray-900">View Alerts</div>
+                  <div className="text-sm text-gray-500">Address team issues</div>
+                </div>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

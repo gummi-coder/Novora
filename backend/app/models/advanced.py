@@ -261,4 +261,79 @@ class TeamAnalytics(Base):
     
     # Relationships
     team = relationship("Team")
+    survey = relationship("Survey")
+
+class Metric(Base):
+    __tablename__ = "metrics"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False, unique=True)
+    description = Column(Text)
+    category = Column(String(50), nullable=False)  # job_satisfaction, enps, manager_relationship, etc.
+    is_core = Column(Boolean, default=False)  # Always included in auto-pilot plans
+    display_order = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    questions = relationship("QuestionBank", back_populates="metric")
+
+class QuestionBank(Base):
+    __tablename__ = "question_bank"
+    id = Column(Integer, primary_key=True)
+    metric_id = Column(Integer, ForeignKey('metrics.id'), nullable=False)
+    question_text_en = Column(Text, nullable=False)  # English version
+    question_text_es = Column(Text)  # Spanish version
+    question_text_is = Column(Text)  # Icelandic version
+    question_text_de = Column(Text)  # German version
+    question_text_fr = Column(Text)  # French version
+    active = Column(Boolean, default=True)  # Can be retired without deletion
+    variation_order = Column(Integer, default=0)  # For auto-rotation logic
+    sensitive = Column(Boolean, default=False)  # For skip prompts (mental health, manager-related)
+    reverse_scored = Column(Boolean, default=False)  # For negatively worded questions
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    metric = relationship("Metric", back_populates="questions")
+    
+    def get_question_text(self, language='en'):
+        """Get question text in specified language, fallback to English"""
+        text_field = f"question_text_{language}"
+        if hasattr(self, text_field) and getattr(self, text_field):
+            return getattr(self, text_field)
+        return self.question_text_en
+
+class AutoPilotPlan(Base):
+    __tablename__ = "auto_pilot_plans"
+    id = Column(Integer, primary_key=True)
+    company_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    plan_id = Column(String(50), nullable=False)  # quarterly, half_year, annual
+    name = Column(String(100), nullable=False)
+    start_date = Column(DateTime, nullable=False)
+    status = Column(String(20), default='active')  # active, paused, completed
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    company = relationship("User")
+    surveys = relationship("AutoPilotSurvey", back_populates="plan", cascade="all, delete-orphan")
+
+class AutoPilotSurvey(Base):
+    __tablename__ = "auto_pilot_surveys"
+    id = Column(Integer, primary_key=True)
+    plan_id = Column(Integer, ForeignKey('auto_pilot_plans.id'), nullable=False)
+    survey_id = Column(Integer, ForeignKey('surveys.id'), nullable=True)  # Created survey
+    month = Column(Integer, nullable=False)  # Which month in the sequence
+    template = Column(String(50), nullable=False)  # monthly_pulse, quarterly_deep_dive, etc.
+    name = Column(String(100), nullable=False)
+    description = Column(Text)
+    send_date = Column(DateTime, nullable=False)
+    first_reminder = Column(DateTime, nullable=False)
+    second_reminder = Column(DateTime, nullable=False)
+    close_date = Column(DateTime, nullable=False)
+    status = Column(String(20), default='scheduled')  # scheduled, sent, completed, cancelled
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    plan = relationship("AutoPilotPlan", back_populates="surveys")
     survey = relationship("Survey") 

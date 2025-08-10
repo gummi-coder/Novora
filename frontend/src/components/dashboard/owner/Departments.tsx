@@ -24,7 +24,8 @@ import {
   UserX,
   ArrowUpDown,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  Activity
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -269,249 +270,291 @@ const Departments = ({ onViewDetail }: DepartmentsProps) => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Departments</h1>
-          <p className="text-gray-600 mt-1">Compare departments and drill into issues</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Modern Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Departments</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Compare departments and drill into issues with comprehensive analytics
+          </p>
         </div>
-        <div className="flex items-center space-x-2">
-          {unassignedCount > 0 && (
-            <Badge variant="destructive" className="flex items-center space-x-1">
-              <UserX className="w-3 h-3" />
-              <span>{unassignedCount} unassigned</span>
-            </Badge>
-          )}
-        </div>
-      </div>
 
-      {/* Filters */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search departments or admins..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+        {/* Enhanced Filters */}
+        <Card className="mb-8 hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Filter className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <span>Search & Filters</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  Find and filter departments by various criteria
+                </CardDescription>
+              </div>
+              {unassignedCount > 0 && (
+                <Badge variant="destructive" className="flex items-center space-x-1 px-3 py-1">
+                  <UserX className="w-3 h-3" />
+                  <span className="font-medium">{unassignedCount} unassigned</span>
+                </Badge>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search departments or admins..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 hover:border-blue-300 transition-colors duration-200"
+                  />
+                </div>
+              </div>
+
+              {/* Show Only Unassigned Toggle */}
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant={showOnlyUnassigned ? "default" : "outline"}
+                  onClick={() => setShowOnlyUnassigned(!showOnlyUnassigned)}
+                  className={`flex items-center space-x-2 transition-all duration-200 ${
+                    showOnlyUnassigned 
+                      ? 'bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700' 
+                      : 'hover:bg-gray-50'
+                  }`}
+                >
+                  <UserX className="w-4 h-4" />
+                  <span>Unassigned Only</span>
+                </Button>
               </div>
             </div>
+          </CardContent>
+        </Card>
 
-            {/* Show Only Unassigned Toggle */}
-            <div className="flex items-center space-x-2">
-              <Button
-                variant={showOnlyUnassigned ? "default" : "outline"}
-                onClick={() => setShowOnlyUnassigned(!showOnlyUnassigned)}
-                className="flex items-center space-x-2"
-              >
-                <UserX className="w-4 h-4" />
-                <span>Unassigned Only</span>
-              </Button>
+        {/* Enhanced Departments Table */}
+        <Card className="hover:shadow-lg transition-all duration-200">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center space-x-2 text-xl">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <Building className="w-5 h-5 text-green-600" />
+                  </div>
+                  <span>Department Performance</span>
+                </CardTitle>
+                <CardDescription className="mt-2">
+                  {filteredDepartments.length} of {departments.length} departments
+                </CardDescription>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Departments Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Building className="w-5 h-5" />
-            <span>Department Performance</span>
-          </CardTitle>
-          <CardDescription>
-            {filteredDepartments.length} of {departments.length} departments
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('name')}
-                      className="flex items-center space-x-1 p-0 h-auto font-medium"
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-hidden rounded-lg border border-gray-200">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="font-semibold text-gray-900">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSort('name')}
+                        className="flex items-center space-x-1 p-0 h-auto font-semibold hover:bg-gray-100"
+                      >
+                        <span>Department</span>
+                        {getSortIcon('name')}
+                      </Button>
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-900">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSort('avgScore')}
+                        className="flex items-center space-x-1 p-0 h-auto font-semibold hover:bg-gray-100"
+                      >
+                        <span>Avg Score</span>
+                        {getSortIcon('avgScore')}
+                      </Button>
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-900">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSort('change')}
+                        className="flex items-center space-x-1 p-0 h-auto font-semibold hover:bg-gray-100"
+                      >
+                        <span>Change</span>
+                        {getSortIcon('change')}
+                      </Button>
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-900">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSort('alerts')}
+                        className="flex items-center space-x-1 p-0 h-auto font-semibold hover:bg-gray-100"
+                      >
+                        <span>Alerts</span>
+                        {getSortIcon('alerts')}
+                      </Button>
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-900">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSort('participation')}
+                        className="flex items-center space-x-1 p-0 h-auto font-semibold hover:bg-gray-100"
+                      >
+                        <span>Participation</span>
+                        {getSortIcon('participation')}
+                      </Button>
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-900">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSort('employeeCount')}
+                        className="flex items-center space-x-1 p-0 h-auto font-semibold hover:bg-gray-100"
+                      >
+                        <span>Employees</span>
+                        {getSortIcon('employeeCount')}
+                      </Button>
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-900">Admin</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Status</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredDepartments.map((dept, index) => (
+                    <TableRow 
+                      key={dept.id} 
+                      className={`hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      }`}
                     >
-                      <span>Department</span>
-                      {getSortIcon('name')}
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('avgScore')}
-                      className="flex items-center space-x-1 p-0 h-auto font-medium"
-                    >
-                      <span>Avg Score</span>
-                      {getSortIcon('avgScore')}
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('change')}
-                      className="flex items-center space-x-1 p-0 h-auto font-medium"
-                    >
-                      <span>Change</span>
-                      {getSortIcon('change')}
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('alerts')}
-                      className="flex items-center space-x-1 p-0 h-auto font-medium"
-                    >
-                      <span>Alerts</span>
-                      {getSortIcon('alerts')}
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('participation')}
-                      className="flex items-center space-x-1 p-0 h-auto font-medium"
-                    >
-                      <span>Participation</span>
-                      {getSortIcon('participation')}
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('employeeCount')}
-                      className="flex items-center space-x-1 p-0 h-auto font-medium"
-                    >
-                      <span>Employees</span>
-                      {getSortIcon('employeeCount')}
-                    </Button>
-                  </TableHead>
-                  <TableHead>Admin</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredDepartments.map((dept) => (
-                  <TableRow key={dept.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium">
-                      <div>
-                        <div className="font-semibold">{dept.name}</div>
-                        <div className="text-sm text-gray-500">
-                          Last survey: {new Date(dept.lastSurveyDate).toLocaleDateString()}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-lg font-semibold">{dept.avgScore}/10</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-1">
-                        {getChangeIcon(dept.change)}
-                        <span className={getChangeColor(dept.change)}>
-                          {dept.change > 0 ? '+' : ''}{dept.change}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {dept.alerts > 0 ? (
-                        <Badge variant="destructive" className="flex items-center space-x-1">
-                          <AlertTriangle className="w-3 h-3" />
-                          <span>{dept.alerts}</span>
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary">0</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <div className="text-sm font-medium">{dept.participation}%</div>
-                        <div className="w-16 bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full" 
-                            style={{ width: `${dept.participation}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">{dept.employeeCount}</div>
-                    </TableCell>
-                    <TableCell>
-                      {dept.hasAdmin ? (
-                        <div className="flex items-center space-x-2">
-                          <UserCheck className="w-4 h-4 text-green-600" />
-                          <div className="text-sm">
-                            <div className="font-medium">{dept.adminName}</div>
-                            <div className="text-gray-500">Assigned</div>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-semibold text-gray-600">
+                              {dept.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">{dept.name}</div>
+                            <div className="text-sm text-gray-500">
+                              Last survey: {new Date(dept.lastSurveyDate).toLocaleDateString()}
+                            </div>
                           </div>
                         </div>
-                      ) : (
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-lg font-bold text-gray-900">{dept.avgScore}/10</div>
+                      </TableCell>
+                      <TableCell>
                         <div className="flex items-center space-x-2">
-                          <UserX className="w-4 h-4 text-red-600" />
-                          <div className="text-sm text-red-600 font-medium">Unassigned</div>
+                          {getChangeIcon(dept.change)}
+                          <span className={`font-semibold ${getChangeColor(dept.change)}`}>
+                            {dept.change > 0 ? '+' : ''}{dept.change}
+                          </span>
                         </div>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(dept.status)}>
-                        {dept.status.charAt(0).toUpperCase() + dept.status.slice(1)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleViewDetail(dept.id)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            <span>View Detail</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Users className="mr-2 h-4 w-4" />
-                            <span>Team Members</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <AlertTriangle className="mr-2 h-4 w-4" />
-                            <span>View Alerts</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          {filteredDepartments.length === 0 && (
-            <div className="text-center py-8">
-              <Building className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No departments found matching your criteria</p>
+                      </TableCell>
+                      <TableCell>
+                        {dept.alerts > 0 ? (
+                          <Badge variant="destructive" className="flex items-center space-x-1 px-3 py-1">
+                            <AlertTriangle className="w-3 h-3" />
+                            <span className="font-medium">{dept.alerts}</span>
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary" className="px-3 py-1 font-medium">0</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-3">
+                          <div className="text-lg font-bold text-gray-900">{dept.participation}%</div>
+                          <div className="w-20 bg-gray-200 rounded-full h-2 overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all duration-300" 
+                              style={{ width: `${dept.participation}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-lg font-bold text-gray-900">{dept.employeeCount}</div>
+                      </TableCell>
+                      <TableCell>
+                        {dept.hasAdmin ? (
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                              <UserCheck className="w-4 h-4 text-green-600" />
+                            </div>
+                            <div className="text-sm">
+                              <div className="font-semibold text-gray-900">{dept.adminName}</div>
+                              <div className="text-gray-500">Assigned</div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                              <UserX className="w-4 h-4 text-red-600" />
+                            </div>
+                            <div className="text-sm text-red-600 font-semibold">Unassigned</div>
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`${getStatusColor(dept.status)} px-3 py-1 font-medium`}>
+                          {dept.status.charAt(0).toUpperCase() + dept.status.slice(1)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem onClick={() => handleViewDetail(dept.id)} className="cursor-pointer">
+                              <Eye className="mr-2 h-4 w-4" />
+                              <span>View Detail</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">
+                              <Users className="mr-2 h-4 w-4" />
+                              <span>Team Members</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">
+                              <AlertTriangle className="mr-2 h-4 w-4" />
+                              <span>View Alerts</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
-          )}
-        </CardContent>
-      </Card>
+
+            {filteredDepartments.length === 0 && (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Building className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-gray-500 font-medium">No departments found matching your criteria</p>
+                <p className="text-gray-400 text-sm mt-1">Try adjusting your search or filters</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

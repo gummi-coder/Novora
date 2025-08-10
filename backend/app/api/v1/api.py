@@ -2,7 +2,7 @@
 Main API router with clean FastAPI endpoints
 """
 from fastapi import APIRouter
-from app.api.v1.endpoints import auth, surveys, responses, analytics, admin, uploads
+from app.api.v1.endpoints import auth, surveys, responses, analytics, admin, uploads, question_bank
 
 api_router = APIRouter()
 
@@ -23,3 +23,4 @@ api_router.include_router(analytics.router, prefix="/analytics", tags=["Analytic
 api_router.include_router(analytics.router, prefix="/dashboard", tags=["Dashboard"])
 api_router.include_router(admin.router, prefix="/admin", tags=["Admin"])
 api_router.include_router(uploads.router, prefix="/uploads", tags=["File Uploads"])
+api_router.include_router(question_bank.router, prefix="/question-bank", tags=["Question Bank"])
