@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from "recharts";
 import DriverMetricsMatrix from "@/components/dashboard/admin/DriverMetricsMatrix";
+import { useToast } from "@/hooks/use-toast";
 
 type Metric = "score" | "participation" | "alerts";
 
@@ -21,38 +22,122 @@ interface TrendPoint {
 }
 
 const TeamTrends = () => {
+  const { toast } = useToast();
   const [selectedTeam, setSelectedTeam] = useState<string>("all");
   const [dateRange, setDateRange] = useState<string>("Last 3 Months");
   const [metric, setMetric] = useState<Metric>("score");
 
-  const lineData = useMemo<TrendPoint[]>(
-    () => [
-      { month: "May", Sales: 6.4, Marketing: 7.1, Engineering: 7.8, Product: 6.9, HR: 7.3, Finance: 6.2, Operations: 6.7, Design: 7.5 },
-      { month: "Jun", Sales: 6.1, Marketing: 7.4, Engineering: 7.6, Product: 7.2, HR: 7.1, Finance: 6.5, Operations: 6.9, Design: 7.3 },
-      { month: "Jul", Sales: 6.6, Marketing: 7.5, Engineering: 7.9, Product: 7.4, HR: 7.6, Finance: 6.8, Operations: 7.1, Design: 7.7 },
-    ],
-    []
-  );
+  // Data for different date ranges
+  const allData = useMemo(() => ({
+    "Last 3 Months": {
+      lineData: [
+        { month: "May", Sales: 6.4, Marketing: 7.1, Engineering: 7.8, Product: 6.9, HR: 7.3, Finance: 6.2, Operations: 6.7, Design: 7.5 },
+        { month: "Jun", Sales: 6.1, Marketing: 7.4, Engineering: 7.6, Product: 7.2, HR: 7.1, Finance: 6.5, Operations: 6.9, Design: 7.3 },
+        { month: "Jul", Sales: 6.6, Marketing: 7.5, Engineering: 7.9, Product: 7.4, HR: 7.6, Finance: 6.8, Operations: 7.1, Design: 7.7 },
+      ],
+      participationData: [
+        { month: "May", Sales: 72, Marketing: 78, Engineering: 85, Product: 76, HR: 81, Finance: 68, Operations: 74, Design: 79 },
+        { month: "Jun", Sales: 75, Marketing: 80, Engineering: 83, Product: 78, HR: 79, Finance: 71, Operations: 77, Design: 81 },
+        { month: "Jul", Sales: 82, Marketing: 84, Engineering: 87, Product: 81, HR: 83, Finance: 75, Operations: 80, Design: 84 },
+      ],
+      responsesData: [
+        { month: "May", Sales: 120, Marketing: 95, Engineering: 156, Product: 108, HR: 89, Finance: 67, Operations: 92, Design: 103 },
+        { month: "Jun", Sales: 98, Marketing: 88, Engineering: 142, Product: 112, HR: 85, Finance: 73, Operations: 96, Design: 97 },
+        { month: "Jul", Sales: 140, Marketing: 110, Engineering: 168, Product: 125, HR: 98, Finance: 82, Operations: 108, Design: 115 },
+      ],
+    },
+    "This Quarter": {
+      lineData: [
+        { month: "Apr", Sales: 6.2, Marketing: 6.8, Engineering: 7.5, Product: 6.7, HR: 7.0, Finance: 6.0, Operations: 6.5, Design: 7.2 },
+        { month: "May", Sales: 6.4, Marketing: 7.1, Engineering: 7.8, Product: 6.9, HR: 7.3, Finance: 6.2, Operations: 6.7, Design: 7.5 },
+        { month: "Jun", Sales: 6.1, Marketing: 7.4, Engineering: 7.6, Product: 7.2, HR: 7.1, Finance: 6.5, Operations: 6.9, Design: 7.3 },
+      ],
+      participationData: [
+        { month: "Apr", Sales: 68, Marketing: 75, Engineering: 82, Product: 73, HR: 78, Finance: 65, Operations: 71, Design: 76 },
+        { month: "May", Sales: 72, Marketing: 78, Engineering: 85, Product: 76, HR: 81, Finance: 68, Operations: 74, Design: 79 },
+        { month: "Jun", Sales: 75, Marketing: 80, Engineering: 83, Product: 78, HR: 79, Finance: 71, Operations: 77, Design: 81 },
+      ],
+      responsesData: [
+        { month: "Apr", Sales: 105, Marketing: 82, Engineering: 145, Product: 95, HR: 78, Finance: 58, Operations: 85, Design: 92 },
+        { month: "May", Sales: 120, Marketing: 95, Engineering: 156, Product: 108, HR: 89, Finance: 67, Operations: 92, Design: 103 },
+        { month: "Jun", Sales: 98, Marketing: 88, Engineering: 142, Product: 112, HR: 85, Finance: 73, Operations: 96, Design: 97 },
+      ],
+    },
+    "This Year": {
+      lineData: [
+        { month: "Jan", Sales: 5.8, Marketing: 6.5, Engineering: 7.2, Product: 6.3, HR: 6.8, Finance: 5.7, Operations: 6.1, Design: 6.9 },
+        { month: "Feb", Sales: 6.0, Marketing: 6.7, Engineering: 7.4, Product: 6.5, HR: 7.0, Finance: 5.9, Operations: 6.3, Design: 7.1 },
+        { month: "Mar", Sales: 6.1, Marketing: 6.9, Engineering: 7.6, Product: 6.7, HR: 7.1, Finance: 6.0, Operations: 6.4, Design: 7.2 },
+        { month: "Apr", Sales: 6.2, Marketing: 6.8, Engineering: 7.5, Product: 6.7, HR: 7.0, Finance: 6.0, Operations: 6.5, Design: 7.2 },
+        { month: "May", Sales: 6.4, Marketing: 7.1, Engineering: 7.8, Product: 6.9, HR: 7.3, Finance: 6.2, Operations: 6.7, Design: 7.5 },
+        { month: "Jun", Sales: 6.1, Marketing: 7.4, Engineering: 7.6, Product: 7.2, HR: 7.1, Finance: 6.5, Operations: 6.9, Design: 7.3 },
+        { month: "Jul", Sales: 6.6, Marketing: 7.5, Engineering: 7.9, Product: 7.4, HR: 7.6, Finance: 6.8, Operations: 7.1, Design: 7.7 },
+      ],
+      participationData: [
+        { month: "Jan", Sales: 65, Marketing: 72, Engineering: 79, Product: 70, HR: 75, Finance: 62, Operations: 68, Design: 73 },
+        { month: "Feb", Sales: 67, Marketing: 74, Engineering: 81, Product: 72, HR: 77, Finance: 64, Operations: 70, Design: 75 },
+        { month: "Mar", Sales: 69, Marketing: 76, Engineering: 83, Product: 74, HR: 79, Finance: 66, Operations: 72, Design: 77 },
+        { month: "Apr", Sales: 68, Marketing: 75, Engineering: 82, Product: 73, HR: 78, Finance: 65, Operations: 71, Design: 76 },
+        { month: "May", Sales: 72, Marketing: 78, Engineering: 85, Product: 76, HR: 81, Finance: 68, Operations: 74, Design: 79 },
+        { month: "Jun", Sales: 75, Marketing: 80, Engineering: 83, Product: 78, HR: 79, Finance: 71, Operations: 77, Design: 81 },
+        { month: "Jul", Sales: 82, Marketing: 84, Engineering: 87, Product: 81, HR: 83, Finance: 75, Operations: 80, Design: 84 },
+      ],
+      responsesData: [
+        { month: "Jan", Sales: 95, Marketing: 75, Engineering: 135, Product: 85, HR: 68, Finance: 52, Operations: 78, Design: 88 },
+        { month: "Feb", Sales: 102, Marketing: 78, Engineering: 142, Product: 90, HR: 72, Finance: 55, Operations: 82, Design: 90 },
+        { month: "Mar", Sales: 108, Marketing: 82, Engineering: 148, Product: 95, HR: 75, Finance: 58, Operations: 86, Design: 93 },
+        { month: "Apr", Sales: 105, Marketing: 82, Engineering: 145, Product: 95, HR: 78, Finance: 58, Operations: 85, Design: 92 },
+        { month: "May", Sales: 120, Marketing: 95, Engineering: 156, Product: 108, HR: 89, Finance: 67, Operations: 92, Design: 103 },
+        { month: "Jun", Sales: 98, Marketing: 88, Engineering: 142, Product: 112, HR: 85, Finance: 73, Operations: 96, Design: 97 },
+        { month: "Jul", Sales: 140, Marketing: 110, Engineering: 168, Product: 125, HR: 98, Finance: 82, Operations: 108, Design: 115 },
+      ],
+    },
+    "Last 6 Months": {
+      lineData: [
+        { month: "Feb", Sales: 6.0, Marketing: 6.7, Engineering: 7.4, Product: 6.5, HR: 7.0, Finance: 5.9, Operations: 6.3, Design: 7.1 },
+        { month: "Mar", Sales: 6.1, Marketing: 6.9, Engineering: 7.6, Product: 6.7, HR: 7.1, Finance: 6.0, Operations: 6.4, Design: 7.2 },
+        { month: "Apr", Sales: 6.2, Marketing: 6.8, Engineering: 7.5, Product: 6.7, HR: 7.0, Finance: 6.0, Operations: 6.5, Design: 7.2 },
+        { month: "May", Sales: 6.4, Marketing: 7.1, Engineering: 7.8, Product: 6.9, HR: 7.3, Finance: 6.2, Operations: 6.7, Design: 7.5 },
+        { month: "Jun", Sales: 6.1, Marketing: 7.4, Engineering: 7.6, Product: 7.2, HR: 7.1, Finance: 6.5, Operations: 6.9, Design: 7.3 },
+        { month: "Jul", Sales: 6.6, Marketing: 7.5, Engineering: 7.9, Product: 7.4, HR: 7.6, Finance: 6.8, Operations: 7.1, Design: 7.7 },
+      ],
+      participationData: [
+        { month: "Feb", Sales: 67, Marketing: 74, Engineering: 81, Product: 72, HR: 77, Finance: 64, Operations: 70, Design: 75 },
+        { month: "Mar", Sales: 69, Marketing: 76, Engineering: 83, Product: 74, HR: 79, Finance: 66, Operations: 72, Design: 77 },
+        { month: "Apr", Sales: 68, Marketing: 75, Engineering: 82, Product: 73, HR: 78, Finance: 65, Operations: 71, Design: 76 },
+        { month: "May", Sales: 72, Marketing: 78, Engineering: 85, Product: 76, HR: 81, Finance: 68, Operations: 74, Design: 79 },
+        { month: "Jun", Sales: 75, Marketing: 80, Engineering: 83, Product: 78, HR: 79, Finance: 71, Operations: 77, Design: 81 },
+        { month: "Jul", Sales: 82, Marketing: 84, Engineering: 87, Product: 81, HR: 83, Finance: 75, Operations: 80, Design: 84 },
+      ],
+      responsesData: [
+        { month: "Feb", Sales: 102, Marketing: 78, Engineering: 142, Product: 90, HR: 72, Finance: 55, Operations: 82, Design: 90 },
+        { month: "Mar", Sales: 108, Marketing: 82, Engineering: 148, Product: 95, HR: 75, Finance: 58, Operations: 86, Design: 93 },
+        { month: "Apr", Sales: 105, Marketing: 82, Engineering: 145, Product: 95, HR: 78, Finance: 58, Operations: 85, Design: 92 },
+        { month: "May", Sales: 120, Marketing: 95, Engineering: 156, Product: 108, HR: 89, Finance: 67, Operations: 92, Design: 103 },
+        { month: "Jun", Sales: 98, Marketing: 88, Engineering: 142, Product: 112, HR: 85, Finance: 73, Operations: 96, Design: 97 },
+        { month: "Jul", Sales: 140, Marketing: 110, Engineering: 168, Product: 125, HR: 98, Finance: 82, Operations: 108, Design: 115 },
+      ],
+    },
+  }), []);
 
-  const participationData = useMemo(
-    () => [
-      { month: "May", Sales: 72, Marketing: 78, Engineering: 85, Product: 76, HR: 81, Finance: 68, Operations: 74, Design: 79 },
-      { month: "Jun", Sales: 75, Marketing: 80, Engineering: 83, Product: 78, HR: 79, Finance: 71, Operations: 77, Design: 81 },
-      { month: "Jul", Sales: 82, Marketing: 84, Engineering: 87, Product: 81, HR: 83, Finance: 75, Operations: 80, Design: 84 },
-    ],
-    []
-  );
-
-  const responsesData = useMemo(
-    () => [
-      { month: "May", Sales: 120, Marketing: 95, Engineering: 156, Product: 108, HR: 89, Finance: 67, Operations: 92, Design: 103 },
-      { month: "Jun", Sales: 98, Marketing: 88, Engineering: 142, Product: 112, HR: 85, Finance: 73, Operations: 96, Design: 97 },
-      { month: "Jul", Sales: 140, Marketing: 110, Engineering: 168, Product: 125, HR: 98, Finance: 82, Operations: 108, Design: 115 },
-    ],
-    []
-  );
+  // Get current data based on selected date range
+  const currentData = allData[dateRange as keyof typeof allData] || allData["Last 3 Months"];
+  
+  const lineData = useMemo<TrendPoint[]>(() => currentData.lineData, [currentData.lineData]);
+  const participationData = useMemo(() => currentData.participationData, [currentData.participationData]);
+  const responsesData = useMemo(() => currentData.responsesData, [currentData.responsesData]);
 
   const activeSeries = metric === "score" ? lineData : participationData;
+
+  // Show toast when date range changes
+  useEffect(() => {
+    if (dateRange !== "Last 3 Months") { // Don't show on initial load
+      toast({
+        title: "Date Range Updated",
+        description: `Showing data for ${dateRange.toLowerCase()}`,
+      });
+    }
+  }, [dateRange, toast]);
 
   const colorForTeam = (team: string) => {
     const colors = {
@@ -99,16 +184,54 @@ const TeamTrends = () => {
   const latestPartIdx = participationData.length - 1;
   const scores = useMemo(() => {
     const base: any[] = [];
-    // Generate realistic scores for all teams and drivers
+    
+    // Get the latest data from the current date range
+    const latestLineData = lineData[lineData.length - 1];
+    const latestParticipationData = participationData[participationData.length - 1];
+    const latestResponsesData = responsesData[responsesData.length - 1];
+    
+    // Generate realistic scores for all teams and drivers based on current data
     const teamScores = {
-      Sales: { base: 6.6, participation: 82, responses: 140 },
-      Marketing: { base: 7.5, participation: 84, responses: 110 },
-      Engineering: { base: 7.9, participation: 87, responses: 168 },
-      Product: { base: 7.4, participation: 81, responses: 125 },
-      HR: { base: 7.6, participation: 83, responses: 98 },
-      Finance: { base: 6.8, participation: 75, responses: 82 },
-      Operations: { base: 7.1, participation: 80, responses: 108 },
-      Design: { base: 7.7, participation: 84, responses: 115 },
+      Sales: { 
+        base: latestLineData?.Sales || 6.6, 
+        participation: latestParticipationData?.Sales || 82, 
+        responses: latestResponsesData?.Sales || 140 
+      },
+      Marketing: { 
+        base: latestLineData?.Marketing || 7.5, 
+        participation: latestParticipationData?.Marketing || 84, 
+        responses: latestResponsesData?.Marketing || 110 
+      },
+      Engineering: { 
+        base: latestLineData?.Engineering || 7.9, 
+        participation: latestParticipationData?.Engineering || 87, 
+        responses: latestResponsesData?.Engineering || 168 
+      },
+      Product: { 
+        base: latestLineData?.Product || 7.4, 
+        participation: latestParticipationData?.Product || 81, 
+        responses: latestResponsesData?.Product || 125 
+      },
+      HR: { 
+        base: latestLineData?.HR || 7.6, 
+        participation: latestParticipationData?.HR || 83, 
+        responses: latestResponsesData?.HR || 98 
+      },
+      Finance: { 
+        base: latestLineData?.Finance || 6.8, 
+        participation: latestParticipationData?.Finance || 75, 
+        responses: latestResponsesData?.Finance || 82 
+      },
+      Operations: { 
+        base: latestLineData?.Operations || 7.1, 
+        participation: latestParticipationData?.Operations || 80, 
+        responses: latestResponsesData?.Operations || 108 
+      },
+      Design: { 
+        base: latestLineData?.Design || 7.7, 
+        participation: latestParticipationData?.Design || 84, 
+        responses: latestResponsesData?.Design || 115 
+      },
     };
 
     // Driver-specific variations and realistic deltas
@@ -154,7 +277,7 @@ const TeamTrends = () => {
     }
 
     return base;
-  }, [drivers, lineData, participationData, latestIdx, latestPartIdx]);
+  }, [drivers, lineData, participationData, teams]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -215,6 +338,7 @@ const TeamTrends = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Last 3 Months">Last 3 Months</SelectItem>
+                    <SelectItem value="Last 6 Months">Last 6 Months</SelectItem>
                     <SelectItem value="This Quarter">This Quarter</SelectItem>
                     <SelectItem value="This Year">This Year</SelectItem>
                   </SelectContent>
@@ -251,7 +375,7 @@ const TeamTrends = () => {
                   <span>Performance Over Time</span>
                 </CardTitle>
                 <CardDescription className="mt-2">
-                  Line chart showing {metric} trends across selected teams
+                  Line chart showing {metric} trends across selected teams for {dateRange.toLowerCase()} ({lineData.length} data points)
                 </CardDescription>
               </div>
             </div>
@@ -315,7 +439,7 @@ const TeamTrends = () => {
                   <span>Survey Responses Over Time</span>
                 </CardTitle>
                 <CardDescription className="mt-2">
-                  Number of responses collected from each team over time
+                  Number of responses collected from each team over time for {dateRange.toLowerCase()} ({responsesData.length} data points)
                 </CardDescription>
               </div>
             </div>

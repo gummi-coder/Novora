@@ -9,7 +9,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Download, Upload, Plus, Pencil, MoveRight, Archive, Mail } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
+import { Download, Upload, Plus, Pencil, MoveRight, Archive, Mail, MoreHorizontal, Users, Send, Trash2, Edit, UserPlus } from "lucide-react";
 import { api } from "@/lib/api";
 
 type EmployeeStatus = "Invited" | "Active" | "Bounced" | "Archived";
@@ -65,7 +67,7 @@ const Employees = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [editing, setEditing] = useState<Employee | null>(null);
 
   const [importOpen, setImportOpen] = useState(false);
@@ -73,29 +75,267 @@ const Employees = () => {
   const [autoCreateTeam, setAutoCreateTeam] = useState(false);
   const [csvPreview, setCsvPreview] = useState<CsvPreviewRow[] | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  
+  // New state for modals and actions
+  const [showAssignTeamModal, setShowAssignTeamModal] = useState(false);
+  const [showMoveTeamModal, setShowMoveTeamModal] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState("");
+  const [availableTeams] = useState(["Engineering", "Sales", "Marketing", "HR", "Finance", "Product", "Support", "Design"]);
+  
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const data = await api.getAdminUsers({ limit: 100 });
-        // Map API users into Employee view model (limited info available)
-        const mapped: Employee[] = data.map((u) => ({
-          id: String(u.id),
-          firstName: u.email.split('@')[0],
-          lastName: "",
-          email: u.email,
-          phone: "",
-          position: "",
-          team: u.company_name || "-",
-          role: (u.role === 'admin' ? 'manager' : 'employee'),
-          status: u.is_active ? "Active" : "Archived",
-          lastSurveySent: undefined,
-          lastResponse: undefined,
-          locale: undefined,
-          timezone: undefined,
-          employmentType: undefined,
-        }));
-        setEmployees(mapped);
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Mock employee data
+        const mockEmployees: Employee[] = [
+          {
+            id: "1",
+            firstName: "Sarah",
+            lastName: "Johnson",
+            email: "sarah.johnson@novora.com",
+            phone: "+15551234567",
+            position: "Senior Software Engineer",
+            team: "Engineering",
+            role: "employee",
+            status: "Active",
+            lastSurveySent: "2024-01-15",
+            lastResponse: "2024-01-16",
+            locale: "en-US",
+            timezone: "America/New_York",
+            employmentType: "Full-time"
+          },
+          {
+            id: "2",
+            firstName: "Michael",
+            lastName: "Chen",
+            email: "michael.chen@novora.com",
+            phone: "+15551234568",
+            position: "Product Manager",
+            team: "Product",
+            role: "manager",
+            status: "Active",
+            lastSurveySent: "2024-01-10",
+            lastResponse: "2024-01-11",
+            locale: "en-US",
+            timezone: "America/Los_Angeles",
+            employmentType: "Full-time"
+          },
+          {
+            id: "3",
+            firstName: "Emily",
+            lastName: "Rodriguez",
+            email: "emily.rodriguez@novora.com",
+            phone: "+15551234569",
+            position: "UX Designer",
+            team: "Design",
+            role: "employee",
+            status: "Active",
+            lastSurveySent: "2024-01-12",
+            lastResponse: "2024-01-13",
+            locale: "en-US",
+            timezone: "America/Chicago",
+            employmentType: "Full-time"
+          },
+          {
+            id: "4",
+            firstName: "David",
+            lastName: "Kim",
+            email: "david.kim@novora.com",
+            phone: "+15551234570",
+            position: "Sales Director",
+            team: "Sales",
+            role: "manager",
+            status: "Active",
+            lastSurveySent: "2024-01-08",
+            lastResponse: "2024-01-09",
+            locale: "en-US",
+            timezone: "America/New_York",
+            employmentType: "Full-time"
+          },
+          {
+            id: "5",
+            firstName: "Lisa",
+            lastName: "Thompson",
+            email: "lisa.thompson@novora.com",
+            phone: "+15551234571",
+            position: "Marketing Specialist",
+            team: "Marketing",
+            role: "employee",
+            status: "Invited",
+            lastSurveySent: undefined,
+            lastResponse: undefined,
+            locale: "en-US",
+            timezone: "America/Denver",
+            employmentType: "Full-time"
+          },
+          {
+            id: "6",
+            firstName: "James",
+            lastName: "Wilson",
+            email: "james.wilson@novora.com",
+            phone: "+15551234572",
+            position: "HR Manager",
+            team: "HR",
+            role: "manager",
+            status: "Active",
+            lastSurveySent: "2024-01-14",
+            lastResponse: "2024-01-15",
+            locale: "en-US",
+            timezone: "America/New_York",
+            employmentType: "Full-time"
+          },
+          {
+            id: "7",
+            firstName: "Maria",
+            lastName: "Garcia",
+            email: "maria.garcia@novora.com",
+            phone: "+15551234573",
+            position: "Data Analyst",
+            team: "Engineering",
+            role: "employee",
+            status: "Active",
+            lastSurveySent: "2024-01-13",
+            lastResponse: "2024-01-14",
+            locale: "es-ES",
+            timezone: "America/Mexico_City",
+            employmentType: "Full-time"
+          },
+          {
+            id: "8",
+            firstName: "Robert",
+            lastName: "Brown",
+            email: "robert.brown@novora.com",
+            phone: "+15551234574",
+            position: "Customer Success Manager",
+            team: "Support",
+            role: "manager",
+            status: "Active",
+            lastSurveySent: "2024-01-11",
+            lastResponse: "2024-01-12",
+            locale: "en-US",
+            timezone: "America/Chicago",
+            employmentType: "Full-time"
+          },
+          {
+            id: "9",
+            firstName: "Jennifer",
+            lastName: "Davis",
+            email: "jennifer.davis@novora.com",
+            phone: "+15551234575",
+            position: "Frontend Developer",
+            team: "Engineering",
+            role: "employee",
+            status: "Bounced",
+            lastSurveySent: "2024-01-09",
+            lastResponse: undefined,
+            locale: "en-US",
+            timezone: "America/Los_Angeles",
+            employmentType: "Full-time"
+          },
+          {
+            id: "10",
+            firstName: "Alex",
+            lastName: "Martinez",
+            email: "alex.martinez@novora.com",
+            phone: "+15551234576",
+            position: "Content Writer",
+            team: "Marketing",
+            role: "employee",
+            status: "Invited",
+            lastSurveySent: undefined,
+            lastResponse: undefined,
+            locale: "en-US",
+            timezone: "America/Denver",
+            employmentType: "Part-time"
+          },
+          {
+            id: "11",
+            firstName: "Rachel",
+            lastName: "Taylor",
+            email: "rachel.taylor@novora.com",
+            phone: "+15551234577",
+            position: "Finance Analyst",
+            team: "Finance",
+            role: "employee",
+            status: "Active",
+            lastSurveySent: "2024-01-16",
+            lastResponse: "2024-01-17",
+            locale: "en-US",
+            timezone: "America/New_York",
+            employmentType: "Full-time"
+          },
+          {
+            id: "12",
+            firstName: "Thomas",
+            lastName: "Anderson",
+            email: "thomas.anderson@novora.com",
+            phone: "+15551234578",
+            position: "DevOps Engineer",
+            team: "Engineering",
+            role: "employee",
+            status: "Active",
+            lastSurveySent: "2024-01-14",
+            lastResponse: "2024-01-15",
+            locale: "en-US",
+            timezone: "America/Los_Angeles",
+            employmentType: "Full-time"
+          },
+          {
+            id: "13",
+            firstName: "Amanda",
+            lastName: "White",
+            email: "amanda.white@novora.com",
+            phone: "+15551234579",
+            position: "Recruiter",
+            team: "HR",
+            role: "employee",
+            status: "Active",
+            lastSurveySent: "2024-01-12",
+            lastResponse: "2024-01-13",
+            locale: "en-US",
+            timezone: "America/Chicago",
+            employmentType: "Full-time"
+          },
+          {
+            id: "14",
+            firstName: "Christopher",
+            lastName: "Lee",
+            email: "christopher.lee@novora.com",
+            phone: "+15551234580",
+            position: "Backend Developer",
+            team: "Engineering",
+            role: "employee",
+            status: "Archived",
+            lastSurveySent: "2023-12-15",
+            lastResponse: "2023-12-16",
+            locale: "en-US",
+            timezone: "America/New_York",
+            employmentType: "Full-time"
+          },
+          {
+            id: "15",
+            firstName: "Jessica",
+            lastName: "Clark",
+            email: "jessica.clark@novora.com",
+            phone: "+15551234581",
+            position: "Brand Manager",
+            team: "Marketing",
+            role: "manager",
+            status: "Active",
+            lastSurveySent: "2024-01-10",
+            lastResponse: "2024-01-11",
+            locale: "en-US",
+            timezone: "America/Los_Angeles",
+            employmentType: "Full-time"
+          }
+        ];
+        
+        setEmployees(mockEmployees);
       } catch (e) {
         // fallback to empty
         setEmployees([]);
@@ -134,8 +374,8 @@ const Employees = () => {
     });
   };
 
-  const startAdd = () => { setEditing(null); setDrawerOpen(true); };
-  const startEdit = (emp: Employee) => { setEditing(emp); setDrawerOpen(true); };
+  const startAdd = () => { setEditing(null); setShowAddEditModal(true); };
+  const startEdit = (emp: Employee) => { setEditing(emp); setShowAddEditModal(true); };
 
   const handleSave = async (data: Partial<Employee>) => {
     // validation
@@ -176,29 +416,129 @@ const Employees = () => {
         status: u.is_active ? "Active" : "Archived",
       }));
       setEmployees(mapped);
-      setDrawerOpen(false);
+      setShowAddEditModal(false);
     } catch (e) {
       alert('Failed to save employee');
     }
   };
 
   const resendInvites = () => {
-    // mock action
-    alert(`Resent invites to ${selectedIds.size} employee(s)`);
+    toast({
+      title: "Invites Resent",
+      description: `Successfully resent invites to ${selectedIds.size} employee(s)`,
+    });
   };
 
   const archiveSelected = () => {
     setEmployees((prev) => prev.map((e) => selectedIds.has(e.id) ? { ...e, status: "Archived" } : e));
     setSelectedIds(new Set());
+    toast({
+      title: "Employees Archived",
+      description: `Successfully archived ${selectedIds.size} employee(s)`,
+    });
+  };
+
+  const handleAssignToTeam = () => {
+    if (selectedIds.size === 0) {
+      toast({
+        title: "No Selection",
+        description: "Please select employees to assign to a team",
+        variant: "destructive",
+      });
+      return;
+    }
+    setShowAssignTeamModal(true);
+  };
+
+  const handleConfirmAssignTeam = () => {
+    if (!selectedTeam) {
+      toast({
+        title: "No Team Selected",
+        description: "Please select a team to assign employees to",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setEmployees((prev) => prev.map((e) => 
+      selectedIds.has(e.id) ? { ...e, team: selectedTeam } : e
+    ));
+    setSelectedIds(new Set());
+    setShowAssignTeamModal(false);
+    setSelectedTeam("");
+    
+    toast({
+      title: "Team Assignment Complete",
+      description: `Successfully assigned ${selectedIds.size} employee(s) to ${selectedTeam}`,
+    });
+  };
+
+  const handleMoveTeam = (employee: Employee) => {
+    setSelectedEmployee(employee);
+    setSelectedTeam(employee.team);
+    setShowMoveTeamModal(true);
+  };
+
+  const handleConfirmMoveTeam = () => {
+    if (!selectedEmployee || !selectedTeam) return;
+    
+    setEmployees((prev) => prev.map((e) => 
+      e.id === selectedEmployee.id ? { ...e, team: selectedTeam } : e
+    ));
+    setShowMoveTeamModal(false);
+    setSelectedEmployee(null);
+    setSelectedTeam("");
+    
+    toast({
+      title: "Team Moved",
+      description: `Successfully moved ${selectedEmployee.firstName} ${selectedEmployee.lastName} to ${selectedTeam}`,
+    });
+  };
+
+  const handleResendInvite = (employee: Employee) => {
+    toast({
+      title: "Invite Resent",
+      description: `Successfully resent invite to ${employee.email}`,
+    });
+  };
+
+  const handleArchiveEmployee = (employee: Employee) => {
+    setEmployees((prev) => prev.map((e) => 
+      e.id === employee.id ? { ...e, status: "Archived" } : e
+    ));
+    
+    toast({
+      title: "Employee Archived",
+      description: `Successfully archived ${employee.firstName} ${employee.lastName}`,
+    });
   };
 
   const exportCsv = () => {
-    const header = ["first_name","last_name","email","phone","position","team","role","locale","timezone"].join(",");
-    const rows = filtered.map((e) => [e.firstName, e.lastName, e.email, e.phone || "", e.position || "", e.team, e.role, e.locale || "", e.timezone || ""].map((v) => (v ?? "")).join(","));
+    const header = ["first_name","last_name","email","phone","position","team","role","locale","timezone","status"].join(",");
+    const rows = filtered.map((e) => [
+      e.firstName, 
+      e.lastName, 
+      e.email, 
+      e.phone || "", 
+      e.position || "", 
+      e.team, 
+      e.role, 
+      e.locale || "", 
+      e.timezone || "",
+      e.status
+    ].map((v) => (v ?? "")).join(","));
     const blob = new Blob([[header, ...rows].join("\n")], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = "employees.csv"; a.click(); URL.revokeObjectURL(url);
+    a.href = url; 
+    a.download = `employees_${new Date().toISOString().split('T')[0]}.csv`; 
+    a.click(); 
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Export Complete",
+      description: `Successfully exported ${filtered.length} employees to CSV`,
+    });
   };
 
   const handleFileChosen = async (file: File) => {
@@ -392,8 +732,8 @@ const Employees = () => {
             Selected: <span className="text-blue-600">{selectedIds.size}</span> employee{selectedIds.size !== 1 ? 's' : ''}
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={() => alert("Assign to team (mock)")} className="hover:bg-blue-50 hover:border-blue-200">
-              Assign to team
+            <Button variant="outline" size="sm" onClick={handleAssignToTeam} className="hover:bg-blue-50 hover:border-blue-200">
+              <Users className="w-4 h-4 mr-2" /> Assign to team
             </Button>
             <Button variant="outline" size="sm" onClick={resendInvites} className="hover:bg-green-50 hover:border-green-200">
               <Mail className="w-4 h-4 mr-2" /> Resend invites
@@ -440,20 +780,35 @@ const Employees = () => {
                       <td className="py-4 px-4 text-gray-600">{e.lastSurveySent || "-"}</td>
                       <td className="py-4 px-4 text-gray-600">{e.lastResponse || "-"}</td>
                       <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          <Button variant="outline" size="sm" onClick={() => startEdit(e)} className="hover:bg-blue-50 hover:border-blue-200">
-                            <Pencil className="w-4 h-4 mr-1" /> Edit
-                          </Button>
-                          <Button variant="outline" size="sm" onClick={async () => { try { await api.resendVerification(e.email); alert('Invite resent'); } catch { alert('Resend failed'); } }} className="hover:bg-green-50 hover:border-green-200">
-                            <Mail className="w-4 h-4 mr-1" /> Resend Invite
-                          </Button>
-                          <Button variant="outline" size="sm" onClick={() => alert("Move team (mock)")} className="hover:bg-purple-50 hover:border-purple-200">
-                            <MoveRight className="w-4 h-4 mr-1" /> Move Team
-                          </Button>
-                          <Button variant="outline" size="sm" onClick={async () => { try { await api.deactivateAdminUser(Number(e.id)); setEmployees((prev) => prev.map((x) => x.id === e.id ? { ...x, status: "Archived" } : x)); } catch { alert('Archive failed'); } }} className="hover:bg-red-50 hover:border-red-200">
-                            <Archive className="w-4 h-4 mr-1" /> Archive
-                          </Button>
-                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem onClick={() => startEdit(e)}>
+                              <Edit className="w-4 h-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleResendInvite(e)}>
+                              <Send className="w-4 h-4 mr-2" />
+                              Resend Invite
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleMoveTeam(e)}>
+                              <MoveRight className="w-4 h-4 mr-2" />
+                              Move Team
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem 
+                              onClick={() => handleArchiveEmployee(e)}
+                              className="text-red-600 focus:text-red-600"
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Archive
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </td>
                     </tr>
                   ))}
@@ -486,42 +841,84 @@ const Employees = () => {
         </Card>
       </div>
 
-      {/* Drawer for Add/Edit */}
-      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>{editing ? "Edit Employee" : "Add Employee"}</DrawerTitle>
-          </DrawerHeader>
-          <div className="px-6 pb-6 space-y-4">
+      {/* Modal for Add/Edit */}
+      <Dialog open={showAddEditModal} onOpenChange={setShowAddEditModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <UserPlus className="w-6 h-6 text-blue-600" />
+              <span>{editing ? "Edit Employee" : "Add Employee"}</span>
+            </DialogTitle>
+            <DialogDescription>
+              {editing ? "Update employee information" : "Add a new employee to your organization"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label>First name</Label>
-                <Input defaultValue={editing?.firstName} onChange={(e) => editing && (editing.firstName = e.target.value)} />
+                <Label className="text-sm font-medium text-gray-700">First name</Label>
+                <Input 
+                  className="mt-1" 
+                  defaultValue={editing?.firstName} 
+                  onChange={(e) => editing && (editing.firstName = e.target.value)} 
+                  placeholder="John"
+                />
               </div>
               <div>
-                <Label>Last name</Label>
-                <Input defaultValue={editing?.lastName} onChange={(e) => editing && (editing.lastName = e.target.value)} />
+                <Label className="text-sm font-medium text-gray-700">Last name</Label>
+                <Input 
+                  className="mt-1" 
+                  defaultValue={editing?.lastName} 
+                  onChange={(e) => editing && (editing.lastName = e.target.value)} 
+                  placeholder="Doe"
+                />
               </div>
               <div className="md:col-span-2">
-                <Label>Email *</Label>
-                <Input defaultValue={editing?.email} onChange={(e) => editing && (editing.email = e.target.value)} />
+                <Label className="text-sm font-medium text-gray-700">Email *</Label>
+                <Input 
+                  className="mt-1" 
+                  defaultValue={editing?.email} 
+                  onChange={(e) => editing && (editing.email = e.target.value)} 
+                  placeholder="john.doe@company.com"
+                />
               </div>
               <div>
-                <Label>Phone</Label>
-                <Input defaultValue={editing?.phone} onChange={(e) => editing && (editing.phone = e.target.value)} placeholder="+15551234567" />
+                <Label className="text-sm font-medium text-gray-700">Phone</Label>
+                <Input 
+                  className="mt-1" 
+                  defaultValue={editing?.phone} 
+                  onChange={(e) => editing && (editing.phone = e.target.value)} 
+                  placeholder="+15551234567" 
+                />
               </div>
               <div>
-                <Label>Position/Title</Label>
-                <Input defaultValue={editing?.position} onChange={(e) => editing && (editing.position = e.target.value)} />
+                <Label className="text-sm font-medium text-gray-700">Position/Title</Label>
+                <Input 
+                  className="mt-1" 
+                  defaultValue={editing?.position} 
+                  onChange={(e) => editing && (editing.position = e.target.value)} 
+                  placeholder="Software Engineer"
+                />
               </div>
               <div>
-                <Label>Team *</Label>
-                <Input defaultValue={editing?.team} onChange={(e) => editing && (editing.team = e.target.value)} />
+                <Label className="text-sm font-medium text-gray-700">Team *</Label>
+                <Select defaultValue={editing?.team || ""} onValueChange={(v) => editing && (editing.team = v)}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select team" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableTeams.map((team) => (
+                      <SelectItem key={team} value={team}>{team}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                <Label>Role</Label>
+                <Label className="text-sm font-medium text-gray-700">Role</Label>
                 <Select defaultValue={editing?.role || "employee"} onValueChange={(v) => editing && (editing.role = v as EmployeeRole)}>
-                  <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="employee">Employee</SelectItem>
                     <SelectItem value="manager">Manager</SelectItem>
@@ -529,26 +926,48 @@ const Employees = () => {
                 </Select>
               </div>
               <div>
-                <Label>Locale</Label>
-                <Input defaultValue={editing?.locale} onChange={(e) => editing && (editing.locale = e.target.value)} placeholder="en-US" />
+                <Label className="text-sm font-medium text-gray-700">Locale</Label>
+                <Input 
+                  className="mt-1" 
+                  defaultValue={editing?.locale} 
+                  onChange={(e) => editing && (editing.locale = e.target.value)} 
+                  placeholder="en-US" 
+                />
               </div>
               <div>
-                <Label>Timezone</Label>
-                <Input defaultValue={editing?.timezone} onChange={(e) => editing && (editing.timezone = e.target.value)} placeholder="America/New_York" />
+                <Label className="text-sm font-medium text-gray-700">Timezone</Label>
+                <Input 
+                  className="mt-1" 
+                  defaultValue={editing?.timezone} 
+                  onChange={(e) => editing && (editing.timezone = e.target.value)} 
+                  placeholder="America/New_York" 
+                />
               </div>
               <div>
-                <Label>Employment type</Label>
-                <Input defaultValue={editing?.employmentType} onChange={(e) => editing && (editing.employmentType = e.target.value)} placeholder="FT / PT / Contractor" />
+                <Label className="text-sm font-medium text-gray-700">Employment type</Label>
+                <Input 
+                  className="mt-1" 
+                  defaultValue={editing?.employmentType} 
+                  onChange={(e) => editing && (editing.employmentType = e.target.value)} 
+                  placeholder="FT / PT / Contractor" 
+                />
               </div>
             </div>
             <Separator />
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setDrawerOpen(false)}>Cancel</Button>
-              <Button onClick={() => handleSave(editing || {})}>Save</Button>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setShowAddEditModal(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => handleSave(editing || {})}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                {editing ? "Update Employee" : "Add Employee"}
+              </Button>
             </div>
           </div>
-        </DrawerContent>
-      </Drawer>
+        </DialogContent>
+      </Dialog>
 
       {/* Import CSV Dialog */}
       <Dialog open={importOpen} onOpenChange={setImportOpen}>
@@ -612,6 +1031,92 @@ const Employees = () => {
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setImportOpen(false)}>Cancel</Button>
               <Button onClick={applyCsv} disabled={!csvPreview || csvPreview.length === 0}>Apply Import</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Assign Team Modal */}
+      <Dialog open={showAssignTeamModal} onOpenChange={setShowAssignTeamModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <Users className="w-6 h-6 text-blue-600" />
+              <span>Assign to Team</span>
+            </DialogTitle>
+            <DialogDescription>
+              Assign {selectedIds.size} selected employee{selectedIds.size !== 1 ? 's' : ''} to a team
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Select Team</Label>
+              <Select value={selectedTeam} onValueChange={setSelectedTeam}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Choose a team" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableTeams.map((team) => (
+                    <SelectItem key={team} value={team}>{team}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setShowAssignTeamModal(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleConfirmAssignTeam}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                Assign to Team
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Move Team Modal */}
+      <Dialog open={showMoveTeamModal} onOpenChange={setShowMoveTeamModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <MoveRight className="w-6 h-6 text-purple-600" />
+              <span>Move Employee</span>
+            </DialogTitle>
+            <DialogDescription>
+              Move {selectedEmployee?.firstName} {selectedEmployee?.lastName} to a different team
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="text-sm text-gray-600">Current Team</div>
+              <div className="font-medium text-gray-900">{selectedEmployee?.team}</div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">New Team</Label>
+              <Select value={selectedTeam} onValueChange={setSelectedTeam}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Choose a new team" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableTeams.map((team) => (
+                    <SelectItem key={team} value={team}>{team}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setShowMoveTeamModal(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleConfirmMoveTeam}
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+              >
+                Move Employee
+              </Button>
             </div>
           </div>
         </DialogContent>

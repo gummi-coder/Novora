@@ -3,6 +3,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  Users, 
+  AlertTriangle, 
+  FileText, 
+  Save,
+  CheckCircle,
+  Loader2
+} from "lucide-react";
 
 const Settings = () => {
   const [managedTeams, setManagedTeams] = useState<Record<string, boolean>>({
@@ -12,6 +21,69 @@ const Settings = () => {
   });
   const [alertDropThreshold, setAlertDropThreshold] = useState<number>(20);
   const [allowOpenComments, setAllowOpenComments] = useState<boolean>(true);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [hasChanges, setHasChanges] = useState<boolean>(false);
+  
+  const { toast } = useToast();
+
+  // Track changes to enable/disable save button
+  const handleTeamChange = (team: string, checked: boolean) => {
+    setManagedTeams((prev) => ({ ...prev, [team]: checked }));
+    setHasChanges(true);
+  };
+
+  const handleThresholdChange = (value: number) => {
+    setAlertDropThreshold(value);
+    setHasChanges(true);
+  };
+
+  const handleCommentsChange = (checked: boolean) => {
+    setAllowOpenComments(checked);
+    setHasChanges(true);
+  };
+
+  const handleSaveChanges = async () => {
+    if (!hasChanges) {
+      toast({
+        title: "No Changes",
+        description: "No changes have been made to save.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    
+    // Simulate API call
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Mock API call to save settings
+      const settingsData = {
+        managedTeams,
+        alertDropThreshold,
+        allowOpenComments,
+        lastUpdated: new Date().toISOString()
+      };
+      
+      console.log('Saving settings:', settingsData);
+      
+      toast({
+        title: "Settings Saved",
+        description: "Your settings have been updated successfully!",
+      });
+      
+      setHasChanges(false);
+    } catch (error) {
+      toast({
+        title: "Save Failed",
+        description: "Failed to save settings. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -31,9 +103,7 @@ const Settings = () => {
               <div>
                 <CardTitle className="flex items-center space-x-2 text-xl">
                   <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
+                    <Users className="w-5 h-5 text-blue-600" />
                   </div>
                   <span>Teams Managed</span>
                 </CardTitle>
@@ -51,7 +121,7 @@ const Settings = () => {
                     type="checkbox"
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                     checked={managedTeams[team]}
-                    onChange={(e) => setManagedTeams((prev) => ({ ...prev, [team]: e.target.checked }))}
+                    onChange={(e) => handleTeamChange(team, e.target.checked)}
                   />
                   <span className="font-medium text-gray-900">{team}</span>
                 </label>
@@ -67,9 +137,7 @@ const Settings = () => {
               <div>
                 <CardTitle className="flex items-center space-x-2 text-xl">
                   <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                    <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                    </svg>
+                    <AlertTriangle className="w-5 h-5 text-orange-600" />
                   </div>
                   <span>Alert Preferences</span>
                 </CardTitle>
@@ -86,8 +154,10 @@ const Settings = () => {
                 id="drop" 
                 type="number" 
                 value={alertDropThreshold} 
-                onChange={(e) => setAlertDropThreshold(Number(e.target.value || 0))} 
+                onChange={(e) => handleThresholdChange(Number(e.target.value || 0))} 
                 className="w-32 h-12" 
+                min="0"
+                max="100"
               />
               <div className="text-sm text-gray-500">
                 Notify when score drops by this percentage
@@ -103,9 +173,7 @@ const Settings = () => {
               <div>
                 <CardTitle className="flex items-center space-x-2 text-xl">
                   <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+                    <FileText className="w-5 h-5 text-green-600" />
                   </div>
                   <span>Survey Defaults</span>
                 </CardTitle>
@@ -121,7 +189,7 @@ const Settings = () => {
                 type="checkbox" 
                 className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2" 
                 checked={allowOpenComments} 
-                onChange={(e) => setAllowOpenComments(e.target.checked)} 
+                onChange={(e) => handleCommentsChange(e.target.checked)} 
               />
               <div>
                 <span className="font-medium text-gray-900">Enable open comments</span>
@@ -133,10 +201,38 @@ const Settings = () => {
 
         {/* Enhanced Save Button */}
         <div className="flex justify-end">
-          <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8 py-3">
-            Save Changes
+          <Button 
+            onClick={handleSaveChanges}
+            disabled={!hasChanges || isSaving}
+            className={`px-8 py-3 ${
+              hasChanges && !isSaving 
+                ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" 
+                : "bg-gray-300 cursor-not-allowed"
+            }`}
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Save Changes
+              </>
+            )}
           </Button>
         </div>
+
+        {/* Changes Indicator */}
+        {hasChanges && (
+          <div className="mt-4 flex justify-end">
+            <div className="flex items-center space-x-2 text-sm text-orange-600">
+              <AlertTriangle className="w-4 h-4" />
+              <span>You have unsaved changes</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

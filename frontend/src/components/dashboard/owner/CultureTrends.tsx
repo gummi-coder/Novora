@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+
 interface TrendData {
   month: string;
   avgScore: number;
@@ -55,6 +56,8 @@ interface CultureTrendsProps {
   dateRange?: string;
   onDateRangeChange?: (range: string) => void;
 }
+
+
 
 const CultureTrends = ({ dateRange = "Last 6 Months", onDateRangeChange }: CultureTrendsProps) => {
   const { toast } = useToast();
@@ -397,23 +400,26 @@ const CultureTrends = ({ dateRange = "Last 6 Months", onDateRangeChange }: Cultu
         {showHeatmap && (
           <Card className="hover:shadow-lg transition-all duration-200">
             <CardContent className="p-6">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-gray-50">
-                      <th className="text-left p-3 font-semibold text-gray-900">Team</th>
-                      <th className="text-center p-3 font-semibold text-gray-900">Jan</th>
-                      <th className="text-center p-3 font-semibold text-gray-900">Feb</th>
-                      <th className="text-center p-3 font-semibold text-gray-900">Mar</th>
-                      <th className="text-center p-3 font-semibold text-gray-900">Apr</th>
-                      <th className="text-center p-3 font-semibold text-gray-900">May</th>
-                      <th className="text-center p-3 font-semibold text-gray-900">Jun</th>
+              <div className="overflow-x-auto border rounded-lg">
+                <table className="min-w-full border-collapse">
+                  <thead className="bg-white sticky top-0 z-10 shadow-sm">
+                    <tr>
+                      <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3 w-56 bg-white sticky left-0 z-20 border-r">
+                        Team
+                      </th>
+                      {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'].map((month) => (
+                        <th key={month} className="text-left align-bottom">
+                          <div className="w-full min-w-[7rem] px-3 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider border-l">
+                            {month}
+                          </div>
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
                     {heatmapData.map((team, index) => (
-                      <tr key={team.team} className={`border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                        <td className="p-3 font-semibold text-gray-900">
+                      <tr key={team.team} className="even:bg-white odd:bg-gray-50 border-t">
+                        <td className="px-4 py-2 font-medium text-gray-900 bg-white sticky left-0 z-10 border-r">
                           <div className="flex items-center space-x-3">
                             <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
                               <span className="text-sm font-semibold text-gray-600">
@@ -423,52 +429,34 @@ const CultureTrends = ({ dateRange = "Last 6 Months", onDateRangeChange }: Cultu
                             <span>{team.team}</span>
                           </div>
                         </td>
-                        <td className="p-3 text-center">
-                          <div 
-                            className="inline-block px-3 py-2 rounded-lg text-white font-semibold text-sm shadow-sm"
-                            style={{ backgroundColor: getScoreColor(team.jan) }}
-                          >
-                            {team.jan}
+                        <td className="p-0 border-l">
+                          <div className="w-full min-w-[7rem] px-3 py-2 text-sm font-medium rounded transition-colors bg-green-100 text-green-800 hover:bg-opacity-80">
+                            {team.jan.toFixed(1)}
                           </div>
                         </td>
-                        <td className="p-3 text-center">
-                          <div 
-                            className="inline-block px-3 py-2 rounded-lg text-white font-semibold text-sm shadow-sm"
-                            style={{ backgroundColor: getScoreColor(team.feb) }}
-                          >
-                            {team.feb}
+                        <td className="p-0 border-l">
+                          <div className="w-full min-w-[7rem] px-3 py-2 text-sm font-medium rounded transition-colors bg-green-100 text-green-800 hover:bg-opacity-80">
+                            {team.feb.toFixed(1)}
                           </div>
                         </td>
-                        <td className="p-3 text-center">
-                          <div 
-                            className="inline-block px-3 py-2 rounded-lg text-white font-semibold text-sm shadow-sm"
-                            style={{ backgroundColor: getScoreColor(team.mar) }}
-                          >
-                            {team.mar}
+                        <td className="p-0 border-l">
+                          <div className="w-full min-w-[7rem] px-3 py-2 text-sm font-medium rounded transition-colors bg-amber-100 text-amber-800 hover:bg-opacity-80">
+                            {team.mar.toFixed(1)}
                           </div>
                         </td>
-                        <td className="p-3 text-center">
-                          <div 
-                            className="inline-block px-3 py-2 rounded-lg text-white font-semibold text-sm shadow-sm"
-                            style={{ backgroundColor: getScoreColor(team.apr) }}
-                          >
-                            {team.apr}
+                        <td className="p-0 border-l">
+                          <div className="w-full min-w-[7rem] px-3 py-2 text-sm font-medium rounded transition-colors bg-green-100 text-green-800 hover:bg-opacity-80">
+                            {team.apr.toFixed(1)}
                           </div>
                         </td>
-                        <td className="p-3 text-center">
-                          <div 
-                            className="inline-block px-3 py-2 rounded-lg text-white font-semibold text-sm shadow-sm"
-                            style={{ backgroundColor: getScoreColor(team.may) }}
-                          >
-                            {team.may}
+                        <td className="p-0 border-l">
+                          <div className="w-full min-w-[7rem] px-3 py-2 text-sm font-medium rounded transition-colors bg-green-100 text-green-800 hover:bg-opacity-80">
+                            {team.may.toFixed(1)}
                           </div>
                         </td>
-                        <td className="p-3 text-center">
-                          <div 
-                            className="inline-block px-3 py-2 rounded-lg text-white font-semibold text-sm shadow-sm"
-                            style={{ backgroundColor: getScoreColor(team.jun) }}
-                          >
-                            {team.jun}
+                        <td className="p-0 border-l">
+                          <div className="w-full min-w-[7rem] px-3 py-2 text-sm font-medium rounded transition-colors bg-green-100 text-green-800 hover:bg-opacity-80">
+                            {team.jun.toFixed(1)}
                           </div>
                         </td>
                       </tr>
@@ -480,15 +468,15 @@ const CultureTrends = ({ dateRange = "Last 6 Months", onDateRangeChange }: Cultu
               {/* Enhanced Legend */}
               <div className="mt-6 flex items-center justify-center space-x-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-200">
                 <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 rounded-lg shadow-sm" style={{ backgroundColor: '#10b981' }}></div>
+                  <div className="w-4 h-4 rounded-lg shadow-sm bg-green-100"></div>
                   <span className="text-sm font-medium text-gray-700">High (7.5+)</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 rounded-lg shadow-sm" style={{ backgroundColor: '#f59e0b' }}></div>
+                  <div className="w-4 h-4 rounded-lg shadow-sm bg-amber-100"></div>
                   <span className="text-sm font-medium text-gray-700">Medium (6.5-7.4)</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 rounded-lg shadow-sm" style={{ backgroundColor: '#ef4444' }}></div>
+                  <div className="w-4 h-4 rounded-lg shadow-sm bg-red-100"></div>
                   <span className="text-sm font-medium text-gray-700">Low (&lt;6.5)</span>
                 </div>
               </div>

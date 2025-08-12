@@ -131,7 +131,7 @@ const AppSidebar = ({ activeSection, onSectionChange, teamsCount = 2 }: AppSideb
                   ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md" 
                   : "bg-gray-100 text-gray-600 group-hover:bg-gray-200"
               )}>
-                <Icon className="w-4 h-4" />
+                <Icon className="w-5 h-5" />
               </div>
               {!collapsed && (
                 <div className="flex-1 min-w-0">
@@ -149,7 +149,7 @@ const AppSidebar = ({ activeSection, onSectionChange, teamsCount = 2 }: AppSideb
         <div className="p-4 border-t border-gray-200 bg-gray-50">
           <div className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200">
             <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center">
-              <Users className="w-3 h-3 text-white" />
+              <Users className="w-4 h-4 text-white" />
             </div>
             <div className="flex-1">
               <div className="text-sm font-medium text-gray-900">

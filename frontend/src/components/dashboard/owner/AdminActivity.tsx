@@ -42,9 +42,25 @@ import {
   CheckCircle,
   XCircle,
   Download,
-  RefreshCw
+  RefreshCw,
+  Mail,
+  Phone,
+  MapPin,
+  BarChart3,
+  Info,
+  Settings,
+  UserPlus,
+  Target,
+  Clock3
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface AdminActivity {
   id: string;
@@ -90,6 +106,52 @@ interface OpenAlert {
   priority: 'high' | 'medium' | 'low';
 }
 
+interface AdminDetail {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  lastLogin: string;
+  teamsManaged: string[];
+  reviewsThisMonth: number;
+  alertsResponded: number;
+  totalAlerts: number;
+  status: 'active' | 'inactive' | 'overloaded' | 'new';
+  avgResponseTime: number;
+  lastReviewDate: string;
+  location: string;
+  department: string;
+  startDate: string;
+  description: string;
+  recentActivity: Array<{
+    id: string;
+    type: string;
+    description: string;
+    date: string;
+    team: string;
+  }>;
+  performanceMetrics: Array<{
+    month: string;
+    reviews: number;
+    alertsHandled: number;
+    responseTime: number;
+    satisfaction: number;
+  }>;
+  managedTeams: Array<{
+    id: string;
+    name: string;
+    size: number;
+    status: string;
+    lastReview: string;
+  }>;
+  upcomingReviews: Array<{
+    id: string;
+    team: string;
+    scheduledDate: string;
+    type: string;
+  }>;
+}
+
 const AdminActivity = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
@@ -98,6 +160,12 @@ const AdminActivity = () => {
   const [flaggedFeedback, setFlaggedFeedback] = useState<FlaggedFeedback[]>([]);
   const [openAlerts, setOpenAlerts] = useState<OpenAlert[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedAdmin, setSelectedAdmin] = useState<AdminDetail | null>(null);
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [selectedAdminForAction, setSelectedAdminForAction] = useState<AdminActivity | null>(null);
   const [filterStatus, setFilterStatus] = useState('all');
 
   useEffect(() => {
@@ -321,6 +389,141 @@ const AdminActivity = () => {
     toast({
       title: "Export",
       description: "Exporting admin activity report...",
+    });
+  };
+
+  const getAdminDetails = async (adminId: string): Promise<AdminDetail> => {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Mock detailed admin data
+    const mockAdminDetails: { [key: string]: AdminDetail } = {
+      "1": {
+        id: "1",
+        name: "Sarah Johnson",
+        email: "sarah.johnson@novora.com",
+        phone: "+1 (555) 123-4567",
+        lastLogin: "2024-01-15",
+        teamsManaged: ["Sales", "Marketing"],
+        reviewsThisMonth: 12,
+        alertsResponded: 8,
+        totalAlerts: 10,
+        status: 'active',
+        avgResponseTime: 2.5,
+        lastReviewDate: "2024-01-14",
+        location: "San Francisco, CA",
+        department: "HR",
+        startDate: "2023-03-15",
+        description: "Experienced HR professional with expertise in employee engagement and team management.",
+        recentActivity: [
+          { id: "1", type: "Review", description: "Completed monthly review for Sales team", date: "2024-01-15", team: "Sales" },
+          { id: "2", type: "Alert", description: "Responded to low participation alert", date: "2024-01-14", team: "Marketing" },
+          { id: "3", type: "Meeting", description: "Scheduled team feedback session", date: "2024-01-13", team: "Sales" }
+        ],
+        performanceMetrics: [
+          { month: "Jan 2024", reviews: 12, alertsHandled: 8, responseTime: 2.5, satisfaction: 8.5 },
+          { month: "Dec 2023", reviews: 15, alertsHandled: 12, responseTime: 2.1, satisfaction: 8.8 },
+          { month: "Nov 2023", reviews: 14, alertsHandled: 10, responseTime: 2.3, satisfaction: 8.6 }
+        ],
+        managedTeams: [
+          { id: "1", name: "Sales", size: 45, status: "Active", lastReview: "2024-01-15" },
+          { id: "2", name: "Marketing", size: 28, status: "Active", lastReview: "2024-01-12" }
+        ],
+        upcomingReviews: [
+          { id: "1", team: "Sales", scheduledDate: "2024-01-22", type: "Monthly Review" },
+          { id: "2", team: "Marketing", scheduledDate: "2024-01-25", type: "Quarterly Review" }
+        ]
+      },
+      "2": {
+        id: "2",
+        name: "Mike Chen",
+        email: "mike.chen@novora.com",
+        phone: "+1 (555) 234-5678",
+        lastLogin: "2024-01-15",
+        teamsManaged: ["Engineering", "Product"],
+        reviewsThisMonth: 18,
+        alertsResponded: 15,
+        totalAlerts: 18,
+        status: 'active',
+        avgResponseTime: 1.8,
+        lastReviewDate: "2024-01-15",
+        location: "Remote",
+        department: "HR",
+        startDate: "2023-06-10",
+        description: "Technical HR specialist with strong background in engineering team management.",
+        recentActivity: [
+          { id: "1", type: "Review", description: "Completed quarterly review for Engineering", date: "2024-01-15", team: "Engineering" },
+          { id: "2", type: "Alert", description: "Resolved high-priority alert", date: "2024-01-14", team: "Product" },
+          { id: "3", type: "Training", description: "Conducted team training session", date: "2024-01-13", team: "Engineering" }
+        ],
+        performanceMetrics: [
+          { month: "Jan 2024", reviews: 18, alertsHandled: 15, responseTime: 1.8, satisfaction: 9.2 },
+          { month: "Dec 2023", reviews: 20, alertsHandled: 18, responseTime: 1.5, satisfaction: 9.4 },
+          { month: "Nov 2023", reviews: 17, alertsHandled: 14, responseTime: 1.9, satisfaction: 9.1 }
+        ],
+        managedTeams: [
+          { id: "1", name: "Engineering", size: 120, status: "Active", lastReview: "2024-01-15" },
+          { id: "2", name: "Product", size: 25, status: "Active", lastReview: "2024-01-10" }
+        ],
+        upcomingReviews: [
+          { id: "1", team: "Engineering", scheduledDate: "2024-01-20", type: "Weekly Check-in" },
+          { id: "2", team: "Product", scheduledDate: "2024-01-23", type: "Monthly Review" }
+        ]
+      }
+    };
+    
+    return mockAdminDetails[adminId] || mockAdminDetails["1"];
+  };
+
+  const handleViewDetails = async (adminId: string) => {
+    try {
+      const adminDetails = await getAdminDetails(adminId);
+      setSelectedAdmin(adminDetails);
+      setShowAdminModal(true);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load admin details",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleSendMessage = (admin: AdminActivity) => {
+    setSelectedAdminForAction(admin);
+    setShowMessageModal(true);
+    toast({
+      title: "Send Message",
+      description: `Opening message interface for ${admin.name}`,
+    });
+  };
+
+  const handleScheduleReview = (admin: AdminActivity) => {
+    setSelectedAdminForAction(admin);
+    setShowScheduleModal(true);
+    toast({
+      title: "Schedule Review",
+      description: `Opening calendar to schedule review with ${admin.name}`,
+    });
+  };
+
+  const handleAssignAlert = (alertId: string) => {
+    setShowAssignModal(true);
+    toast({
+      title: "Assign Alert",
+      description: "Opening admin assignment interface",
+    });
+  };
+
+  const handleContactAdmin = (email: string) => {
+    window.open(`mailto:${email}`, '_blank');
+  };
+
+  const handleScheduleMeeting = (adminId: string) => {
+    const admin = adminActivities.find(a => a.id === adminId);
+    toast({
+      title: "Schedule Meeting",
+      description: `Opening calendar to schedule meeting with ${admin?.name || 'the'} admin`,
     });
   };
 
@@ -594,15 +797,24 @@ const AdminActivity = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-48">
-                            <DropdownMenuItem className="cursor-pointer">
+                            <DropdownMenuItem 
+                              onClick={() => handleViewDetails(admin.id)}
+                              className="cursor-pointer"
+                            >
                               <Eye className="mr-2 h-4 w-4" />
                               <span>View Details</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
+                            <DropdownMenuItem 
+                              onClick={() => handleSendMessage(admin)}
+                              className="cursor-pointer"
+                            >
                               <MessageSquare className="mr-2 h-4 w-4" />
                               <span>Send Message</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
+                            <DropdownMenuItem 
+                              onClick={() => handleScheduleReview(admin)}
+                              className="cursor-pointer"
+                            >
                               <Calendar className="mr-2 h-4 w-4" />
                               <span>Schedule Review</span>
                             </DropdownMenuItem>
@@ -746,7 +958,12 @@ const AdminActivity = () => {
                           )}
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" className="hover:bg-red-50 hover:border-red-200">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="hover:bg-red-50 hover:border-red-200"
+                        onClick={() => handleAssignAlert(alert.id)}
+                      >
                         Assign
                       </Button>
                     </div>
@@ -756,6 +973,362 @@ const AdminActivity = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Admin Detail Modal */}
+        <Dialog open={showAdminModal} onOpenChange={setShowAdminModal}>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+            {selectedAdmin && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center space-x-2">
+                    <Users className="w-6 h-6 text-blue-600" />
+                    <span>{selectedAdmin.name} - Admin Details</span>
+                  </DialogTitle>
+                  <DialogDescription>
+                    Comprehensive overview of admin performance, activity, and managed teams
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="space-y-6">
+                  {/* Admin Overview */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-gray-600">Reviews This Month</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-gray-900">{selectedAdmin.reviewsThisMonth}</div>
+                        <div className="text-sm text-gray-500 mt-1">completed reviews</div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-gray-600">Alerts Handled</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-gray-900">{selectedAdmin.alertsResponded}/{selectedAdmin.totalAlerts}</div>
+                        <div className="text-sm text-gray-500 mt-1">response rate</div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-gray-600">Avg Response Time</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-gray-900">{selectedAdmin.avgResponseTime}h</div>
+                        <div className="text-sm text-gray-500 mt-1">to alerts</div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-gray-600">Teams Managed</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-gray-900">{selectedAdmin.teamsManaged.length}</div>
+                        <div className="text-sm text-gray-500 mt-1">active teams</div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Admin Information */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Info className="w-5 h-5" />
+                        <span>Admin Information</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span className="text-lg font-semibold text-blue-600">
+                              {selectedAdmin.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">{selectedAdmin.name}</div>
+                            <div className="text-sm text-gray-500">{selectedAdmin.email}</div>
+                            <div className="text-sm text-gray-500 flex items-center space-x-1 mt-1">
+                              <Phone className="w-3 h-3" />
+                              <span>{selectedAdmin.phone}</span>
+                            </div>
+                            <div className="text-sm text-gray-500 flex items-center space-x-1 mt-1">
+                              <MapPin className="w-3 h-3" />
+                              <span>{selectedAdmin.location}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleContactAdmin(selectedAdmin.email)}
+                          >
+                            <Mail className="w-4 h-4 mr-2" />
+                            Contact
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleScheduleMeeting(selectedAdmin.id)}
+                          >
+                            <Calendar className="w-4 h-4 mr-2" />
+                            Schedule Meeting
+                          </Button>
+                        </div>
+                      </div>
+                      <p className="text-gray-700 mt-4">{selectedAdmin.description}</p>
+                    </CardContent>
+                  </Card>
+
+                  {/* Recent Activity */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Activity className="w-5 h-5" />
+                        <span>Recent Activity</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {selectedAdmin.recentActivity.map((activity) => (
+                          <div key={activity.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <Activity className="w-4 h-4 text-blue-600" />
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900">{activity.type}</div>
+                                <div className="text-sm text-gray-600">{activity.description}</div>
+                                <div className="text-sm text-gray-500">{activity.team}</div>
+                              </div>
+                            </div>
+                            <div className="text-sm text-gray-500">{activity.date}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Managed Teams */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Users className="w-5 h-5" />
+                        <span>Managed Teams</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {selectedAdmin.managedTeams.map((team) => (
+                          <div key={team.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                <span className="text-sm font-semibold text-green-600">
+                                  {team.name.charAt(0)}
+                                </span>
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900">{team.name}</div>
+                                <div className="text-sm text-gray-500">{team.size} members</div>
+                                <div className="text-sm text-gray-500">Status: {team.status}</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-sm text-gray-500">Last Review</div>
+                              <div className="text-sm font-medium text-gray-900">{team.lastReview}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Upcoming Reviews */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Calendar className="w-5 h-5" />
+                        <span>Upcoming Reviews</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {selectedAdmin.upcomingReviews.map((review) => (
+                          <div key={review.id} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <Calendar className="w-4 h-4 text-blue-600" />
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900">{review.team}</div>
+                                <div className="text-sm text-gray-600">{review.type}</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-sm text-gray-500">Scheduled</div>
+                              <div className="text-sm font-medium text-gray-900">{review.scheduledDate}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Send Message Modal */}
+        <Dialog open={showMessageModal} onOpenChange={setShowMessageModal}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <MessageSquare className="w-6 h-6 text-blue-600" />
+                <span>Send Message to {selectedAdminForAction?.name}</span>
+              </DialogTitle>
+              <DialogDescription>
+                Send a direct message to the admin
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Subject</label>
+                <Input placeholder="Enter message subject..." />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Message</label>
+                <textarea 
+                  className="w-full h-32 p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter your message..."
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setShowMessageModal(false)}>
+                  Cancel
+                </Button>
+                <Button>
+                  <Mail className="w-4 h-4 mr-2" />
+                  Send Message
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Schedule Review Modal */}
+        <Dialog open={showScheduleModal} onOpenChange={setShowScheduleModal}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <Calendar className="w-6 h-6 text-blue-600" />
+                <span>Schedule Review with {selectedAdminForAction?.name}</span>
+              </DialogTitle>
+              <DialogDescription>
+                Schedule a review meeting with the admin
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Review Type</label>
+                <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option>Performance Review</option>
+                  <option>Team Management Review</option>
+                  <option>Training Session</option>
+                  <option>General Check-in</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Date & Time</label>
+                <Input type="datetime-local" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Duration</label>
+                <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option>30 minutes</option>
+                  <option>1 hour</option>
+                  <option>1.5 hours</option>
+                  <option>2 hours</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Notes</label>
+                <textarea 
+                  className="w-full h-20 p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Add any notes for the review..."
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setShowScheduleModal(false)}>
+                  Cancel
+                </Button>
+                <Button>
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Schedule Review
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Assign Alert Modal */}
+        <Dialog open={showAssignModal} onOpenChange={setShowAssignModal}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <UserPlus className="w-6 h-6 text-blue-600" />
+                <span>Assign Alert to Admin</span>
+              </DialogTitle>
+              <DialogDescription>
+                Assign this alert to an available admin
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Select Admin</label>
+                <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option>Sarah Johnson (Sales, Marketing)</option>
+                  <option>Mike Chen (Engineering, Product)</option>
+                  <option>Lisa Rodriguez (HR, Finance)</option>
+                  <option>David Kim (Operations, Customer Success)</option>
+                  <option>Alex Thompson (Product, Design)</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Priority</label>
+                <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option>High</option>
+                  <option>Medium</option>
+                  <option>Low</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Notes</label>
+                <textarea 
+                  className="w-full h-20 p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Add any notes for the assignment..."
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setShowAssignModal(false)}>
+                  Cancel
+                </Button>
+                <Button>
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Assign Alert
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

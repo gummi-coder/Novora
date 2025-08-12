@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -74,6 +74,7 @@ interface RecentActivity {
 const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('overview');
@@ -101,6 +102,14 @@ const Dashboard = () => {
       setLoading(false);
     }
   }, [navigate]);
+
+  // Handle URL parameters for section navigation
+  useEffect(() => {
+    const sectionParam = searchParams.get('section');
+    if (sectionParam) {
+      setActiveSection(sectionParam);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchRecentActivity = async () => {
@@ -309,6 +318,7 @@ const Dashboard = () => {
               description: "Switching to admin view...",
             });
           }}
+          onNavigateToSettings={() => setActiveSection('settings')}
           onLogout={handleLogout}
         />
       ) : (

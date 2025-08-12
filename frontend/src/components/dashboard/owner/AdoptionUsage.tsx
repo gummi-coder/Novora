@@ -33,9 +33,24 @@ import {
   CheckCircle,
   XCircle,
   Eye,
-  Download
+  Download,
+  Mail,
+  Phone,
+  MapPin,
+  MessageSquare,
+  Settings,
+  UserPlus,
+  RefreshCw,
+  Info
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface AdoptionMetrics {
   activeTeams: number;
@@ -70,6 +85,54 @@ interface AdminCoverageData {
   color: string;
 }
 
+interface TeamDetail {
+  id: string;
+  name: string;
+  isActive: boolean;
+  participationRate: number;
+  timeInUse: number;
+  lastActivity: string;
+  hasAdmin: boolean;
+  adminName?: string;
+  adminEmail?: string;
+  adminPhone?: string;
+  surveyDeliveryRate: number;
+  status: 'active' | 'inactive' | 'at-risk' | 'new';
+  description: string;
+  location: string;
+  teamSize: number;
+  department: string;
+  recentSurveys: Array<{
+    id: string;
+    date: string;
+    participation: number;
+    avgScore: number;
+    responseCount: number;
+  }>;
+  engagementHistory: Array<{
+    month: string;
+    participation: number;
+    surveysSent: number;
+    responsesReceived: number;
+  }>;
+  teamMembers: Array<{
+    id: string;
+    name: string;
+    role: string;
+    email: string;
+    lastSurvey: string;
+    participationRate: number;
+  }>;
+  issues: Array<{
+    id: string;
+    type: string;
+    description: string;
+    severity: 'low' | 'medium' | 'high';
+    date: string;
+    status: 'open' | 'resolved';
+  }>;
+}
+
 const AdoptionUsage = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
@@ -83,6 +146,11 @@ const AdoptionUsage = () => {
   const [teamUsage, setTeamUsage] = useState<TeamUsage[]>([]);
   const [timeInUseData, setTimeInUseData] = useState<TimeInUseData[]>([]);
   const [adminCoverageData, setAdminCoverageData] = useState<AdminCoverageData[]>([]);
+  const [selectedTeam, setSelectedTeam] = useState<TeamDetail | null>(null);
+  const [showTeamModal, setShowTeamModal] = useState(false);
+  const [showAssignAdminModal, setShowAssignAdminModal] = useState(false);
+  const [showReengageModal, setShowReengageModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   useEffect(() => {
     const fetchAdoptionData = async () => {
@@ -251,6 +319,147 @@ const AdoptionUsage = () => {
     if (diffDays < 7) return `${diffDays} days ago`;
     if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
     return `${Math.floor(diffDays / 30)} months ago`;
+  };
+
+  const getTeamDetails = async (teamId: string): Promise<TeamDetail> => {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Mock detailed team data
+    const mockTeamDetails: { [key: string]: TeamDetail } = {
+      "1": {
+        id: "1",
+        name: "Sales",
+        isActive: true,
+        participationRate: 78,
+        timeInUse: 6,
+        lastActivity: "2024-01-15",
+        hasAdmin: true,
+        adminName: "Sarah Johnson",
+        adminEmail: "sarah.johnson@novora.com",
+        adminPhone: "+1 (555) 123-4567",
+        surveyDeliveryRate: 95,
+        status: 'active',
+        description: "Our sales team drives revenue growth through strategic partnerships and customer acquisition.",
+        location: "San Francisco, CA",
+        teamSize: 45,
+        department: "Sales",
+        recentSurveys: [
+          { id: "1", date: "2024-01-15", participation: 78, avgScore: 6.4, responseCount: 35 },
+          { id: "2", date: "2023-12-15", participation: 85, avgScore: 7.1, responseCount: 38 },
+          { id: "3", date: "2023-11-15", participation: 82, avgScore: 7.3, responseCount: 37 }
+        ],
+        engagementHistory: [
+          { month: "Jan 2024", participation: 78, surveysSent: 45, responsesReceived: 35 },
+          { month: "Dec 2023", participation: 85, surveysSent: 45, responsesReceived: 38 },
+          { month: "Nov 2023", participation: 82, surveysSent: 45, responsesReceived: 37 }
+        ],
+        teamMembers: [
+          { id: "1", name: "Sarah Johnson", role: "Sales Manager", email: "sarah.johnson@novora.com", lastSurvey: "2024-01-15", participationRate: 100 },
+          { id: "2", name: "Mike Chen", role: "Senior Sales Rep", email: "mike.chen@novora.com", lastSurvey: "2024-01-14", participationRate: 85 },
+          { id: "3", name: "Lisa Rodriguez", role: "Sales Rep", email: "lisa.rodriguez@novora.com", lastSurvey: "2024-01-13", participationRate: 90 }
+        ],
+        issues: [
+          { id: "1", type: "Low Participation", description: "Participation rate dropped below 80%", severity: "medium", date: "2024-01-15", status: "open" },
+          { id: "2", type: "Score Decline", description: "Average score decreased by 0.7 points", severity: "high", date: "2024-01-14", status: "open" }
+        ]
+      },
+      "2": {
+        id: "2",
+        name: "Engineering",
+        isActive: true,
+        participationRate: 92,
+        timeInUse: 8,
+        lastActivity: "2024-01-10",
+        hasAdmin: true,
+        adminName: "Mike Chen",
+        adminEmail: "mike.chen@novora.com",
+        adminPhone: "+1 (555) 234-5678",
+        surveyDeliveryRate: 98,
+        status: 'active',
+        description: "Our engineering team builds innovative solutions and maintains technical excellence.",
+        location: "Remote",
+        teamSize: 120,
+        department: "Engineering",
+        recentSurveys: [
+          { id: "1", date: "2024-01-10", participation: 92, avgScore: 7.8, responseCount: 110 },
+          { id: "2", date: "2023-12-10", participation: 88, avgScore: 7.5, responseCount: 106 },
+          { id: "3", date: "2023-11-10", participation: 85, avgScore: 7.2, responseCount: 102 }
+        ],
+        engagementHistory: [
+          { month: "Jan 2024", participation: 92, surveysSent: 120, responsesReceived: 110 },
+          { month: "Dec 2023", participation: 88, surveysSent: 120, responsesReceived: 106 },
+          { month: "Nov 2023", participation: 85, surveysSent: 120, responsesReceived: 102 }
+        ],
+        teamMembers: [
+          { id: "1", name: "Mike Chen", role: "Engineering Manager", email: "mike.chen@novora.com", lastSurvey: "2024-01-10", participationRate: 100 },
+          { id: "2", name: "Alex Thompson", role: "Senior Engineer", email: "alex.thompson@novora.com", lastSurvey: "2024-01-09", participationRate: 95 },
+          { id: "3", name: "Emma Wilson", role: "Software Engineer", email: "emma.wilson@novora.com", lastSurvey: "2024-01-08", participationRate: 90 }
+        ],
+        issues: []
+      }
+    };
+    
+    return mockTeamDetails[teamId] || mockTeamDetails["1"];
+  };
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'high': return 'text-red-600 bg-red-100';
+      case 'medium': return 'text-yellow-600 bg-yellow-100';
+      case 'low': return 'text-blue-600 bg-blue-100';
+      default: return 'text-gray-600 bg-gray-100';
+    }
+  };
+
+  const handleViewTeam = async (teamId: string) => {
+    try {
+      const teamDetails = await getTeamDetails(teamId);
+      setSelectedTeam(teamDetails);
+      setShowTeamModal(true);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load team details",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleAssignAdmins = () => {
+    setShowAssignAdminModal(true);
+    toast({
+      title: "Assign Admins",
+      description: "Opening admin assignment interface",
+    });
+  };
+
+  const handleReengage = () => {
+    setShowReengageModal(true);
+    toast({
+      title: "Re-engage Teams",
+      description: "Opening re-engagement interface",
+    });
+  };
+
+  const handleReview = () => {
+    setShowReviewModal(true);
+    toast({
+      title: "Review At-Risk Teams",
+      description: "Opening review interface",
+    });
+  };
+
+  const handleContactAdmin = (email: string) => {
+    window.open(`mailto:${email}`, '_blank');
+  };
+
+  const handleScheduleMeeting = (teamId: string) => {
+    const team = teamUsage.find(t => t.id === teamId);
+    toast({
+      title: "Schedule Meeting",
+      description: `Opening calendar to schedule meeting with ${team?.name || 'the'} team`,
+    });
   };
 
   const handleExport = () => {
@@ -559,7 +768,12 @@ const AdoptionUsage = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="sm" className="flex items-center space-x-1 hover:bg-gray-100">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="flex items-center space-x-1 hover:bg-gray-100"
+                          onClick={() => handleViewTeam(team.id)}
+                        >
                           <Eye className="w-4 h-4" />
                           <span>View</span>
                         </Button>
@@ -589,7 +803,12 @@ const AdoptionUsage = () => {
               <p className="text-sm text-gray-600 mt-2">
                 Need HR/admin assignment
               </p>
-              <Button variant="outline" size="sm" className="mt-4 hover:bg-red-50 hover:border-red-200">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-4 hover:bg-red-50 hover:border-red-200"
+                onClick={handleAssignAdmins}
+              >
                 Assign Admins
               </Button>
             </CardContent>
@@ -612,7 +831,12 @@ const AdoptionUsage = () => {
               <p className="text-sm text-gray-600 mt-2">
                 Not using platform
               </p>
-              <Button variant="outline" size="sm" className="mt-4 hover:bg-gray-50">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-4 hover:bg-gray-50"
+                onClick={handleReengage}
+              >
                 Re-engage
               </Button>
             </CardContent>
@@ -635,12 +859,395 @@ const AdoptionUsage = () => {
               <p className="text-sm text-gray-600 mt-2">
                 Need attention
               </p>
-              <Button variant="outline" size="sm" className="mt-4 hover:bg-yellow-50 hover:border-yellow-200">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-4 hover:bg-yellow-50 hover:border-yellow-200"
+                onClick={handleReview}
+              >
                 Review
               </Button>
             </CardContent>
           </Card>
         </div>
+
+        {/* Team Detail Modal */}
+        <Dialog open={showTeamModal} onOpenChange={setShowTeamModal}>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+            {selectedTeam && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center space-x-2">
+                    <Users className="w-6 h-6 text-blue-600" />
+                    <span>{selectedTeam.name} Team Details</span>
+                  </DialogTitle>
+                  <DialogDescription>
+                    Comprehensive overview of team adoption, usage, and engagement metrics
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="space-y-6">
+                  {/* Team Overview */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-gray-600">Participation Rate</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-gray-900">{selectedTeam.participationRate}%</div>
+                        <div className="text-sm text-gray-500 mt-1">survey completion</div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-gray-600">Time in Use</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-gray-900">{selectedTeam.timeInUse} months</div>
+                        <div className="text-sm text-gray-500 mt-1">platform usage</div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-gray-600">Team Size</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-gray-900">{selectedTeam.teamSize}</div>
+                        <div className="text-sm text-gray-500 mt-1">members</div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-gray-600">Survey Delivery</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-gray-900">{selectedTeam.surveyDeliveryRate}%</div>
+                        <div className="text-sm text-gray-500 mt-1">success rate</div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Team Description */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Info className="w-5 h-5" />
+                        <span>Team Overview</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700 mb-4">{selectedTeam.description}</p>
+                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                        <MapPin className="w-4 h-4" />
+                        <span>{selectedTeam.location}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Admin Information */}
+                  {selectedTeam.hasAdmin && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center space-x-2">
+                          <UserCheck className="w-5 h-5" />
+                          <span>Team Admin</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                              <span className="text-lg font-semibold text-blue-600">
+                                {selectedTeam.adminName?.charAt(0)}
+                              </span>
+                            </div>
+                            <div>
+                              <div className="font-semibold text-gray-900">{selectedTeam.adminName}</div>
+                              <div className="text-sm text-gray-500">{selectedTeam.adminEmail}</div>
+                              <div className="text-sm text-gray-500 flex items-center space-x-1 mt-1">
+                                <Phone className="w-3 h-3" />
+                                <span>{selectedTeam.adminPhone}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleContactAdmin(selectedTeam.adminEmail!)}
+                            >
+                              <Mail className="w-4 h-4 mr-2" />
+                              Contact
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleScheduleMeeting(selectedTeam.id)}
+                            >
+                              <Calendar className="w-4 h-4 mr-2" />
+                              Schedule Meeting
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Recent Surveys */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <BarChart3 className="w-5 h-5" />
+                        <span>Recent Surveys</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {selectedTeam.recentSurveys.map((survey) => (
+                          <div key={survey.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <BarChart3 className="w-4 h-4 text-blue-600" />
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900">{survey.date}</div>
+                                <div className="text-sm text-gray-500">{survey.responseCount} responses</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-lg font-bold text-gray-900">{survey.avgScore}/10</div>
+                              <div className="text-sm text-gray-500">{survey.participation}% participation</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Team Members */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Users className="w-5 h-5" />
+                        <span>Team Members</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {selectedTeam.teamMembers.map((member) => (
+                          <div key={member.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                <span className="text-sm font-semibold text-gray-600">
+                                  {member.name.charAt(0)}
+                                </span>
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900">{member.name}</div>
+                                <div className="text-sm text-gray-500">{member.role}</div>
+                                <div className="text-sm text-gray-500">{member.email}</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-lg font-bold text-gray-900">{member.participationRate}%</div>
+                              <div className="text-sm text-gray-500">Last: {member.lastSurvey}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Issues */}
+                  {selectedTeam.issues.length > 0 && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center space-x-2">
+                          <AlertTriangle className="w-5 h-5" />
+                          <span>Active Issues</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          {selectedTeam.issues.map((issue) => (
+                            <div key={issue.id} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
+                              <div className="flex items-center space-x-3">
+                                <Badge className={`${getSeverityColor(issue.severity)} px-2 py-1`}>
+                                  {issue.severity.toUpperCase()}
+                                </Badge>
+                                <div>
+                                  <div className="font-medium text-gray-900">{issue.type}</div>
+                                  <div className="text-sm text-gray-600">{issue.description}</div>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-sm text-gray-500">{issue.date}</div>
+                                <div className="text-xs text-orange-600 font-medium">{issue.status}</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Assign Admins Modal */}
+        <Dialog open={showAssignAdminModal} onOpenChange={setShowAssignAdminModal}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <UserPlus className="w-6 h-6 text-blue-600" />
+                <span>Assign Admins to Teams</span>
+              </DialogTitle>
+              <DialogDescription>
+                Assign HR admins to teams that currently don't have one
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Teams Without Admin</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {teamUsage.filter(team => !team.hasAdmin).map((team) => (
+                      <div key={team.id} className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-semibold text-red-600">
+                              {team.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">{team.name}</div>
+                            <div className="text-sm text-gray-600">{team.teamSize || 25} members</div>
+                          </div>
+                        </div>
+                        <Button variant="outline" size="sm">
+                          <UserPlus className="w-4 h-4 mr-2" />
+                          Assign Admin
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Re-engage Modal */}
+        <Dialog open={showReengageModal} onOpenChange={setShowReengageModal}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <RefreshCw className="w-6 h-6 text-blue-600" />
+                <span>Re-engage Inactive Teams</span>
+              </DialogTitle>
+              <DialogDescription>
+                Re-engage teams that are not actively using the platform
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Inactive Teams</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {teamUsage.filter(team => !team.isActive).map((team) => (
+                      <div key={team.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-semibold text-gray-600">
+                              {team.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">{team.name}</div>
+                            <div className="text-sm text-gray-600">Last activity: {formatTimeAgo(team.lastActivity)}</div>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm">
+                            <Mail className="w-4 h-4 mr-2" />
+                            Send Email
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Calendar className="w-4 h-4 mr-2" />
+                            Schedule Call
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Review Modal */}
+        <Dialog open={showReviewModal} onOpenChange={setShowReviewModal}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <AlertTriangle className="w-6 h-6 text-yellow-600" />
+                <span>Review At-Risk Teams</span>
+              </DialogTitle>
+              <DialogDescription>
+                Review and address issues with teams at risk of low engagement
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">At-Risk Teams</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {teamUsage.filter(team => team.status === 'at-risk').map((team) => (
+                      <div key={team.id} className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-semibold text-yellow-600">
+                              {team.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">{team.name}</div>
+                            <div className="text-sm text-gray-600">Participation: {team.participationRate}%</div>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm">
+                            <MessageSquare className="w-4 h-4 mr-2" />
+                            Send Message
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Settings className="w-4 h-4 mr-2" />
+                            Review Settings
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

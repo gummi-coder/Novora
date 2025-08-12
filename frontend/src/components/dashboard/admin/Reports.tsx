@@ -2,13 +2,122 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  Download, 
+  FileText, 
+  BarChart3, 
+  Link, 
+  CheckCircle, 
+  Copy,
+  ExternalLink
+} from "lucide-react";
 
 const Reports = () => {
   const [shareLink, setShareLink] = useState<string>("");
+  const { toast } = useToast();
 
   const generateLink = () => {
     const link = `${window.location.origin}/reports/shared/${Math.random().toString(36).slice(2, 8)}`;
     setShareLink(link);
+    toast({
+      title: "Link Generated",
+      description: "Share link has been created successfully!",
+    });
+  };
+
+  const copyToClipboard = async () => {
+    if (!shareLink) {
+      toast({
+        title: "No Link Available",
+        description: "Please generate a link first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareLink);
+      toast({
+        title: "Link Copied",
+        description: "Share link has been copied to clipboard!",
+      });
+    } catch (err) {
+      toast({
+        title: "Copy Failed",
+        description: "Failed to copy link to clipboard.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const exportPDF = () => {
+    // Simulate PDF generation
+    toast({
+      title: "Exporting PDF",
+      description: "Generating This Month's Results report...",
+    });
+
+    setTimeout(() => {
+      // Create a mock PDF download
+      const blob = new Blob(['Mock PDF content for This Month\'s Results'], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `novora-monthly-results-${new Date().toISOString().split('T')[0]}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "PDF Exported",
+        description: "This Month's Results report has been downloaded successfully!",
+      });
+    }, 2000);
+  };
+
+  const exportCSV = () => {
+    // Simulate CSV generation
+    toast({
+      title: "Exporting CSV",
+      description: "Generating Trend Report...",
+    });
+
+    setTimeout(() => {
+      // Create a mock CSV download
+      const csvContent = `Date,Team,Engagement Score,Response Rate,Alerts
+2024-01-01,Engineering,4.2,85%,2
+2024-01-01,Sales,3.8,72%,1
+2024-01-01,Marketing,4.5,91%,0
+2024-01-01,HR,4.1,88%,1`;
+      
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `novora-trend-report-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "CSV Exported",
+        description: "Trend Report has been downloaded successfully!",
+      });
+    }, 1500);
+  };
+
+  const openBuilder = () => {
+    toast({
+      title: "Opening Report Builder",
+      description: "Redirecting to custom report builder...",
+    });
+
+    // Simulate opening the builder (could navigate to a new page)
+    setTimeout(() => {
+      toast({
+        title: "Report Builder",
+        description: "Custom report builder is now available. Select your metrics and timeframe.",
+      });
+    }, 1000);
   };
 
   return (
@@ -28,9 +137,7 @@ const Reports = () => {
             <CardHeader>
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
+                  <FileText className="w-5 h-5 text-red-600" />
                 </div>
                 <div>
                   <CardTitle className="text-lg">This Month's Results (PDF)</CardTitle>
@@ -39,7 +146,11 @@ const Reports = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <Button className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700">
+              <Button 
+                onClick={exportPDF}
+                className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700"
+              >
+                <Download className="w-4 h-4 mr-2" />
                 Export PDF
               </Button>
             </CardContent>
@@ -49,9 +160,7 @@ const Reports = () => {
             <CardHeader>
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
+                  <BarChart3 className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
                   <CardTitle className="text-lg">Trend Report (CSV)</CardTitle>
@@ -60,7 +169,13 @@ const Reports = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" variant="outline">Export CSV</Button>
+              <Button 
+                onClick={exportCSV}
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export CSV
+              </Button>
             </CardContent>
           </Card>
 
@@ -68,9 +183,7 @@ const Reports = () => {
             <CardHeader>
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
-                  </svg>
+                  <BarChart3 className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
                   <CardTitle className="text-lg">Custom Report Builder</CardTitle>
@@ -79,7 +192,13 @@ const Reports = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" variant="outline">Open Builder</Button>
+              <Button 
+                onClick={openBuilder}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Open Builder
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -91,9 +210,7 @@ const Reports = () => {
               <div>
                 <CardTitle className="flex items-center space-x-2 text-xl">
                   <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                    </svg>
+                    <Link className="w-5 h-5 text-purple-600" />
                   </div>
                   <span>Shared Links</span>
                 </CardTitle>
@@ -115,15 +232,24 @@ const Reports = () => {
                 onClick={generateLink} 
                 className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
               >
+                <Link className="w-4 h-4 mr-2" />
                 Generate Link
               </Button>
+              {shareLink && (
+                <Button 
+                  onClick={copyToClipboard}
+                  variant="outline"
+                  className="hover:bg-green-50 hover:border-green-200"
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy
+                </Button>
+              )}
             </div>
             {shareLink && (
               <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-center">
-                  <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+                  <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
                   <span className="text-green-700 text-sm font-medium">
                     Link generated successfully! Share this link with stakeholders.
                   </span>

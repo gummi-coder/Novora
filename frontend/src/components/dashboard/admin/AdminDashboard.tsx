@@ -5,6 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   LineChart,
   Line,
   BarChart,
@@ -77,6 +84,16 @@ const AdminDashboard = () => {
   });
   const [teamPerformance, setTeamPerformance] = useState<TeamPerformance[]>([]);
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
+  
+  // Modal states
+  const [showTeamsModal, setShowTeamsModal] = useState(false);
+  const [showSurveysModal, setShowSurveysModal] = useState(false);
+  const [showScoreModal, setShowScoreModal] = useState(false);
+  const [showAlertsModal, setShowAlertsModal] = useState(false);
+  const [showAllTeamsModal, setShowAllTeamsModal] = useState(false);
+  const [showAllActivityModal, setShowAllActivityModal] = useState(false);
+  const [showTeamDetailsModal, setShowTeamDetailsModal] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<TeamPerformance | null>(null);
 
   useEffect(() => {
     const fetchAdminDashboardData = async () => {
@@ -213,6 +230,85 @@ const AdminDashboard = () => {
     return `${diffDays} days ago`;
   };
 
+  // KPI Card handlers
+  const handleTeamsClick = () => {
+    setShowTeamsModal(true);
+    toast({
+      title: "Teams Overview",
+      description: "Opening detailed teams information",
+    });
+  };
+
+  const handleSurveysClick = () => {
+    setShowSurveysModal(true);
+    toast({
+      title: "Active Surveys",
+      description: "Opening surveys management",
+    });
+  };
+
+  const handleScoreClick = () => {
+    setShowScoreModal(true);
+    toast({
+      title: "Score Analysis",
+      description: "Opening detailed score breakdown",
+    });
+  };
+
+  const handleAlertsClick = () => {
+    setShowAlertsModal(true);
+    toast({
+      title: "Active Alerts",
+      description: "Opening alerts management",
+    });
+  };
+
+  // Button handlers
+  const handleViewAllTeams = () => {
+    setShowAllTeamsModal(true);
+    toast({
+      title: "All Teams",
+      description: "Opening comprehensive teams view",
+    });
+  };
+
+  const handleViewDetails = (teamId: string) => {
+    const team = teamPerformance.find(t => t.id === teamId);
+    if (team) {
+      setSelectedTeam(team);
+      setShowTeamDetailsModal(true);
+      toast({
+        title: "Team Details",
+        description: `Opening detailed view for ${team.name}`,
+      });
+    }
+  };
+
+  const handleViewAllActivity = () => {
+    setShowAllActivityModal(true);
+    toast({
+      title: "All Activity",
+      description: "Opening comprehensive activity log",
+    });
+  };
+
+  // Quick Actions handlers
+  const handleReviewFeedback = () => {
+    navigate('/dashboard?section=feedback');
+    toast({
+      title: "Review Feedback",
+      description: "Navigating to feedback review panel",
+    });
+  };
+
+  const handleViewAlerts = () => {
+    navigate('/dashboard?section=alerts');
+    toast({
+      title: "View Alerts",
+      description: "Navigating to alerts management",
+    });
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -237,7 +333,10 @@ const AdminDashboard = () => {
         {/* Enhanced Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Teams */}
-          <Card className="hover:shadow-lg transition-all duration-200">
+          <Card 
+            className="hover:shadow-lg transition-all duration-200 cursor-pointer hover:bg-blue-50"
+            onClick={handleTeamsClick}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600">Teams Managed</CardTitle>
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -253,7 +352,10 @@ const AdminDashboard = () => {
           </Card>
 
           {/* Active Surveys */}
-          <Card className="hover:shadow-lg transition-all duration-200">
+          <Card 
+            className="hover:shadow-lg transition-all duration-200 cursor-pointer hover:bg-green-50"
+            onClick={handleSurveysClick}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600">Active Surveys</CardTitle>
               <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
@@ -269,7 +371,10 @@ const AdminDashboard = () => {
           </Card>
 
           {/* Average Score */}
-          <Card className="hover:shadow-lg transition-all duration-200">
+          <Card 
+            className="hover:shadow-lg transition-all duration-200 cursor-pointer hover:bg-purple-50"
+            onClick={handleScoreClick}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600">Average Score</CardTitle>
               <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
@@ -292,7 +397,10 @@ const AdminDashboard = () => {
           </Card>
 
           {/* Alerts */}
-          <Card className="hover:shadow-lg transition-all duration-200">
+          <Card 
+            className="hover:shadow-lg transition-all duration-200 cursor-pointer hover:bg-orange-50"
+            onClick={handleAlertsClick}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600">Active Alerts</CardTitle>
               <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
@@ -323,7 +431,7 @@ const AdminDashboard = () => {
                   Overview of your managed teams and their engagement metrics
                 </CardDescription>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={handleViewAllTeams}>
                 View All Teams
               </Button>
             </div>
@@ -379,7 +487,12 @@ const AdminDashboard = () => {
                     </Badge>
 
                     {/* Actions */}
-                    <Button variant="outline" size="sm" className="hover:bg-blue-50 hover:border-blue-200">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="hover:bg-blue-50 hover:border-blue-200"
+                      onClick={() => handleViewDetails(team.id)}
+                    >
                       View Details
                     </Button>
                   </div>
@@ -404,7 +517,7 @@ const AdminDashboard = () => {
                   Latest updates and important events from your teams
                 </CardDescription>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={handleViewAllActivity}>
                 View All Activity
               </Button>
             </div>
@@ -472,6 +585,7 @@ const AdminDashboard = () => {
               <Button 
                 variant="outline" 
                 className="flex items-center space-x-4 h-auto p-6 hover:shadow-md transition-all duration-200 hover:bg-gray-50"
+                onClick={handleReviewFeedback}
               >
                 <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                   <MessageSquare className="w-5 h-5 text-blue-600" />
@@ -485,6 +599,7 @@ const AdminDashboard = () => {
               <Button 
                 variant="outline" 
                 className="flex items-center space-x-4 h-auto p-6 hover:shadow-md transition-all duration-200 hover:bg-gray-50"
+                onClick={handleViewAlerts}
               >
                 <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
                   <AlertTriangle className="w-5 h-5 text-orange-600" />
@@ -497,6 +612,625 @@ const AdminDashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Teams Modal */}
+        <Dialog open={showTeamsModal} onOpenChange={setShowTeamsModal}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <Users className="w-6 h-6 text-blue-600" />
+                <span>Teams Overview</span>
+              </DialogTitle>
+              <DialogDescription>
+                Comprehensive view of all managed teams and their performance metrics
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="text-2xl font-bold text-blue-600">{stats.totalTeams}</div>
+                  <div className="text-sm text-blue-700">Total Teams</div>
+                </div>
+                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="text-2xl font-bold text-green-600">{stats.avgParticipation}%</div>
+                  <div className="text-sm text-green-700">Avg Participation</div>
+                </div>
+                <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                  <div className="text-2xl font-bold text-purple-600">{stats.totalResponses}</div>
+                  <div className="text-sm text-purple-700">Total Responses</div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-900">Team Performance Summary</h3>
+                {teamPerformance.map((team) => (
+                  <div key={team.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                        <span className="text-lg font-semibold text-gray-600">{team.name.charAt(0)}</span>
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-900">{team.name}</div>
+                        <div className="text-sm text-gray-500">{team.responses} responses, {team.alerts} alerts</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-gray-900">{team.score}/10</div>
+                        <div className="text-xs text-gray-500">Score</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-gray-900">{team.participation}%</div>
+                        <div className="text-xs text-gray-500">Participation</div>
+                      </div>
+                      <Badge className={getStatusColor(team.status)}>
+                        {team.status.charAt(0).toUpperCase() + team.status.slice(1)}
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Surveys Modal */}
+        <Dialog open={showSurveysModal} onOpenChange={setShowSurveysModal}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <BarChart3 className="w-6 h-6 text-green-600" />
+                <span>Active Surveys</span>
+              </DialogTitle>
+              <DialogDescription>
+                Manage and monitor all currently active surveys across teams
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="text-2xl font-bold text-green-600">{stats.activeSurveys}</div>
+                  <div className="text-sm text-green-700">Active Surveys</div>
+                </div>
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="text-2xl font-bold text-blue-600">{stats.totalResponses}</div>
+                  <div className="text-sm text-blue-700">Total Responses</div>
+                </div>
+                <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                  <div className="text-2xl font-bold text-purple-600">{stats.avgParticipation}%</div>
+                  <div className="text-sm text-purple-700">Avg Participation</div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-900">Survey Details</h3>
+                <div className="space-y-3">
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-gray-900">Q1 Culture Survey</div>
+                        <div className="text-sm text-gray-500">Sales & Marketing Teams</div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-gray-900">45</div>
+                          <div className="text-xs text-gray-500">Responses</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-gray-900">75%</div>
+                          <div className="text-xs text-gray-500">Participation</div>
+                        </div>
+                        <Badge className="bg-green-100 text-green-800">Active</Badge>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-gray-900">Employee Engagement Survey</div>
+                        <div className="text-sm text-gray-500">All Teams</div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-gray-900">32</div>
+                          <div className="text-xs text-gray-500">Responses</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-gray-900">82%</div>
+                          <div className="text-xs text-gray-500">Participation</div>
+                        </div>
+                        <Badge className="bg-green-100 text-green-800">Active</Badge>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-gray-900">Team Feedback Survey</div>
+                        <div className="text-sm text-gray-500">Engineering Team</div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-gray-900">28</div>
+                          <div className="text-xs text-gray-500">Responses</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-gray-900">90%</div>
+                          <div className="text-xs text-gray-500">Participation</div>
+                        </div>
+                        <Badge className="bg-green-100 text-green-800">Active</Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Score Modal */}
+        <Dialog open={showScoreModal} onOpenChange={setShowScoreModal}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <Target className="w-6 h-6 text-purple-600" />
+                <span>Score Analysis</span>
+              </DialogTitle>
+              <DialogDescription>
+                Detailed breakdown of organizational scores and trends
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                  <div className="text-2xl font-bold text-purple-600">{stats.avgScore}/10</div>
+                  <div className="text-sm text-purple-700">Average Score</div>
+                </div>
+                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="text-2xl font-bold text-green-600">+{stats.scoreChange}</div>
+                  <div className="text-sm text-green-700">Monthly Change</div>
+                </div>
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="text-2xl font-bold text-blue-600">{stats.avgParticipation}%</div>
+                  <div className="text-sm text-blue-700">Participation Rate</div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-900">Score Breakdown by Team</h3>
+                {teamPerformance.map((team) => (
+                  <div key={team.id} className="p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                          <span className="text-sm font-semibold text-gray-600">{team.name.charAt(0)}</span>
+                        </div>
+                        <span className="font-semibold text-gray-900">{team.name}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl font-bold text-gray-900">{team.score}/10</div>
+                        <div className="flex items-center space-x-1 text-sm">
+                          {team.change > 0 ? (
+                            <TrendingUp className="w-3 h-3 text-green-600" />
+                          ) : (
+                            <TrendingDown className="w-3 h-3 text-red-600" />
+                          )}
+                          <span className={team.change > 0 ? 'text-green-600' : 'text-red-600'}>
+                            {team.change > 0 ? '+' : ''}{team.change}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <Progress value={team.score * 10} className="h-2" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Alerts Modal */}
+        <Dialog open={showAlertsModal} onOpenChange={setShowAlertsModal}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <AlertTriangle className="w-6 h-6 text-orange-600" />
+                <span>Active Alerts</span>
+              </DialogTitle>
+              <DialogDescription>
+                Manage and address all active alerts requiring attention
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                  <div className="text-2xl font-bold text-orange-600">{stats.alertsCount}</div>
+                  <div className="text-sm text-orange-700">Active Alerts</div>
+                </div>
+                <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                  <div className="text-2xl font-bold text-red-600">2</div>
+                  <div className="text-sm text-red-700">High Priority</div>
+                </div>
+                <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <div className="text-2xl font-bold text-yellow-600">3</div>
+                  <div className="text-sm text-yellow-700">Medium Priority</div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-900">Alert Details</h3>
+                <div className="space-y-3">
+                  <div className="p-4 border border-red-200 rounded-lg bg-red-50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-red-900">Sales team score dropped by 0.2 points</div>
+                        <div className="text-sm text-red-700">Team: Sales • 2 hours ago</div>
+                      </div>
+                      <Badge className="bg-red-100 text-red-800">High Priority</Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 border border-red-200 rounded-lg bg-red-50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-red-900">New anonymous comment flagged for review</div>
+                        <div className="text-sm text-red-700">Team: Marketing • 4 hours ago</div>
+                      </div>
+                      <Badge className="bg-red-100 text-red-800">High Priority</Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-yellow-900">Participation rate below 70%</div>
+                        <div className="text-sm text-yellow-700">Team: Finance • 6 hours ago</div>
+                      </div>
+                      <Badge className="bg-yellow-100 text-yellow-800">Medium Priority</Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-yellow-900">Survey response rate declining</div>
+                        <div className="text-sm text-yellow-700">Team: Operations • 1 day ago</div>
+                      </div>
+                      <Badge className="bg-yellow-100 text-yellow-800">Medium Priority</Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-yellow-900">Team engagement score below threshold</div>
+                        <div className="text-sm text-yellow-700">Team: HR • 2 days ago</div>
+                      </div>
+                      <Badge className="bg-yellow-100 text-yellow-800">Medium Priority</Badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* All Teams Modal */}
+        <Dialog open={showAllTeamsModal} onOpenChange={setShowAllTeamsModal}>
+          <DialogContent className="max-w-6xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <Users className="w-6 h-6 text-blue-600" />
+                <span>All Teams</span>
+              </DialogTitle>
+              <DialogDescription>
+                Comprehensive view of all teams under your management
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="text-2xl font-bold text-blue-600">{stats.totalTeams}</div>
+                  <div className="text-sm text-blue-700">Total Teams</div>
+                </div>
+                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="text-2xl font-bold text-green-600">{stats.avgParticipation}%</div>
+                  <div className="text-sm text-green-700">Avg Participation</div>
+                </div>
+                <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                  <div className="text-2xl font-bold text-purple-600">{stats.avgScore}/10</div>
+                  <div className="text-sm text-purple-700">Avg Score</div>
+                </div>
+                <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                  <div className="text-2xl font-bold text-orange-600">{stats.alertsCount}</div>
+                  <div className="text-sm text-orange-700">Active Alerts</div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-900">Team Performance Matrix</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="text-left p-3 font-semibold text-gray-900">Team</th>
+                        <th className="text-center p-3 font-semibold text-gray-900">Score</th>
+                        <th className="text-center p-3 font-semibold text-gray-900">Change</th>
+                        <th className="text-center p-3 font-semibold text-gray-900">Participation</th>
+                        <th className="text-center p-3 font-semibold text-gray-900">Responses</th>
+                        <th className="text-center p-3 font-semibold text-gray-900">Alerts</th>
+                        <th className="text-center p-3 font-semibold text-gray-900">Status</th>
+                        <th className="text-center p-3 font-semibold text-gray-900">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {teamPerformance.map((team, index) => (
+                        <tr key={team.id} className={`border-b border-gray-100 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                          <td className="p-3">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                <span className="text-sm font-semibold text-gray-600">{team.name.charAt(0)}</span>
+                              </div>
+                              <span className="font-semibold text-gray-900">{team.name}</span>
+                            </div>
+                          </td>
+                          <td className="p-3 text-center">
+                            <div className="text-lg font-bold text-gray-900">{team.score}/10</div>
+                          </td>
+                          <td className="p-3 text-center">
+                            <div className="flex items-center justify-center space-x-1">
+                              {team.change > 0 ? (
+                                <TrendingUp className="w-4 h-4 text-green-600" />
+                              ) : (
+                                <TrendingDown className="w-4 h-4 text-red-600" />
+                              )}
+                              <span className={team.change > 0 ? 'text-green-600' : 'text-red-600'}>
+                                {team.change > 0 ? '+' : ''}{team.change}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="p-3 text-center">
+                            <div className="text-lg font-bold text-gray-900">{team.participation}%</div>
+                          </td>
+                          <td className="p-3 text-center">
+                            <div className="text-lg font-bold text-gray-900">{team.responses}</div>
+                          </td>
+                          <td className="p-3 text-center">
+                            <div className="text-lg font-bold text-gray-900">{team.alerts}</div>
+                          </td>
+                          <td className="p-3 text-center">
+                            <Badge className={getStatusColor(team.status)}>
+                              {team.status.charAt(0).toUpperCase() + team.status.slice(1)}
+                            </Badge>
+                          </td>
+                          <td className="p-3 text-center">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleViewDetails(team.id)}
+                            >
+                              View Details
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* All Activity Modal */}
+        <Dialog open={showAllActivityModal} onOpenChange={setShowAllActivityModal}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <Activity className="w-6 h-6 text-green-600" />
+                <span>All Activity</span>
+              </DialogTitle>
+              <DialogDescription>
+                Complete activity log with all recent events and updates
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-900">Activity Timeline</h3>
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {recentActivity.map((activity) => (
+                    <div key={activity.id} className="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                      <div className="flex-shrink-0 mt-1">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                          {getActivityIcon(activity.type)}
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="font-medium text-gray-900">{activity.description}</div>
+                          <Badge className={`${getPriorityColor(activity.priority)} px-2 py-1`}>
+                            {activity.priority.charAt(0).toUpperCase() + activity.priority.slice(1)}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm text-gray-500">
+                          <span className="font-medium">{activity.team}</span>
+                          <span>•</span>
+                          <span>{formatTimeAgo(activity.timestamp)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Team Details Modal */}
+        <Dialog open={showTeamDetailsModal} onOpenChange={setShowTeamDetailsModal}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <Users className="w-6 h-6 text-blue-600" />
+                <span>Team Details - {selectedTeam?.name}</span>
+              </DialogTitle>
+              <DialogDescription>
+                Comprehensive overview of team performance, metrics, and recent activity
+              </DialogDescription>
+            </DialogHeader>
+            
+            {selectedTeam && (
+              <div className="space-y-6">
+                {/* Team Header */}
+                <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-semibold text-gray-600">
+                      {selectedTeam.name.charAt(0)}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">{selectedTeam.name}</h3>
+                    <div className="flex items-center space-x-4 text-sm text-gray-600">
+                      <span>{selectedTeam.responses} responses</span>
+                      <span>•</span>
+                      <span>{selectedTeam.alerts} alerts</span>
+                      <span>•</span>
+                      <Badge className={getStatusColor(selectedTeam.status)}>
+                        {selectedTeam.status.charAt(0).toUpperCase() + selectedTeam.status.slice(1)}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Key Metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="text-2xl font-bold text-blue-600">{selectedTeam.score}/10</div>
+                    <div className="text-sm text-blue-700">Current Score</div>
+                    <div className="flex items-center space-x-1 text-xs mt-1">
+                      {selectedTeam.change > 0 ? (
+                        <TrendingUp className="w-3 h-3 text-green-600" />
+                      ) : (
+                        <TrendingDown className="w-3 h-3 text-red-600" />
+                      )}
+                      <span className={selectedTeam.change > 0 ? 'text-green-600' : 'text-red-600'}>
+                        {selectedTeam.change > 0 ? '+' : ''}{selectedTeam.change} change
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="text-2xl font-bold text-green-600">{selectedTeam.participation}%</div>
+                    <div className="text-sm text-green-700">Participation Rate</div>
+                  </div>
+                  
+                  <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                    <div className="text-2xl font-bold text-purple-600">{selectedTeam.responses}</div>
+                    <div className="text-sm text-purple-700">Total Responses</div>
+                  </div>
+                  
+                  <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                    <div className="text-2xl font-bold text-orange-600">{selectedTeam.alerts}</div>
+                    <div className="text-sm text-orange-700">Active Alerts</div>
+                  </div>
+                </div>
+
+                {/* Score Progress */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-900">Score Progress</h4>
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Current Score</span>
+                      <span className="text-sm font-bold text-gray-900">{selectedTeam.score}/10</span>
+                    </div>
+                    <Progress value={selectedTeam.score * 10} className="h-3" />
+                    <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+                      <span>0</span>
+                      <span>5</span>
+                      <span>10</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Activity for this team */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-900">Recent Activity</h4>
+                  <div className="space-y-3">
+                    {recentActivity
+                      .filter(activity => activity.team === selectedTeam.name)
+                      .slice(0, 5)
+                      .map((activity) => (
+                        <div key={activity.id} className="flex items-start space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                          <div className="flex-shrink-0 mt-1">
+                            <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                              {getActivityIcon(activity.type)}
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <div className="text-sm font-medium text-gray-900">{activity.description}</div>
+                              <Badge className={`${getPriorityColor(activity.priority)} px-2 py-1 text-xs`}>
+                                {activity.priority.charAt(0).toUpperCase() + activity.priority.slice(1)}
+                              </Badge>
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {formatTimeAgo(activity.timestamp)}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+
+
+
+                {/* Performance Insights */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-900">Performance Insights</h4>
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">Score Trend</span>
+                        <div className="flex items-center space-x-1">
+                          {selectedTeam.change > 0 ? (
+                            <TrendingUp className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <TrendingDown className="w-4 h-4 text-red-600" />
+                          )}
+                          <span className={`text-sm font-medium ${selectedTeam.change > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {selectedTeam.change > 0 ? 'Improving' : 'Declining'}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">Participation Level</span>
+                        <span className={`text-sm font-medium ${selectedTeam.participation >= 80 ? 'text-green-600' : selectedTeam.participation >= 60 ? 'text-yellow-600' : 'text-red-600'}`}>
+                          {selectedTeam.participation >= 80 ? 'Excellent' : selectedTeam.participation >= 60 ? 'Good' : 'Needs Improvement'}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">Alert Status</span>
+                        <span className={`text-sm font-medium ${selectedTeam.alerts === 0 ? 'text-green-600' : selectedTeam.alerts <= 2 ? 'text-yellow-600' : 'text-red-600'}`}>
+                          {selectedTeam.alerts === 0 ? 'No Issues' : selectedTeam.alerts <= 2 ? 'Minor Issues' : 'Critical Issues'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

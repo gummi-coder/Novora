@@ -39,9 +39,24 @@ import {
   Link,
   FileSpreadsheet,
   FileImage,
-  Presentation
+  Presentation,
+  RefreshCw,
+  Info,
+  UserPlus,
+  Target,
+  Clock3,
+  FileDown,
+  Share,
+  MessageSquare
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface ReportTemplate {
   id: string;
@@ -88,6 +103,10 @@ const Reports = () => {
   const [emailSubject, setEmailSubject] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
   const [selectedExecutives, setSelectedExecutives] = useState<string[]>([]);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [showShareLinkModal, setShowShareLinkModal] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [selectedTemplateForAction, setSelectedTemplateForAction] = useState<ReportTemplate | null>(null);
 
   useEffect(() => {
     const fetchReportsData = async () => {
@@ -316,6 +335,114 @@ const Reports = () => {
     setSelectedExecutives([]);
   };
 
+  const handleDownloadLatest = (template: ReportTemplate) => {
+    setSelectedTemplateForAction(template);
+    setShowDownloadModal(true);
+    toast({
+      title: "Download Report",
+      description: `Preparing ${template.name} for download...`,
+    });
+  };
+
+  const handleCreateShareLinkAction = (template: ReportTemplate) => {
+    setSelectedTemplateForAction(template);
+    setShowShareLinkModal(true);
+    toast({
+      title: "Create Share Link",
+      description: `Creating share link for ${template.name}...`,
+    });
+  };
+
+  const handleEmailToExecutivesAction = (template: ReportTemplate) => {
+    setSelectedTemplateForAction(template);
+    setShowEmailModal(true);
+    toast({
+      title: "Email to Executives",
+      description: `Opening email interface for ${template.name}...`,
+    });
+  };
+
+  const handleDownloadReport = async (format: string) => {
+    try {
+      // Simulate file download
+      const fileName = `${selectedTemplateForAction?.name.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.${format}`;
+      const dataStr = `Mock report data for ${selectedTemplateForAction?.name} in ${format.toUpperCase()} format`;
+      const dataBlob = new Blob([dataStr], { type: 'text/plain' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Download Complete",
+        description: `${selectedTemplateForAction?.name} downloaded successfully`,
+      });
+      setShowDownloadModal(false);
+    } catch (error) {
+      toast({
+        title: "Download Failed",
+        description: "Failed to download report",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleCreateShareLinkForTemplate = async () => {
+    try {
+      // Simulate creating share link
+      const newLink: ShareLink = {
+        id: Date.now().toString(),
+        name: `${selectedTemplateForAction?.name} - Shared`,
+        url: `https://novora.com/reports/share/${Date.now()}`,
+        createdAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+        isActive: true,
+        views: 0,
+        accessCount: 0
+      };
+      
+      setShareLinks(prev => [newLink, ...prev]);
+      
+      toast({
+        title: "Share Link Created",
+        description: `Share link created for ${selectedTemplateForAction?.name}`,
+      });
+      setShowShareLinkModal(false);
+    } catch (error) {
+      toast({
+        title: "Failed to Create Link",
+        description: "Failed to create share link",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleSendEmailToExecutives = async () => {
+    try {
+      // Simulate sending email
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Email Sent",
+        description: `Report sent to ${selectedExecutives.length} executive(s)`,
+      });
+      setShowEmailModal(false);
+      setSelectedExecutives([]);
+      setEmailSubject('');
+      setEmailMessage('');
+    } catch (error) {
+      toast({
+        title: "Email Failed",
+        description: "Failed to send email to executives",
+        variant: "destructive"
+      });
+    }
+  };
+
   const toggleExecutiveSelection = (executiveId: string) => {
     setSelectedExecutives(prev => 
       prev.includes(executiveId) 
@@ -538,15 +665,24 @@ const Reports = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-48">
-                            <DropdownMenuItem className="cursor-pointer">
+                            <DropdownMenuItem 
+                              onClick={() => handleDownloadLatest(template)}
+                              className="cursor-pointer"
+                            >
                               <Download className="mr-2 h-4 w-4" />
                               <span>Download Latest</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
+                            <DropdownMenuItem 
+                              onClick={() => handleCreateShareLinkAction(template)}
+                              className="cursor-pointer"
+                            >
                               <Share2 className="mr-2 h-4 w-4" />
                               <span>Create Share Link</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
+                            <DropdownMenuItem 
+                              onClick={() => handleEmailToExecutivesAction(template)}
+                              className="cursor-pointer"
+                            >
                               <Mail className="mr-2 h-4 w-4" />
                               <span>Email to Executives</span>
                             </DropdownMenuItem>
@@ -761,6 +897,260 @@ const Reports = () => {
             </Button>
           </CardContent>
         </Card>
+
+        {/* Download Latest Modal */}
+        <Dialog open={showDownloadModal} onOpenChange={setShowDownloadModal}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <FileDown className="w-6 h-6 text-blue-600" />
+                <span>Download {selectedTemplateForAction?.name}</span>
+              </DialogTitle>
+              <DialogDescription>
+                Choose the format and download the latest version of this report
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="font-semibold text-gray-900">Select Format</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center space-x-2 p-4 h-auto"
+                    onClick={() => handleDownloadReport('pdf')}
+                  >
+                    <FileText className="w-5 h-5 text-red-600" />
+                    <div className="text-left">
+                      <div className="font-semibold">PDF Report</div>
+                      <div className="text-sm text-gray-500">Professional format</div>
+                    </div>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center space-x-2 p-4 h-auto"
+                    onClick={() => handleDownloadReport('csv')}
+                  >
+                    <FileSpreadsheet className="w-5 h-5 text-green-600" />
+                    <div className="text-left">
+                      <div className="font-semibold">CSV Data</div>
+                      <div className="text-sm text-gray-500">Raw data export</div>
+                    </div>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center space-x-2 p-4 h-auto"
+                    onClick={() => handleDownloadReport('slides')}
+                  >
+                    <Presentation className="w-5 h-5 text-orange-600" />
+                    <div className="text-left">
+                      <div className="font-semibold">PowerPoint</div>
+                      <div className="text-sm text-gray-500">Presentation ready</div>
+                    </div>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center space-x-2 p-4 h-auto"
+                    onClick={() => handleDownloadReport('all')}
+                  >
+                    <DownloadCloud className="w-5 h-5 text-purple-600" />
+                    <div className="text-left">
+                      <div className="font-semibold">All Formats</div>
+                      <div className="text-sm text-gray-500">Complete package</div>
+                    </div>
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setShowDownloadModal(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Create Share Link Modal */}
+        <Dialog open={showShareLinkModal} onOpenChange={setShowShareLinkModal}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <Share className="w-6 h-6 text-purple-600" />
+                <span>Create Share Link for {selectedTemplateForAction?.name}</span>
+              </DialogTitle>
+              <DialogDescription>
+                Create a public share link for this report with customizable settings
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="font-semibold text-gray-900">Link Name</Label>
+                <Input 
+                  placeholder={`${selectedTemplateForAction?.name} - Shared Report`}
+                  className="hover:border-purple-300 transition-colors duration-200"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="font-semibold text-gray-900">Expiration</Label>
+                <Select defaultValue="30">
+                  <SelectTrigger className="hover:border-purple-300 transition-colors duration-200">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="7">7 days</SelectItem>
+                    <SelectItem value="30">30 days</SelectItem>
+                    <SelectItem value="90">90 days</SelectItem>
+                    <SelectItem value="never">Never expires</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="font-semibold text-gray-900">Access Settings</Label>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Switch defaultChecked />
+                    <Label>Require password</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch defaultChecked />
+                    <Label>Track views and downloads</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch />
+                    <Label>Allow comments</Label>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setShowShareLinkModal(false)}>
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleCreateShareLinkForTemplate}
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                >
+                  <Link className="w-4 h-4 mr-2" />
+                  Create Share Link
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Email to Executives Modal */}
+        <Dialog open={showEmailModal} onOpenChange={setShowEmailModal}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <MessageSquare className="w-6 h-6 text-orange-600" />
+                <span>Email {selectedTemplateForAction?.name} to Executives</span>
+              </DialogTitle>
+              <DialogDescription>
+                Send this report directly to board members and executives with custom messaging
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              {/* Executive Selection */}
+              <div className="space-y-4">
+                <Label className="font-semibold text-gray-900">Select Recipients</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {executiveContacts.map((executive) => (
+                    <div
+                      key={executive.id}
+                      className={`p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
+                        selectedExecutives.includes(executive.id)
+                          ? 'border-orange-500 bg-gradient-to-r from-orange-50 to-red-50 shadow-md'
+                          : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                      }`}
+                      onClick={() => toggleExecutiveSelection(executive.id)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-semibold text-gray-600">
+                              {executive.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">{executive.name}</div>
+                            <div className="text-sm text-gray-600">{executive.role} • {executive.department}</div>
+                            <div className="text-sm text-gray-500">{executive.email}</div>
+                          </div>
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          Last sent: {new Date(executive.lastSent).toLocaleDateString()}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Email Content */}
+              <div className="space-y-4">
+                <div>
+                  <Label className="font-semibold text-gray-900">Subject</Label>
+                  <Input
+                    placeholder={`${selectedTemplateForAction?.name} - Executive Report`}
+                    value={emailSubject}
+                    onChange={(e) => setEmailSubject(e.target.value)}
+                    className="hover:border-orange-300 transition-colors duration-200"
+                  />
+                </div>
+                <div>
+                  <Label className="font-semibold text-gray-900">Message</Label>
+                  <Textarea
+                    placeholder="Enter your message to executives..."
+                    value={emailMessage}
+                    onChange={(e) => setEmailMessage(e.target.value)}
+                    rows={4}
+                    className="hover:border-orange-300 transition-colors duration-200"
+                  />
+                </div>
+              </div>
+
+              {/* Report Options */}
+              <div className="space-y-4">
+                <Label className="font-semibold text-gray-900">Report Options</Label>
+                <div className="flex items-center space-x-8 p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    <Switch defaultChecked />
+                    <Label className="font-medium">Include Executive Summary</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch defaultChecked />
+                    <Label className="font-medium">Include Action Items</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch />
+                    <Label className="font-medium">Include Raw Data</Label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Send Button */}
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setShowEmailModal(false)}>
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleSendEmailToExecutives}
+                  disabled={selectedExecutives.length === 0 || !emailSubject.trim() || !emailMessage.trim()}
+                  className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700"
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  Send to {selectedExecutives.length} Executive(s)
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
