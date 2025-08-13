@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { CustomSlider } from "@/components/ui/custom-slider";
+import { QuestionImage } from "@/components/ui/question-image";
 import { useToast } from "@/hooks/use-toast";
 import {
   ArrowLeft,
@@ -53,6 +55,7 @@ interface Question {
     choices: string[];
   };
   allow_comments: boolean;
+  image?: string;
 }
 
 const SurveyResponse = () => {
@@ -198,6 +201,15 @@ const SurveyResponse = () => {
                 )}
               </div>
               
+              {/* Question Image */}
+              {question.image && (
+                <QuestionImage
+                  src={question.image}
+                  alt={`Illustration for: ${question.text}`}
+                  className="mt-4"
+                />
+              )}
+              
               {question.type === 'text' && (
                 <Input
                   placeholder="Enter your answer..."
@@ -257,22 +269,32 @@ const SurveyResponse = () => {
               )}
 
               {question.type === 'rating' && (
-                <div className="flex items-center space-x-2">
-                  {[1, 2, 3, 4, 5].map((rating) => (
-                    <Button
-                      key={rating}
-                      type="button"
-                      variant={currentValue === rating ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => handleInputChange(question.id, rating)}
-                      className="w-10 h-10 p-0"
-                    >
-                      <Star className="h-4 w-4" />
-                    </Button>
-                  ))}
-                  <span className="ml-2 text-sm text-gray-500">
-                    {currentValue ? `${currentValue}/5` : "Select rating"}
-                  </span>
+                <div className="space-y-4">
+                  <div className="flex justify-between text-sm text-gray-500">
+                    <span>Poor</span>
+                    <span>Average</span>
+                    <span>Excellent</span>
+                  </div>
+                  
+                  <CustomSlider
+                    value={currentValue ?? 5}
+                    onChange={(value) => handleInputChange(question.id, value)}
+                    min={0}
+                    max={10}
+                    className="w-full"
+                  />
+                  
+                  <div className="flex justify-between text-xs text-gray-400">
+                    <span>0 = Very Poor</span>
+                    <span>5 = Neutral</span>
+                    <span>10 = Excellent</span>
+                  </div>
+                  
+                  <div className="text-center">
+                    <span className="text-lg font-semibold text-blue-600">
+                      {currentValue ?? 5}/10
+                    </span>
+                  </div>
                 </div>
               )}
 

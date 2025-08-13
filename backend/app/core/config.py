@@ -1,7 +1,7 @@
 """
 Configuration settings for the FastAPI application
 """
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List, Optional
 import os
 
@@ -10,9 +10,27 @@ class Settings(BaseSettings):
     APP_NAME: str = "Novora Survey Platform"
     VERSION: str = "1.0.0"
     DEBUG: bool = True
+    ENVIRONMENT: str = "development"  # development, staging, production
     
-    # Database - Using SQLite for development
+    # Database Configuration
+    # Development: SQLite, Production: PostgreSQL
     DATABASE_URL: str = "sqlite:///./novora.db"
+    POSTGRES_HOST: str = "localhost"
+    POSTGRES_PORT: int = 5432
+    POSTGRES_DB: str = "novora"
+    POSTGRES_USER: str = "novora_user"
+    POSTGRES_PASSWORD: str = "novora_password"
+    
+    # Redis Configuration
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
+    REDIS_DB: int = 0
+    REDIS_PASSWORD: Optional[str] = None
+    REDIS_URL: str = "redis://localhost:6379/0"
+    
+    # Celery Configuration
+    CELERY_BROKER_URL: str = "redis://localhost:6379/1"
+    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/2"
     
     # Security
     SECRET_KEY: str = "your-super-secret-key-change-this-in-production-12345"
@@ -30,9 +48,6 @@ class Settings(BaseSettings):
         "*"  # Allow all origins in development
     ]
     
-    # Redis
-    REDIS_URL: str = "redis://localhost:6379"
-    
     # Email
     SMTP_SERVER: Optional[str] = None
     SMTP_PORT: int = 587
@@ -43,8 +58,50 @@ class Settings(BaseSettings):
     MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
     UPLOAD_DIR: str = "uploads"
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    # Cache Configuration
+    CACHE_TTL: int = 3600  # 1 hour default cache TTL
+    CACHE_PREFIX: str = "novora"
+    
+    # Auto-Pilot Configuration
+    AUTO_PILOT_CHECK_INTERVAL: int = 300  # 5 minutes
+    AUTO_PILOT_MAX_RETRIES: int = 3
+    
+    # Logging Configuration
+    LOG_LEVEL: str = "INFO"
+    LOG_FILE: str = "logs/novora.log"
+    
+    # Performance Configuration
+    WORKER_CONCURRENCY: int = 4
+    MAX_CONNECTIONS: int = 100
+    
+    @property
+    def is_production(self) -> bool:
+        """Check if running in production environment"""
+        return self.ENVIRONMENT.lower() == "production"
+    
+    @property
+    def is_development(self) -> bool:
+        """Check if running in development environment"""
+        return self.ENVIRONMENT.lower() == "development"
+    
+    def get_database_url(self) -> str:
+        """Get database URL based on environment"""
+        if self.is_production:
+            # Production: Use PostgreSQL
+            return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        else:
+            # Development: Use SQLite
+            return self.DATABASE_URL
+    
+    def get_redis_url(self) -> str:
+        """Get Redis URL with authentication if provided"""
+        if self.REDIS_PASSWORD:
+            return f"redis://:{self.REDIS_PASSWORD}@{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
+        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
+    
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=True
+    )
 
 settings = Settings()

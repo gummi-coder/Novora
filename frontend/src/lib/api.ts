@@ -1,6 +1,5 @@
 import { Survey } from '@/types/survey';
-
-const API_BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/v1` : 'http://127.0.0.1:8000/api/v1';
+import { apiConfig, log, debug, isFeatureEnabled } from '@/config/environment';
 
 // Type definitions for API responses
 interface CreateSurveyData {
@@ -52,118 +51,162 @@ class ApiError extends Error {
   }
 }
 
-async function handleResponse<T>(response: Response): Promise<T> {
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'An error occurred' }));
-    throw new ApiError(response.status, error.message || 'An error occurred');
+// Enhanced API client with retry logic and better error handling
+class ApiClient {
+  private baseUrl: string;
+  private timeout: number;
+  private retryAttempts: number;
+
+  constructor() {
+    this.baseUrl = apiConfig.fullUrl;
+    this.timeout = apiConfig.timeout;
+    this.retryAttempts = apiConfig.retryAttempts;
+    
+    debug(`API Client initialized with base URL: ${this.baseUrl}`);
   }
-  return response.json();
-}
 
-// Helper function to get auth headers
-function getAuthHeaders(): HeadersInit {
-  const token = localStorage.getItem('token');
-  return {
-    'Content-Type': 'application/json',
-    ...(token && { 'Authorization': `Bearer ${token}` })
-  };
-}
+  private async makeRequest<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    retryCount = 0
+  ): Promise<T> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
-export const api = {
-  healthCheck: async () => {
-    const response = await fetch(`${API_BASE}/health`);
-    return handleResponse<{ status: string }>(response);
-  },
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'An error occurred' }));
+        throw new ApiError(response.status, error.message || 'An error occurred');
+      }
+
+      const data = await response.json();
+      debug(`API ${options.method || 'GET'} ${endpoint} - Success`);
+      return data;
+
+    } catch (error) {
+      clearTimeout(timeoutId);
+      
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
+      // Retry logic for network errors
+      if (retryCount < this.retryAttempts && this.shouldRetry(error)) {
+        log('warn', `API request failed, retrying (${retryCount + 1}/${this.retryAttempts}): ${endpoint}`);
+        await this.delay(Math.pow(2, retryCount) * 1000); // Exponential backoff
+        return this.makeRequest<T>(endpoint, options, retryCount + 1);
+      }
+
+      log('error', `API request failed after ${retryCount + 1} attempts: ${endpoint}`, error);
+      throw new ApiError(0, `Request failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private shouldRetry(error: any): boolean {
+    // Retry on network errors, timeouts, and 5xx server errors
+    return (
+      error.name === 'AbortError' || // Timeout
+      error.name === 'TypeError' || // Network error
+      (error instanceof ApiError && error.status >= 500) // Server error
+    );
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Helper function to get auth headers
+  private getAuthHeaders(): HeadersInit {
+    const token = localStorage.getItem('token');
+    return {
+      'Content-Type': 'application/json',
+      ...(token && { 'Authorization': `Bearer ${token}` })
+    };
+  }
+
+  // Health check
+  async healthCheck(): Promise<{ status: string }> {
+    return this.makeRequest<{ status: string }>('/health');
+  }
 
   // Survey endpoints
-  getSurveys: async () => {
-    const response = await fetch(`${API_BASE}/surveys`, {
-      headers: getAuthHeaders()
+  async getSurveys(): Promise<Survey[]> {
+    return this.makeRequest<Survey[]>('/surveys', {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<Survey[]>(response);
-  },
+  }
 
-  getSurvey: async (id: string) => {
-    const response = await fetch(`${API_BASE}/surveys/${id}`, {
-      headers: getAuthHeaders()
+  async getSurvey(id: string): Promise<Survey> {
+    return this.makeRequest<Survey>(`/surveys/${id}`, {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<Survey>(response);
-  },
+  }
 
-  createSurvey: async (data: CreateSurveyData) => {
-    const response = await fetch(`${API_BASE}/surveys`, {
+  async createSurvey(data: CreateSurveyData): Promise<Survey> {
+    return this.makeRequest<Survey>('/surveys', {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
-    return handleResponse<Survey>(response);
-  },
+  }
 
-  updateSurvey: async (id: string, data: Partial<CreateSurveyData>) => {
-    const response = await fetch(`${API_BASE}/surveys/${id}`, {
+  async updateSurvey(id: string, data: Partial<CreateSurveyData>): Promise<Survey> {
+    return this.makeRequest<Survey>(`/surveys/${id}`, {
       method: 'PATCH',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
-    return handleResponse<Survey>(response);
-  },
+  }
 
-  deleteSurvey: async (id: string) => {
-    const response = await fetch(`${API_BASE}/surveys/${id}`, {
+  async deleteSurvey(id: string): Promise<void> {
+    return this.makeRequest<void>(`/surveys/${id}`, {
       method: 'DELETE',
-      headers: getAuthHeaders()
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<void>(response);
-  },
+  }
 
   // Auth endpoints
-  login: async (email: string, password: string) => {
+  async login(email: string, password: string): Promise<{ access_token: string; token_type: string }> {
     const formData = new URLSearchParams();
     formData.append('username', email);
     formData.append('password', password);
     
-    const response = await fetch(`${API_BASE}/auth/login`, {
+    return this.makeRequest<{ access_token: string; token_type: string }>('/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: formData,
     });
-    return handleResponse<{ access_token: string; token_type: string }>(response);
-  },
+  }
 
-  register: async (email: string, password: string, name: string) => {
-    const response = await fetch(`${API_BASE}/auth/register`, {
+  async register(email: string, password: string, name: string): Promise<{ id: string; email: string; name: string }> {
+    return this.makeRequest<{ id: string; email: string; name: string }>('/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email, password, company_name: name }),
     });
-    return handleResponse<{ id: string; email: string; name: string }>(response);
-  },
+  }
 
   // User endpoints
-  getCurrentUser: async () => {
-    const response = await fetch(`${API_BASE}/users/me`, {
-      headers: getAuthHeaders()
+  async getCurrentUser(): Promise<{ id: string; email: string; name: string }> {
+    return this.makeRequest<{ id: string; email: string; name: string }>('/users/me', {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{ id: string; email: string; name: string }>(response);
-  },
+  }
 
   // Admin - Users
-  getAdminUsers: async (params?: { skip?: number; limit?: number; role?: string; is_active?: boolean; search?: string; }) => {
-    const sp = new URLSearchParams();
-    if (params?.skip != null) sp.append('skip', String(params.skip));
-    if (params?.limit != null) sp.append('limit', String(params.limit));
-    if (params?.role) sp.append('role', params.role);
-    if (params?.is_active != null) sp.append('is_active', String(params.is_active));
-    if (params?.search) sp.append('search', params.search);
-    const qs = sp.toString();
-    const response = await fetch(`${API_BASE}/admin/users${qs ? `?${qs}` : ''}`, {
-      headers: getAuthHeaders()
-    });
-    return handleResponse<Array<{
+  async getAdminUsers(params?: { skip?: number; limit?: number; role?: string; is_active?: boolean; search?: string; }): Promise<Array<{
       id: number;
       email: string;
       role: string;
@@ -173,121 +216,146 @@ export const api = {
       created_at: string;
       last_login?: string;
       failed_login_attempts: number;
-    }>>(response);
-  },
+    }>> {
+    const sp = new URLSearchParams();
+    if (params?.skip != null) sp.append('skip', String(params.skip));
+    if (params?.limit != null) sp.append('limit', String(params.limit));
+    if (params?.role) sp.append('role', params.role);
+    if (params?.is_active != null) sp.append('is_active', String(params.is_active));
+    if (params?.search) sp.append('search', params.search);
+    const qs = sp.toString();
+    return this.makeRequest<Array<{
+      id: number;
+      email: string;
+      role: string;
+      company_name?: string;
+      is_active: boolean;
+      is_email_verified: boolean;
+      created_at: string;
+      last_login?: string;
+      failed_login_attempts: number;
+    }>>(`/admin/users${qs ? `?${qs}` : ''}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
 
-  updateAdminUser: async (userId: number, updates: Partial<{ email: string; role: string; company_name: string; is_active: boolean; is_email_verified: boolean; }>) => {
-    const response = await fetch(`${API_BASE}/admin/users/${userId}`, {
+  async updateAdminUser(userId: number, updates: Partial<{ email: string; role: string; company_name: string; is_active: boolean; is_email_verified: boolean; }>): Promise<any> {
+    return this.makeRequest<any>(`/admin/users/${userId}`, {
       method: 'PUT',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(updates)
     });
-    return handleResponse<any>(response);
-  },
+  }
 
-  deactivateAdminUser: async (userId: number) => {
-    const response = await fetch(`${API_BASE}/admin/users/${userId}`, {
+  async deactivateAdminUser(userId: number): Promise<{ message: string }> {
+    return this.makeRequest<{ message: string }>(`/admin/users/${userId}`, {
       method: 'DELETE',
-      headers: getAuthHeaders()
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{ message: string }>(response);
-  },
+  }
 
-  activateAdminUser: async (userId: number) => {
-    const response = await fetch(`${API_BASE}/admin/users/${userId}/activate`, {
+  async activateAdminUser(userId: number): Promise<{ message: string }> {
+    return this.makeRequest<{ message: string }>(`/admin/users/${userId}/activate`, {
       method: 'POST',
-      headers: getAuthHeaders()
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{ message: string }>(response);
-  },
+  }
 
-  resendVerification: async (email: string) => {
+  async resendVerification(email: string): Promise<{ message: string }> {
     const sp = new URLSearchParams();
     sp.append('email', email);
-    const response = await fetch(`${API_BASE}/auth/resend-verification?${sp.toString()}`, {
+    return this.makeRequest<{ message: string }>(`/auth/resend-verification?${sp.toString()}`, {
       method: 'POST',
-      headers: getAuthHeaders()
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{ message: string }>(response);
-  },
+  }
 
   // Analytics endpoints
-  getSurveyAnalytics: async (surveyId: string) => {
-    const response = await fetch(`${API_BASE}/analytics/surveys/${surveyId}`, {
-      headers: getAuthHeaders()
+  async getSurveyAnalytics(surveyId: string): Promise<SurveyAnalytics> {
+    return this.makeRequest<SurveyAnalytics>(`/analytics/surveys/${surveyId}`, {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<SurveyAnalytics>(response);
-  },
+  }
 
-  getAdminDashboardStats: async () => {
-    const response = await fetch(`${API_BASE}/analytics/admin/dashboard`, {
-      headers: getAuthHeaders()
+  async getAdminDashboardStats(): Promise<AdminDashboardStats> {
+    return this.makeRequest<AdminDashboardStats>('/analytics/admin/dashboard', {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<AdminDashboardStats>(response);
-  },
+  }
 
-  getSurveyList: async (page: number = 1, pageSize: number = 10) => {
-    const response = await fetch(
-      `${API_BASE}/analytics/surveys?page=${page}&pageSize=${pageSize}`,
-      { headers: getAuthHeaders() }
+  async getSurveyList(page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<SurveyAnalytics>> {
+    return this.makeRequest<PaginatedResponse<SurveyAnalytics>>(
+      `/analytics/surveys?page=${page}&pageSize=${pageSize}`,
+      { headers: this.getAuthHeaders() }
     );
-    return handleResponse<PaginatedResponse<SurveyAnalytics>>(response);
-  },
+  }
 
   // Dashboard endpoints
-  getDashboardStats: async () => {
-    const response = await fetch(`${API_BASE}/analytics/stats`, {
-      headers: getAuthHeaders()
-    });
-    return handleResponse<{
+  async getDashboardStats(): Promise<{
       totalSurveys: number;
       activeSurveys: number;
       totalResponses: number;
       responseRate: number;
-    }>(response);
-  },
-
-  getPulseOverview: async () => {
-    const response = await fetch(`${API_BASE}/analytics/pulse-overview`, {
-      headers: getAuthHeaders()
+    }> {
+    return this.makeRequest<{
+      totalSurveys: number;
+      activeSurveys: number;
+      totalResponses: number;
+      responseRate: number;
+    }>('/analytics/stats', {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{
+  }
+
+  async getPulseOverview(): Promise<{
       currentScore: number;
       previousScore: number;
       trend: Array<{ month: string; score: number }>;
       alerts: Array<{ type: string; message: string; severity: string }>;
-    }>(response);
-  },
-
-  getDashboardAlerts: async () => {
-    const response = await fetch(`${API_BASE}/analytics/dashboard-alerts`, {
-      headers: getAuthHeaders()
+    }> {
+    return this.makeRequest<{
+      currentScore: number;
+      previousScore: number;
+      trend: Array<{ month: string; score: number }>;
+      alerts: Array<{ type: string; message: string; severity: string }>;
+    }>('/analytics/pulse-overview', {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<Array<{
+  }
+
+  async getDashboardAlerts(): Promise<Array<{
       type: string;
       message: string;
       severity: string;
       createdAt: string;
-    }>>(response);
-  },
-
-  getRecentActivity: async () => {
-    const response = await fetch(`${API_BASE}/analytics/recent-activity`, {
-      headers: getAuthHeaders()
+    }>> {
+    return this.makeRequest<Array<{
+      type: string;
+      message: string;
+      severity: string;
+      createdAt: string;
+    }>>('/analytics/dashboard-alerts', {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<Array<{
+  }
+
+  async getRecentActivity(): Promise<Array<{
       id: string;
       type: string;
       description: string;
       createdAt: string;
-    }>>(response);
-  },
-
-  getTeamBreakdown: async () => {
-    const response = await fetch(`${API_BASE}/analytics/team-breakdown`, {
-      headers: getAuthHeaders()
+    }>> {
+    return this.makeRequest<Array<{
+      id: string;
+      type: string;
+      description: string;
+      createdAt: string;
+    }>>('/analytics/recent-activity', {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<Array<{
+  }
+
+  async getTeamBreakdown(): Promise<Array<{
       id: string;
       name: string;
       avgScore: number;
@@ -296,27 +364,28 @@ export const api = {
       comments: string[];
       sentiment: string;
       alerts: string[];
-    }>>(response);
-  },
+    }>> {
+    return this.makeRequest<Array<{
+      id: string;
+      name: string;
+      avgScore: number;
+      scoreChange: number;
+      responseCount: number;
+      comments: string[];
+      sentiment: string;
+      alerts: string[];
+    }>>('/analytics/team-breakdown', {
+      headers: this.getAuthHeaders()
+    });
+  }
 
-  getAnonymousComments: async (filters?: {
+  async getAnonymousComments(filters?: {
     team?: string;
     sentiment?: string;
     startDate?: string;
     endDate?: string;
     search?: string;
-  }) => {
-    const params = new URLSearchParams();
-    if (filters?.team) params.append('team', filters.team);
-    if (filters?.sentiment) params.append('sentiment', filters.sentiment);
-    if (filters?.startDate) params.append('start_date', filters.startDate);
-    if (filters?.endDate) params.append('end_date', filters.endDate);
-    if (filters?.search) params.append('search', filters.search);
-
-    const response = await fetch(`${API_BASE}/analytics/anonymous-comments?${params}`, {
-      headers: getAuthHeaders()
-    });
-    return handleResponse<Array<{
+  }): Promise<Array<{
       id: string;
       text: string;
       team: string;
@@ -325,78 +394,102 @@ export const api = {
       isPinned: boolean;
       isFlagged: boolean;
       tags: string[];
-    }>>(response);
-  },
+    }>> {
+    const params = new URLSearchParams();
+    if (filters?.team) params.append('team', filters.team);
+    if (filters?.sentiment) params.append('sentiment', filters.sentiment);
+    if (filters?.startDate) params.append('start_date', filters.startDate);
+    if (filters?.endDate) params.append('end_date', filters.endDate);
+    if (filters?.search) params.append('search', filters.search);
 
-  pinComment: async (commentId: string) => {
-    const response = await fetch(`${API_BASE}/analytics/anonymous-comments/${commentId}/pin`, {
-      method: 'POST',
-      headers: getAuthHeaders()
+    return this.makeRequest<Array<{
+      id: string;
+      text: string;
+      team: string;
+      sentiment: string;
+      createdAt: string;
+      isPinned: boolean;
+      isFlagged: boolean;
+      tags: string[];
+    }>>(`/analytics/anonymous-comments?${params.toString()}`, {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{ message: string }>(response);
-  },
+  }
 
-  flagComment: async (commentId: string) => {
-    const response = await fetch(`${API_BASE}/analytics/anonymous-comments/${commentId}/flag`, {
+  async pinComment(commentId: string): Promise<{ message: string }> {
+    return this.makeRequest<{ message: string }>(`/analytics/anonymous-comments/${commentId}/pin`, {
       method: 'POST',
-      headers: getAuthHeaders()
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{ message: string }>(response);
-  },
+  }
+
+  async flagComment(commentId: string): Promise<{ message: string }> {
+    return this.makeRequest<{ message: string }>(`/analytics/anonymous-comments/${commentId}/flag`, {
+      method: 'POST',
+      headers: this.getAuthHeaders()
+    });
+  }
 
   // Quick Actions endpoints
-  exportDashboardPDF: async () => {
-    const response = await fetch(`${API_BASE}/analytics/export-pdf`, {
-      method: 'POST',
-      headers: getAuthHeaders()
-    });
-    return handleResponse<{
+  async exportDashboardPDF(): Promise<{
       message: string;
       download_url: string;
       expires_at: string;
-    }>(response);
-  },
-
-  generateShareableLink: async () => {
-    const response = await fetch(`${API_BASE}/analytics/generate-shareable-link`, {
+    }> {
+    return this.makeRequest<{
+      message: string;
+      download_url: string;
+      expires_at: string;
+    }>('/analytics/export-pdf', {
       method: 'POST',
-      headers: getAuthHeaders()
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{
+  }
+
+  async generateShareableLink(): Promise<{
       message: string;
       share_url: string;
       expires_at: string;
       access_level: string;
-    }>(response);
-  },
+    }> {
+    return this.makeRequest<{
+      message: string;
+      share_url: string;
+      expires_at: string;
+      access_level: string;
+    }>('/analytics/generate-shareable-link', {
+      method: 'POST',
+      headers: this.getAuthHeaders()
+    });
+  }
 
 
 
-  scheduleSurveyDelivery: async (scheduleData: {
+  async scheduleSurveyDelivery(scheduleData: {
     surveyId: string;
     deliveryDate: string;
     reminderEnabled: boolean;
     reminderDays: number;
-  }) => {
-    const response = await fetch(`${API_BASE}/analytics/surveys/schedule`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(scheduleData)
-    });
-    return handleResponse<{
+  }): Promise<{
       message: string;
       delivery_date: string;
       reminder_enabled: boolean;
       schedule_id: string;
-    }>(response);
-  },
+    }> {
+    return this.makeRequest<{
+      message: string;
+      delivery_date: string;
+      reminder_enabled: boolean;
+      schedule_id: string;
+    }>('/analytics/surveys/schedule', {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(scheduleData)
+    });
+  }
 
   // Advanced Capabilities endpoints
-  getSurveyBranchingLogic: async (surveyId: string) => {
-    const response = await fetch(`${API_BASE}/analytics/survey-logic/branching?survey_id=${surveyId}`, {
-      headers: getAuthHeaders()
-    });
-    return handleResponse<{
+  async getSurveyBranchingLogic(surveyId: string): Promise<{
       survey_id: string;
       branching_rules: Array<{
         question_id: string;
@@ -404,115 +497,111 @@ export const api = {
         next_question: string;
         skip_questions: string[];
       }>;
-    }>(response);
-  },
-
-  updateSurveyBranchingLogic: async (surveyId: string, branchingData: any) => {
-    const response = await fetch(`${API_BASE}/analytics/survey-logic/branching`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ survey_id: surveyId, ...branchingData })
+    }> {
+    return this.makeRequest<{
+      survey_id: string;
+      branching_rules: Array<{
+        question_id: string;
+        condition: string;
+        next_question: string;
+        skip_questions: string[];
+      }>;
+    }>(`/analytics/survey-logic/branching?survey_id=${surveyId}`, {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{
+  }
+
+  async updateSurveyBranchingLogic(surveyId: string, branchingData: any): Promise<{
       message: string;
       survey_id: string;
       rules_count: number;
-    }>(response);
-  },
+    }> {
+    return this.makeRequest<{
+      message: string;
+      survey_id: string;
+      rules_count: number;
+    }>(`/analytics/survey-logic/branching`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ survey_id: surveyId, ...branchingData })
+    });
+  }
 
   // Team Usage Snapshot for Owner Dashboard
-  getTeamUsageSnapshot: async () => {
-    const response = await fetch(`${API_BASE}/analytics/team-usage-snapshot`, {
-      headers: getAuthHeaders(),
+  async getTeamUsageSnapshot(): Promise<any> {
+    return this.makeRequest<any>('/analytics/team-usage-snapshot', {
+      headers: this.getAuthHeaders(),
     });
-    if (!response.ok) throw new Error('Failed to fetch team usage snapshot');
-    return response.json();
-  },
+  }
 
   // Survey Activity Log for Owner Dashboard
-  getSurveyActivityLog: async () => {
-    const response = await fetch(`${API_BASE}/analytics/survey-activity-log`, {
-      headers: getAuthHeaders(),
+  async getSurveyActivityLog(): Promise<any> {
+    return this.makeRequest<any>('/analytics/survey-activity-log', {
+      headers: this.getAuthHeaders(),
     });
-    if (!response.ok) throw new Error('Failed to fetch survey activity log');
-    return response.json();
-  },
+  }
 
-  updateScoreThreshold: async (threshold: any) => {
-    const response = await fetch(`${API_BASE}/analytics/score-threshold`, {
+  async updateScoreThreshold(threshold: any): Promise<any> {
+    return this.makeRequest<any>('/analytics/score-threshold', {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(threshold),
     });
-    if (!response.ok) throw new Error('Failed to update score threshold');
-    return response.json();
-  },
+  }
 
-  updateCommentTags: async (tags: any) => {
-    const response = await fetch(`${API_BASE}/analytics/comment-tags`, {
+  async updateCommentTags(tags: any): Promise<any> {
+    return this.makeRequest<any>('/analytics/comment-tags', {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(tags),
     });
-    if (!response.ok) throw new Error('Failed to update comment tags');
-    return response.json();
-  },
+  }
 
   // Plan & Billing Overview for Owner Dashboard
-  getPlanBillingOverview: async () => {
-    const response = await fetch(`${API_BASE}/analytics/plan-billing-overview`, {
-      headers: getAuthHeaders(),
+  async getPlanBillingOverview(): Promise<any> {
+    return this.makeRequest<any>('/analytics/plan-billing-overview', {
+      headers: this.getAuthHeaders(),
     });
-    if (!response.ok) throw new Error('Failed to fetch plan billing overview');
-    return response.json();
-  },
+  }
 
   // Support & Risk Flags for Owner Dashboard
-  getSupportRiskFlags: async () => {
-    const response = await fetch(`${API_BASE}/analytics/support-risk-flags`, {
-      headers: getAuthHeaders(),
+  async getSupportRiskFlags(): Promise<any> {
+    return this.makeRequest<any>('/analytics/support-risk-flags', {
+      headers: this.getAuthHeaders(),
     });
-    if (!response.ok) throw new Error('Failed to fetch support risk flags');
-    return response.json();
-  },
+  }
 
-  toggleTeamWatch: async (teamId: string, isWatched: boolean) => {
-    const response = await fetch(`${API_BASE}/analytics/teams/${teamId}/watch`, {
+  async toggleTeamWatch(teamId: string, isWatched: boolean): Promise<any> {
+    return this.makeRequest<any>(`/analytics/teams/${teamId}/watch`, {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
       body: JSON.stringify({ watched: isWatched }),
     });
-    if (!response.ok) throw new Error('Failed to toggle team watch status');
-    return response.json();
-  },
+  }
 
   // Anonymous Suggestion Box
-  submitSuggestion: async (suggestionData: {
+  async submitSuggestion(suggestionData: {
     title: string;
     description: string;
     category: string;
     priority: 'low' | 'medium' | 'high';
-  }) => {
-    const response = await fetch(`${API_BASE}/suggestions`, {
+  }): Promise<any> {
+    return this.makeRequest<any>('/suggestions', {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(suggestionData),
     });
-    if (!response.ok) throw new Error('Failed to submit suggestion');
-    return response.json();
-  },
+  }
 
-  voteSuggestion: async (suggestionId: string) => {
-    const response = await fetch(`${API_BASE}/suggestions/${suggestionId}/vote`, {
+  async voteSuggestion(suggestionId: string): Promise<any> {
+    return this.makeRequest<any>('/suggestions/${suggestionId}/vote', {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
     });
-    if (!response.ok) throw new Error('Failed to vote on suggestion');
-    return response.json();
-  },
+  }
 
   // Goal Tracking Dashboard
-  createGoal: async (goalData: {
+  async createGoal(goalData: {
     title: string;
     description: string;
     category: string;
@@ -520,17 +609,15 @@ export const api = {
     unit: string;
     deadline: string;
     teamId?: string;
-  }) => {
-    const response = await fetch(`${API_BASE}/goals`, {
+  }): Promise<any> {
+    return this.makeRequest<any>('/goals', {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(goalData),
     });
-    if (!response.ok) throw new Error('Failed to create goal');
-    return response.json();
-  },
+  }
 
-  updateGoal: async (goalId: string, goalData: {
+  async updateGoal(goalId: string, goalData: {
     title: string;
     description: string;
     category: string;
@@ -538,55 +625,43 @@ export const api = {
     unit: string;
     deadline: string;
     teamId?: string;
-  }) => {
-    const response = await fetch(`${API_BASE}/goals/${goalId}`, {
+  }): Promise<any> {
+    return this.makeRequest<any>('/goals/${goalId}', {
       method: 'PUT',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(goalData),
     });
-    if (!response.ok) throw new Error('Failed to update goal');
-    return response.json();
-  },
+  }
 
-  deleteGoal: async (goalId: string) => {
-    const response = await fetch(`${API_BASE}/goals/${goalId}`, {
+  async deleteGoal(goalId: string): Promise<any> {
+    return this.makeRequest<any>('/goals/${goalId}', {
       method: 'DELETE',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
     });
-    if (!response.ok) throw new Error('Failed to delete goal');
-    return response.json();
-  },
+  }
 
   // Predictive Trend Forecasting
-  refreshPredictions: async (params: {
+  async refreshPredictions(params: {
     timeframe: string;
     metric: string;
-  }) => {
-    const response = await fetch(`${API_BASE}/predictions/refresh?timeframe=${params.timeframe}&metric=${params.metric}`, {
+  }): Promise<any> {
+    return this.makeRequest<any>(`/predictions/refresh?timeframe=${params.timeframe}&metric=${params.metric}`, {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
     });
-    if (!response.ok) throw new Error('Failed to refresh predictions');
-    return response.json();
-  },
+  }
 
-  exportPredictionReport: async (params: {
+  async exportPredictionReport(params: {
     timeframe: string;
     metric: string;
-  }) => {
-    const response = await fetch(`${API_BASE}/predictions/export?timeframe=${params.timeframe}&metric=${params.metric}`, {
+  }): Promise<any> {
+    return this.makeRequest<any>(`/predictions/export?timeframe=${params.timeframe}&metric=${params.metric}`, {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: this.getAuthHeaders(),
     });
-    if (!response.ok) throw new Error('Failed to export prediction report');
-    return response.json();
-  },
+  }
 
-  getDepartmentHierarchy: async () => {
-    const response = await fetch(`${API_BASE}/analytics/department-hierarchy`, {
-      headers: getAuthHeaders()
-    });
-    return handleResponse<{
+  async getDepartmentHierarchy(): Promise<{
       departments: Array<{
         id: string;
         name: string;
@@ -599,26 +674,40 @@ export const api = {
         }>;
         permissions: string[];
       }>;
-    }>(response);
-  },
-
-  updateDepartmentHierarchy: async (hierarchyData: any) => {
-    const response = await fetch(`${API_BASE}/analytics/department-hierarchy`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(hierarchyData)
+    }> {
+    return this.makeRequest<{
+      departments: Array<{
+        id: string;
+        name: string;
+        level: number;
+        children: Array<{
+          id: string;
+          name: string;
+          level: number;
+          permissions: string[];
+        }>;
+        permissions: string[];
+      }>;
+    }>('/analytics/department-hierarchy', {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{
+  }
+
+  async updateDepartmentHierarchy(hierarchyData: any): Promise<{
       message: string;
       departments_count: number;
-    }>(response);
-  },
-
-  getPermissions: async () => {
-    const response = await fetch(`${API_BASE}/analytics/permissions`, {
-      headers: getAuthHeaders()
+    }> {
+    return this.makeRequest<{
+      message: string;
+      departments_count: number;
+    }>(`/analytics/department-hierarchy`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(hierarchyData)
     });
-    return handleResponse<{
+  }
+
+  async getPermissions(): Promise<{
       permissions: Array<{
         id: string;
         name: string;
@@ -632,26 +721,41 @@ export const api = {
         permissions: string[];
         scope: string;
       }>;
-    }>(response);
-  },
-
-  updatePermissions: async (permissionsData: any) => {
-    const response = await fetch(`${API_BASE}/analytics/permissions`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(permissionsData)
+    }> {
+    return this.makeRequest<{
+      permissions: Array<{
+        id: string;
+        name: string;
+        description: string;
+        scope: string;
+        enabled: boolean;
+      }>;
+      roles: Array<{
+        id: string;
+        name: string;
+        permissions: string[];
+        scope: string;
+      }>;
+    }>('/analytics/permissions', {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{
+  }
+
+  async updatePermissions(permissionsData: any): Promise<{
       message: string;
       permissions_count: number;
-    }>(response);
-  },
-
-  getBrandingConfig: async () => {
-    const response = await fetch(`${API_BASE}/analytics/branding`, {
-      headers: getAuthHeaders()
+    }> {
+    return this.makeRequest<{
+      message: string;
+      permissions_count: number;
+    }>(`/analytics/permissions`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(permissionsData)
     });
-    return handleResponse<{
+  }
+
+  async getBrandingConfig(): Promise<{
       logo: string;
       primary_color: string;
       secondary_color: string;
@@ -659,53 +763,71 @@ export const api = {
       survey_theme: string;
       custom_css: string;
       company_name: string;
-    }>(response);
-  },
-
-  updateBrandingConfig: async (brandingData: any) => {
-    const response = await fetch(`${API_BASE}/analytics/branding`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(brandingData)
+    }> {
+    return this.makeRequest<{
+      logo: string;
+      primary_color: string;
+      secondary_color: string;
+      email_domain: string;
+      survey_theme: string;
+      custom_css: string;
+      company_name: string;
+    }>('/analytics/branding', {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{
+  }
+
+  async updateBrandingConfig(brandingData: any): Promise<{
       message: string;
       logo_url: string;
       theme: string;
-    }>(response);
-  },
-
-  getSSOConfig: async () => {
-    const response = await fetch(`${API_BASE}/analytics/sso/config`, {
-      headers: getAuthHeaders()
+    }> {
+    return this.makeRequest<{
+      message: string;
+      logo_url: string;
+      theme: string;
+    }>(`/analytics/branding`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(brandingData)
     });
-    return handleResponse<{
+  }
+
+  async getSSOConfig(): Promise<{
       enabled: boolean;
       provider: string;
       domain: string;
       metadata_url: string;
       entity_id: string;
-    }>(response);
-  },
-
-  updateSSOConfig: async (ssoData: any) => {
-    const response = await fetch(`${API_BASE}/analytics/sso/config`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(ssoData)
+    }> {
+    return this.makeRequest<{
+      enabled: boolean;
+      provider: string;
+      domain: string;
+      metadata_url: string;
+      entity_id: string;
+    }>(`/analytics/sso/config`, {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{
+  }
+
+  async updateSSOConfig(ssoData: any): Promise<{
       message: string;
       provider: string;
       enabled: boolean;
-    }>(response);
-  },
-
-  getAPIKeys: async () => {
-    const response = await fetch(`${API_BASE}/analytics/api/keys`, {
-      headers: getAuthHeaders()
+    }> {
+    return this.makeRequest<{
+      message: string;
+      provider: string;
+      enabled: boolean;
+    }>(`/analytics/sso/config`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(ssoData)
     });
-    return handleResponse<{
+  }
+
+  async getAPIKeys(): Promise<{
       api_keys: Array<{
         id: string;
         name: string;
@@ -715,28 +837,41 @@ export const api = {
         permissions: string[];
       }>;
       webhook_urls: string[];
-    }>(response);
-  },
-
-  createAPIKey: async (keyData: any) => {
-    const response = await fetch(`${API_BASE}/analytics/api/keys`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(keyData)
+    }> {
+    return this.makeRequest<{
+      api_keys: Array<{
+        id: string;
+        name: string;
+        key: string;
+        created_at: string;
+        last_used: string;
+        permissions: string[];
+      }>;
+      webhook_urls: string[];
+    }>(`/analytics/api/keys`, {
+      headers: this.getAuthHeaders()
     });
-    return handleResponse<{
+  }
+
+  async createAPIKey(keyData: any): Promise<{
       message: string;
       key: string;
       name: string;
       permissions: string[];
-    }>(response);
-  },
-
-  getSupportContact: async () => {
-    const response = await fetch(`${API_BASE}/analytics/support/contact`, {
-      headers: getAuthHeaders()
+    }> {
+    return this.makeRequest<{
+      message: string;
+      key: string;
+      name: string;
+      permissions: string[];
+    }>(`/analytics/api/keys`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(keyData)
     });
-    return handleResponse<{
+  }
+
+  async getSupportContact(): Promise<{
       email: string;
       phone: string;
       live_chat: boolean;
@@ -748,6 +883,23 @@ export const api = {
       };
       priority_support: boolean;
       response_time: string;
-    }>(response);
-  },
-}; 
+    }> {
+    return this.makeRequest<{
+      email: string;
+      phone: string;
+      live_chat: boolean;
+      dedicated_manager: {
+        name: string;
+        email: string;
+        phone: string;
+        available_hours: string;
+      };
+      priority_support: boolean;
+      response_time: string;
+    }>(`/analytics/support/contact`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+}
+
+export const api = new ApiClient(); 

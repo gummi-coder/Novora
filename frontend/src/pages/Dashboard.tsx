@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -50,7 +50,10 @@ import AdminSurveys from "@/components/dashboard/admin/Surveys";
 import AdminReports from "@/components/dashboard/admin/Reports";
 import AdminSettings from "@/components/dashboard/admin/Settings";
 import Employees from "@/components/dashboard/admin/Employees";
+import AutoPilotDashboard from "@/components/autoPilot/AutoPilotDashboard";
 import { api } from "@/lib/api";
+import Breadcrumb from "@/components/ui/breadcrumb";
+import { getPageTitle } from "@/utils/navigation";
 
 interface User {
   id: string;
@@ -74,14 +77,26 @@ interface RecentActivity {
 const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState('overview');
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [activityLoading, setActivityLoading] = useState(true);
   const [dateRange, setDateRange] = useState('This Month');
   const [notifications, setNotifications] = useState(3); // Mock notification count
+
+  // Get current section from URL
+  const getCurrentSection = () => {
+    const path = location.pathname;
+    if (path === '/dashboard' || path === '/dashboard/overview') {
+      return 'overview';
+    }
+    // Extract section from path like /dashboard/trends -> trends
+    const section = path.replace('/dashboard/', '');
+    return section || 'overview';
+  };
+
+  const currentSection = getCurrentSection();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -102,14 +117,6 @@ const Dashboard = () => {
       setLoading(false);
     }
   }, [navigate]);
-
-  // Handle URL parameters for section navigation
-  useEffect(() => {
-    const sectionParam = searchParams.get('section');
-    if (sectionParam) {
-      setActiveSection(sectionParam);
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     const fetchRecentActivity = async () => {
@@ -201,8 +208,8 @@ const Dashboard = () => {
   const renderActiveSection = () => {
     // For admin dashboard, use admin-specific components
     if (user?.role === 'admin') {
-      switch (activeSection) {
-        case 'dashboard':
+      switch (currentSection) {
+        case 'overview':
           return <AdminDashboard />;
         case 'team-trends':
           return <TeamTrends />;
@@ -220,13 +227,15 @@ const Dashboard = () => {
           return <AdminSettings />;
         case 'my-teams':
           return <div>My Teams - Coming Soon</div>;
+        case 'auto-pilot':
+          return <AutoPilotDashboard />;
         default:
           return <AdminDashboard />;
       }
     }
     // For owner dashboard, use different components
     else if (user?.role === 'owner') {
-      switch (activeSection) {
+      switch (currentSection) {
         case 'overview':
           return <OwnerDashboard />;
         case 'culture-trends':
@@ -241,13 +250,15 @@ const Dashboard = () => {
           return <Reports />;
         case 'settings':
           return <OwnerSettings />;
+        case 'auto-pilot':
+          return <AutoPilotDashboard />;
         default:
           return <OwnerDashboard />;
       }
     }
     
     // For regular users, use the original components
-    switch (activeSection) {
+    switch (currentSection) {
       case 'overview':
         return <PulseOverview />;
       case 'trends':
@@ -276,6 +287,8 @@ const Dashboard = () => {
         return <PlanBillingOverview />;
       case 'support-risk':
         return <SupportRiskFlags />;
+      case 'auto-pilot':
+        return <AutoPilotDashboard />;
       default:
         return <PulseOverview />;
     }
@@ -318,7 +331,7 @@ const Dashboard = () => {
               description: "Switching to admin view...",
             });
           }}
-          onNavigateToSettings={() => setActiveSection('settings')}
+          onNavigateToSettings={() => navigate('/dashboard/settings')}
           onLogout={handleLogout}
         />
       ) : (
@@ -401,21 +414,29 @@ const Dashboard = () => {
         {/* Conditional Sidebar - Admin vs Others */}
         {user?.role === 'admin' ? (
           <AdminSidebar
-            activeSection={activeSection}
-            onSectionChange={setActiveSection}
             teamsCount={2}
           />
         ) : (
           <DashboardSidebar
             userRole={user?.role || 'user'}
-            activeSection={activeSection}
-            onSectionChange={setActiveSection}
           />
         )}
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto">
           <div className="p-6">
+            {/* Breadcrumb */}
+            <div className="mb-6">
+              <Breadcrumb />
+            </div>
+            
+            {/* Page Title */}
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold tracking-tight">
+                {getPageTitle(location.pathname, user?.role)}
+              </h1>
+            </div>
+            
             {renderActiveSection()}
           </div>
         </main>

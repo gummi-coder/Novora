@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { CustomSlider } from "@/components/ui/custom-slider";
+import { QuestionImage } from "@/components/ui/question-image";
 import { ChevronLeft, ChevronRight, CheckCircle, Star } from "lucide-react";
 
 interface Question {
@@ -12,6 +14,7 @@ interface Question {
   category: string;
   order: number;
   required: boolean;
+  image?: string;
 }
 
 interface SurveyData {
@@ -59,35 +62,40 @@ const SurveyPreview = () => {
           text: "How likely are you to recommend this company as a place to work?",
           category: "enps",
           order: 0,
-          required: true
+          required: true,
+          image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=250&fit=crop"
         },
         {
           id: "q2", 
           text: "How satisfied are you with your current role?",
           category: "happiness",
           order: 1,
-          required: true
+          required: true,
+          image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop"
         },
         {
           id: "q3",
           text: "How well do you collaborate with your team members?",
           category: "peer_collaboration",
           order: 2,
-          required: true
+          required: true,
+          image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=250&fit=crop"
         },
         {
           id: "q4",
           text: "How supported do you feel by your manager?",
           category: "manager_relationship",
           order: 3,
-          required: true
+          required: true,
+          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=250&fit=crop"
         },
         {
           id: "q5",
           text: "How satisfied are you with your career growth opportunities?",
           category: "career_growth",
           order: 4,
-          required: true
+          required: true,
+          image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=400&h=250&fit=crop"
         }
       ],
       isAnonymous: true,
@@ -223,6 +231,15 @@ const SurveyPreview = () => {
                 </p>
               </div>
 
+              {/* Question Image */}
+              {currentQuestion.image && (
+                <QuestionImage
+                  src={currentQuestion.image}
+                  alt={`Illustration for: ${currentQuestion.text}`}
+                  className="mb-6"
+                />
+              )}
+
               {/* Rating Scale */}
               <div className="space-y-4">
                 <div className="flex justify-between text-sm text-gray-500">
@@ -231,36 +248,25 @@ const SurveyPreview = () => {
                   <span>Excellent</span>
                 </div>
                 
-                <div className="grid grid-cols-11 gap-1">
-                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => {
-                    const isSelected = answers[currentQuestion.id] === rating;
-                    const isAnswered = answers[currentQuestion.id] !== undefined;
-                    
-                    return (
-                      <button
-                        key={rating}
-                        onClick={() => handleAnswer(rating)}
-                        className={`
-                          w-10 h-10 rounded-lg border-2 flex items-center justify-center text-sm font-medium transition-all
-                          ${isSelected 
-                            ? 'bg-blue-600 border-blue-600 text-white' 
-                            : isAnswered 
-                              ? 'bg-gray-100 border-gray-200 text-gray-600 hover:bg-gray-200' 
-                              : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'
-                          }
-                        `}
-                      >
-                        {rating}
-                      </button>
-                    );
-                  })}
-                </div>
+                <CustomSlider
+                  value={answers[currentQuestion.id] ?? 5}
+                  onChange={(value) => handleAnswer(value)}
+                  min={0}
+                  max={10}
+                  className="w-full"
+                />
 
                 {/* Rating Labels */}
                 <div className="flex justify-between text-xs text-gray-400">
                   <span>0 = Very Poor</span>
                   <span>5 = Neutral</span>
                   <span>10 = Excellent</span>
+                </div>
+                
+                <div className="text-center">
+                  <span className="text-lg font-semibold text-blue-600">
+                    {answers[currentQuestion.id] ?? 5}/10
+                  </span>
                 </div>
               </div>
             </CardContent>

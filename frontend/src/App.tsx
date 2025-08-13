@@ -34,12 +34,39 @@ const App = () => (
           <Route path="/auth/signin" element={<SignIn />} />
           <Route path="/auth/signup" element={<SignUp />} />
           <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+          
+          {/* Dashboard Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/overview" element={<Dashboard />} />
+          <Route path="/dashboard/trends" element={<Dashboard />} />
+          <Route path="/dashboard/feedback" element={<Dashboard />} />
+          <Route path="/dashboard/reports" element={<Dashboard />} />
+          <Route path="/dashboard/settings" element={<Dashboard />} />
+          
+          {/* Owner-specific routes */}
+          <Route path="/dashboard/culture-trends" element={<Dashboard />} />
+          <Route path="/dashboard/departments" element={<Dashboard />} />
+          <Route path="/dashboard/adoption-usage" element={<Dashboard />} />
+          <Route path="/dashboard/admin-activity" element={<Dashboard />} />
+          
+          {/* Admin-specific routes */}
+          <Route path="/dashboard/team-trends" element={<Dashboard />} />
+          <Route path="/dashboard/alerts" element={<Dashboard />} />
+          <Route path="/dashboard/employees" element={<Dashboard />} />
+          <Route path="/dashboard/surveys" element={<Dashboard />} />
+          <Route path="/dashboard/my-teams" element={<Dashboard />} />
+          
+          {/* Auto-Pilot routes */}
+          <Route path="/dashboard/auto-pilot" element={<Dashboard />} />
+          
+          {/* Survey Routes */}
           <Route path="/surveys" element={<SurveysList />} />
           <Route path="/surveys/create" element={<CreateSurvey />} />
           <Route path="/question-bank" element={<QuestionBank />} />
           <Route path="/survey/:surveyId" element={<SurveyResponse />} />
           <Route path="/survey/preview" element={<SurveyPreview />} />
+          
+          {/* Catch all */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

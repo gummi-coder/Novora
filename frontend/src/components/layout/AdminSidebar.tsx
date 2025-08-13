@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -15,13 +16,22 @@ import {
 } from "lucide-react";
 
 interface AdminSidebarProps {
-  activeSection: string;
-  onSectionChange: (section: string) => void;
   teamsCount?: number;
 }
 
-const AdminSidebar = ({ activeSection, onSectionChange, teamsCount = 2 }: AdminSidebarProps) => {
+const AdminSidebar = ({ teamsCount = 2 }: AdminSidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Helper function to check if a route is active
+  const isActiveRoute = (routeId: string) => {
+    const path = location.pathname;
+    if (routeId === 'dashboard') {
+      return path === '/dashboard' || path === '/dashboard/overview';
+    }
+    return path === `/dashboard/${routeId}`;
+  };
 
   // Admin navigation items
   const adminNavigationItems = [
@@ -29,49 +39,57 @@ const AdminSidebar = ({ activeSection, onSectionChange, teamsCount = 2 }: AdminS
       id: 'dashboard',
       label: 'Dashboard',
       icon: Home,
-      description: 'Overview & Analytics'
+      description: 'Overview & Analytics',
+      path: '/dashboard'
     },
     {
       id: 'team-trends',
       label: 'Team Trends',
       icon: TrendingUp,
-      description: 'Team Performance Trends'
+      description: 'Team Performance Trends',
+      path: '/dashboard/team-trends'
     },
     {
       id: 'feedback',
       label: 'Feedback',
       icon: MessageSquare,
-      description: 'Comments & Responses'
+      description: 'Comments & Responses',
+      path: '/dashboard/feedback'
     },
     {
       id: 'alerts',
       label: 'Alerts',
       icon: AlertTriangle,
-      description: 'Team Alerts & Issues'
+      description: 'Team Alerts & Issues',
+      path: '/dashboard/alerts'
     },
     {
       id: 'employees',
       label: 'Employees',
       icon: Users,
-      description: 'Directory & Invitations'
+      description: 'Directory & Invitations',
+      path: '/dashboard/employees'
     },
     {
       id: 'surveys',
       label: 'Surveys',
       icon: BarChart3,
-      description: 'Survey Management'
+      description: 'Survey Management',
+      path: '/dashboard/surveys'
     },
     {
       id: 'reports',
       label: 'Reports',
       icon: FileText,
-      description: 'Analytics & Exports'
+      description: 'Analytics & Exports',
+      path: '/dashboard/reports'
     },
     {
       id: 'settings',
       label: 'Settings',
       icon: Settings,
-      description: 'Configuration'
+      description: 'Configuration',
+      path: '/dashboard/settings'
     }
   ];
 
@@ -82,9 +100,14 @@ const AdminSidebar = ({ activeSection, onSectionChange, teamsCount = 2 }: AdminS
         id: 'my-teams',
         label: 'My Teams',
         icon: Users,
-        description: `Managing ${teamsCount} teams`
+        description: `Managing ${teamsCount} teams`,
+        path: '/dashboard/my-teams'
       }]
     : adminNavigationItems;
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
 
   return (
     <div className={cn(
@@ -99,8 +122,8 @@ const AdminSidebar = ({ activeSection, onSectionChange, teamsCount = 2 }: AdminS
               <Settings className="w-6 h-6 text-white" />
             </div>
             <div>
-              <span className="font-bold text-xl text-gray-900">Admin</span>
-              <div className="text-xs text-gray-600 font-medium">Control Center</div>
+              <h2 className="text-lg font-bold text-gray-900">Admin Panel</h2>
+              <p className="text-sm text-gray-600">Team Management</p>
             </div>
           </div>
         )}
@@ -108,44 +131,37 @@ const AdminSidebar = ({ activeSection, onSectionChange, teamsCount = 2 }: AdminS
           variant="ghost"
           size="sm"
           onClick={() => setCollapsed(!collapsed)}
-          className={cn(
-            "hover:bg-white/80 transition-all duration-200",
-            collapsed ? "ml-auto" : ""
-          )}
+          className="ml-auto"
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </Button>
       </div>
 
-      {/* Enhanced Navigation Items */}
+      {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2">
         {allItems.map((item) => {
           const Icon = item.icon;
-          const isActive = activeSection === item.id;
-          
+          const isActive = isActiveRoute(item.id);
+
           return (
             <button
               key={item.id}
-              onClick={() => onSectionChange(item.id)}
+              onClick={() => handleNavigation(item.path)}
               className={cn(
-                "w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 group",
+                "w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200",
                 isActive
-                  ? "bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 border border-purple-200 shadow-sm"
+                  ? "bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border border-purple-200 shadow-sm"
                   : "text-gray-700 hover:bg-gray-50 hover:text-gray-900 hover:shadow-sm"
               )}
             >
-              <div className={cn(
-                "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200",
-                isActive 
-                  ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md" 
-                  : "bg-gray-100 text-gray-600 group-hover:bg-gray-200"
-              )}>
-                <Icon className="w-4 h-4" />
-              </div>
+              <Icon className={cn(
+                "w-5 h-5",
+                isActive ? "text-purple-600" : "text-gray-500"
+              )} />
               {!collapsed && (
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm">{item.label}</div>
-                  <div className="text-xs text-gray-500 truncate mt-0.5">{item.description}</div>
+                <div className="flex-1 text-left">
+                  <div className="font-medium">{item.label}</div>
+                  <div className="text-xs text-gray-500">{item.description}</div>
                 </div>
               )}
             </button>
@@ -153,22 +169,17 @@ const AdminSidebar = ({ activeSection, onSectionChange, teamsCount = 2 }: AdminS
         })}
       </nav>
 
-      {/* Enhanced Footer */}
-      {!collapsed && (
-        <div className="p-4 border-t border-gray-200 bg-gray-50">
-          <div className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200">
-            <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center">
-              <Users className="w-3 h-3 text-white" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-gray-900">
-                {teamsCount} team{teamsCount !== 1 ? 's' : ''}
-              </div>
-              <div className="text-xs text-gray-500">Under management</div>
+      {/* Footer */}
+      <div className="p-4 border-t border-gray-200 bg-gray-50">
+        {!collapsed && (
+          <div className="text-center">
+            <div className="text-xs text-gray-500 mb-2">Admin Dashboard</div>
+            <div className="text-xs text-gray-400">
+              Managing {teamsCount} teams
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

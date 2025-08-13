@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import SurveyBuilderSteps from "@/components/survey/SurveyBuilderSteps";
+import { surveyService, SurveyData } from "@/services/survey";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -830,6 +832,41 @@ const CreateSurvey = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   
+  // Step-based survey builder state
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showStepsBuilder, setShowStepsBuilder] = useState(false);
+  const [surveyData, setSurveyData] = useState<SurveyData>({
+    title: "",
+    description: "",
+    questions: [],
+    language: "en",
+    branding: {
+      logo: null,
+      primaryColor: "#3B82F6",
+      secondaryColor: "#1F2937",
+      customCSS: "",
+      companyName: "",
+      surveyTitle: "",
+      surveyDescription: ""
+    },
+    distribution: {
+      channels: ["email"],
+      emailTemplate: "",
+      reminderFrequency: "weekly",
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      maxResponses: 1000,
+      allowAnonymous: true
+    },
+    saveData: {
+      saveAsTemplate: false,
+      templateName: "",
+      sendImmediately: false,
+      scheduleSend: false,
+      scheduledDate: new Date()
+    }
+  });
+  
   // Get tab from URL parameter or default to templates
   const tabParam = searchParams.get('tab');
   const [activeTab, setActiveTab] = useState(tabParam || "templates");
@@ -1055,6 +1092,108 @@ const CreateSurvey = () => {
   const [currentCoreQuestions, setCurrentCoreQuestions] = useState(getRandomCoreQuestions());
 
   const [launchDate, setLaunchDate] = useState<Date | undefined>(undefined);
+
+  // Step-based survey builder handlers
+  const handleContinueToSteps = () => {
+    if (questions.length === 0) {
+      toast({
+        title: "No Questions Added",
+        description: "Please add at least one question before continuing.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setSurveyData(prev => ({
+      ...prev,
+      title: form.getValues("title") || "Employee Survey",
+      description: form.getValues("description") || "",
+      questions: questions.map((q, index) => ({
+        id: q.id,
+        text: q.text,
+        category: q.category,
+        order: index,
+        required: q.required,
+        type: "rating"
+      }))
+    }));
+    setShowStepsBuilder(true);
+  };
+
+  const handleSaveSurvey = async (data: SurveyData) => {
+    try {
+      const validation = surveyService.validateSurveyData(data);
+      if (!validation.isValid) {
+        toast({
+          title: "Validation Error",
+          description: validation.errors.join(", "),
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (data.saveData.saveAsTemplate && data.saveData.templateName) {
+        await surveyService.saveAsTemplate(data, data.saveData.templateName);
+        toast({
+          title: "Template Saved",
+          description: "Survey saved as template successfully.",
+        });
+      } else {
+        await surveyService.saveSurvey(data);
+        toast({
+          title: "Survey Saved",
+          description: "Survey saved as draft successfully.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Save Failed",
+        description: "Failed to save survey. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleSendSurvey = async (data: SurveyData) => {
+    try {
+      const validation = surveyService.validateSurveyData(data);
+      if (!validation.isValid) {
+        toast({
+          title: "Validation Error",
+          description: validation.errors.join(", "),
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (data.saveData.scheduleSend) {
+        await surveyService.scheduleSurvey(data, data.saveData.scheduledDate);
+        toast({
+          title: "Survey Scheduled",
+          description: "Survey scheduled for later delivery.",
+        });
+      } else {
+        await surveyService.sendSurvey(data);
+        toast({
+          title: "Survey Sent",
+          description: "Survey sent successfully!",
+        });
+      }
+      
+      // Navigate to dashboard after sending
+      navigate('/dashboard');
+    } catch (error) {
+      toast({
+        title: "Send Failed",
+        description: "Failed to send survey. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleBackFromSteps = () => {
+    setShowStepsBuilder(false);
+  };
 
   const form = useForm<SurveyFormData>({
     resolver: zodResolver(surveySchema),
@@ -1406,7 +1545,7 @@ const CreateSurvey = () => {
       // Transform questions to match backend format
       const transformedQuestions = questions.map((question, index) => ({
         text: question.text,
-        type: "rating", // All questions are 0-10 scale
+        type: "rating", // All questions are 1-10 scale
         required: question.required,
         order: index,
         category: question.category,
@@ -1554,19 +1693,30 @@ const CreateSurvey = () => {
                 Settings
               </Button>
               <Button
-                onClick={form.handleSubmit(onSubmit)}
+                onClick={handleContinueToSteps}
                 disabled={questions.length === 0}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
-                <Save className="h-4 w-4 mr-2" />
-                Create Survey
+                <ChevronRight className="h-4 w-4 mr-2" />
+                Continue to Builder
               </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Step-based Survey Builder */}
+      {showStepsBuilder ? (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <SurveyBuilderSteps
+            surveyData={surveyData}
+            onSave={handleSaveSurvey}
+            onSend={handleSendSurvey}
+            onBack={handleBackFromSteps}
+          />
+        </div>
+      ) : (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs 
           value={activeTab} 
           onValueChange={(value) => {
@@ -2791,6 +2941,7 @@ const CreateSurvey = () => {
           </TabsContent>
         </Tabs>
       </div>
+        )}
 
       {/* Settings Dialog */}
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
