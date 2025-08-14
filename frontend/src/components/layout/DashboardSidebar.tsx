@@ -96,6 +96,13 @@ const DashboardSidebar = ({ userRole }: DashboardSidebarProps) => {
       description: 'Configuration & Preferences',
       path: '/dashboard/settings'
     },
+    {
+      id: 'debug',
+      label: 'Debug',
+      icon: Activity,
+      description: 'Debug Information',
+      path: '/dashboard/debug'
+    },
   ];
 
   // Owner navigation items - Strategic & High-Level

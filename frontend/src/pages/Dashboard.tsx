@@ -54,6 +54,7 @@ import AutoPilotDashboard from "@/components/autoPilot/AutoPilotDashboard";
 import { api } from "@/lib/api";
 import Breadcrumb from "@/components/ui/breadcrumb";
 import { getPageTitle } from "@/utils/navigation";
+import DashboardDebug from "@/components/DashboardDebug";
 
 interface User {
   id: string;
@@ -206,6 +207,11 @@ const Dashboard = () => {
   };
 
   const renderActiveSection = () => {
+    // Temporary: Show debug component for troubleshooting
+    if (currentSection === 'debug') {
+      return <DashboardDebug />;
+    }
+    
     // For admin dashboard, use admin-specific components
     if (user?.role === 'admin') {
       switch (currentSection) {
