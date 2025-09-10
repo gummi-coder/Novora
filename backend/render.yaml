@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: novora-api
+    env: python
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: novora-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: BACKEND_CORS_ORIGINS
+        value: "https://novora-frontend.vercel.app,http://localhost:3000,http://localhost:5173"
+
+databases:
+  - name: novora-db
+    plan: free
+    databaseName: novora
+    user: novora_user

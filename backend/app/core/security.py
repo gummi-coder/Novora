@@ -44,4 +44,16 @@ def verify_token(token: str) -> dict:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         return payload
     except JWTError:
-        raise ValueError("Invalid token") 
+        raise ValueError("Invalid token")
+
+def check_permission(user, permission: str) -> bool:
+    """Check if user has the required permission"""
+    # Simple permission check based on user role
+    if permission == "settings.write":
+        return user.role in ["admin", "owner", "enterprise"]
+    elif permission == "settings.read":
+        return True  # All authenticated users can read settings
+    elif permission == "admin":
+        return user.role in ["admin", "owner"]
+    else:
+        return False 

@@ -1,0 +1,283 @@
+2025-09-02 10:44:13 - app.core.monitoring - INFO - Logging system initialized
+2025-09-02 10:44:13 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:25:23 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:25:23 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:25:31 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:25:31 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:25:35 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:25:35 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:25:38 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:25:38 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:25:42 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:25:42 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:25:57 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:25:57 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:27:47 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:27:47 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:30:37 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:30:37 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:31:08 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:31:08 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:31:34 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:31:34 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:31:47 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:31:47 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:31:52 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:31:52 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:31:55 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:31:55 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:32:07 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:32:07 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:32:10 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:32:10 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:32:25 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:32:25 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:32:29 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:32:29 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:32:35 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:32:35 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:32:38 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:32:38 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:33:18 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:33:18 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:34:16 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:34:16 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-07 17:34:24 - app.core.monitoring - INFO - Logging system initialized
+2025-09-07 17:34:24 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:04:51 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:04:51 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:04:54 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:04:54 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:05:25 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:05:25 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:13:27 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:13:27 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:16:04 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:16:04 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:19:12 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:19:12 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:25:08 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:25:08 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:26:29 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:26:29 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:28:29 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:28:29 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:28:56 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:28:56 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:29:29 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:29:29 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:29:29 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:29:50 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:29:50 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:29:50 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:30:05 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:30:05 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:30:05 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:30:22 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:30:22 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:30:22 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:31:11 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:31:11 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:31:11 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:31:31 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:31:31 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:31:31 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:31:58 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:31:58 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:31:58 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:32:18 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:32:18 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:32:18 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:32:35 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:32:35 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:32:35 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:33:38 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:33:38 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:33:38 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:33:55 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:33:55 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:33:55 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:34:57 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:34:57 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:34:57 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:34:57 - app.main - INFO - Starting Novora API in development mode
+2025-09-09 13:34:57 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:34:57 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:34:57 - sqlalchemy.engine.Engine - INFO - [generated in 0.00018s] ()
+2025-09-09 13:34:57 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:34:57 - app.core.database - INFO - Database connection successful
+2025-09-09 13:34:57 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:34:57 - app.main - INFO - Database connection: OK
+2025-09-09 13:34:57 - app.main - INFO - Redis connection: FAILED
+2025-09-09 13:34:57 - app.main - WARNING - Redis connection failed on startup (optional)
+2025-09-09 13:34:57 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:36:23 - app.main - INFO - Shutting down Novora API
+2025-09-09 13:40:10 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:40:10 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:40:10 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:40:10 - app.main - INFO - Starting Novora API in development mode
+2025-09-09 13:40:10 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:40:10 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:40:10 - sqlalchemy.engine.Engine - INFO - [generated in 0.00018s] ()
+2025-09-09 13:40:10 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:40:10 - app.core.database - INFO - Database connection successful
+2025-09-09 13:40:10 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:40:10 - app.main - INFO - Database connection: OK
+2025-09-09 13:40:10 - app.main - INFO - Redis connection: FAILED
+2025-09-09 13:40:10 - app.main - WARNING - Redis connection failed on startup (optional)
+2025-09-09 13:40:10 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:40:18 - app.core.monitoring - INFO - Request: GET http://localhost:8001/health - Status: 200 - Time: 0.001s - IP: 127.0.0.1
+2025-09-09 13:40:23 - app.core.monitoring - INFO - Request: GET http://localhost:8001/docs - Status: 200 - Time: 0.000s - IP: 127.0.0.1
+2025-09-09 13:40:34 - app.core.monitoring - INFO - Request: GET http://localhost:8001/surveys - Status: 404 - Time: 0.000s - IP: 127.0.0.1
+2025-09-09 13:40:40 - app.core.monitoring - INFO - Request: GET http://localhost:8001/openapi.json - Status: 200 - Time: 0.020s - IP: 127.0.0.1
+2025-09-09 13:40:46 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:40:46 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:40:46 - sqlalchemy.engine.Engine - INFO - [cached since 35.76s ago] ()
+2025-09-09 13:40:46 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:40:46 - app.core.database - INFO - Database connection successful
+2025-09-09 13:40:46 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:40:46 - app.core.monitoring - INFO - Request: GET http://localhost:8001/api/v1/health - Status: 200 - Time: 0.002s - IP: 127.0.0.1
+2025-09-09 13:40:51 - app.core.monitoring - INFO - Request: GET http://localhost:8001/api/v1/surveys - Status: 307 - Time: 0.000s - IP: 127.0.0.1
+2025-09-09 13:40:56 - app.core.monitoring - INFO - Request: GET http://localhost:8001/api/v1/user/surveys - Status: 404 - Time: 0.000s - IP: 127.0.0.1
+2025-09-09 13:41:01 - app.core.monitoring - INFO - Request: GET http://localhost:8001/openapi.json - Status: 200 - Time: 0.001s - IP: 127.0.0.1
+2025-09-09 13:42:53 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:42:53 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:42:53 - sqlalchemy.engine.Engine - INFO - [cached since 163.2s ago] ()
+2025-09-09 13:42:53 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:42:53 - app.core.database - INFO - Database connection successful
+2025-09-09 13:42:53 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:42:53 - app.core.monitoring - INFO - Request: GET http://localhost:8001/api/v1/health - Status: 200 - Time: 0.006s - IP: 127.0.0.1
+2025-09-09 13:50:11 - app.main - INFO - Shutting down Novora API
+2025-09-09 13:50:11 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:50:11 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:50:11 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:50:11 - app.main - INFO - Starting Novora API in development mode
+2025-09-09 13:50:11 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:50:11 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:50:11 - sqlalchemy.engine.Engine - INFO - [generated in 0.00020s] ()
+2025-09-09 13:50:11 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:50:11 - app.core.database - INFO - Database connection successful
+2025-09-09 13:50:11 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:50:11 - app.main - INFO - Database connection: OK
+2025-09-09 13:50:11 - app.main - INFO - Redis connection: FAILED
+2025-09-09 13:50:11 - app.main - WARNING - Redis connection failed on startup (optional)
+2025-09-09 13:50:11 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:50:20 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:50:20 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:50:20 - sqlalchemy.engine.Engine - INFO - [cached since 8.787s ago] ()
+2025-09-09 13:50:20 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:50:20 - app.core.database - INFO - Database connection successful
+2025-09-09 13:50:20 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:50:20 - app.core.monitoring - INFO - Request: GET http://localhost:8001/api/v1/health - Status: 200 - Time: 0.003s - IP: 127.0.0.1
+2025-09-09 13:50:37 - app.main - INFO - Shutting down Novora API
+2025-09-09 13:50:37 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:50:37 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:50:37 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:50:37 - app.main - INFO - Starting Novora API in development mode
+2025-09-09 13:50:37 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:50:37 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:50:37 - sqlalchemy.engine.Engine - INFO - [generated in 0.00020s] ()
+2025-09-09 13:50:37 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:50:37 - app.core.database - INFO - Database connection successful
+2025-09-09 13:50:37 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:50:37 - app.main - INFO - Database connection: OK
+2025-09-09 13:50:37 - app.main - INFO - Redis connection: FAILED
+2025-09-09 13:50:37 - app.main - WARNING - Redis connection failed on startup (optional)
+2025-09-09 13:50:37 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:52:34 - app.main - INFO - Shutting down Novora API
+2025-09-09 13:52:35 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:52:35 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:52:35 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:52:35 - app.main - INFO - Starting Novora API in development mode
+2025-09-09 13:52:35 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:52:35 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:52:35 - sqlalchemy.engine.Engine - INFO - [generated in 0.00018s] ()
+2025-09-09 13:52:35 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:52:35 - app.core.database - INFO - Database connection successful
+2025-09-09 13:52:35 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:52:35 - app.main - INFO - Database connection: OK
+2025-09-09 13:52:35 - app.main - INFO - Redis connection: FAILED
+2025-09-09 13:52:35 - app.main - WARNING - Redis connection failed on startup (optional)
+2025-09-09 13:52:35 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:55:04 - app.main - INFO - Shutting down Novora API
+2025-09-09 13:55:04 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:55:04 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:55:04 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:55:04 - app.main - INFO - Starting Novora API in development mode
+2025-09-09 13:55:04 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:55:04 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:55:04 - sqlalchemy.engine.Engine - INFO - [generated in 0.00017s] ()
+2025-09-09 13:55:04 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:55:04 - app.core.database - INFO - Database connection successful
+2025-09-09 13:55:04 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:55:04 - app.main - INFO - Database connection: OK
+2025-09-09 13:55:04 - app.main - INFO - Redis connection: FAILED
+2025-09-09 13:55:04 - app.main - WARNING - Redis connection failed on startup (optional)
+2025-09-09 13:55:04 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:55:11 - app.main - INFO - Shutting down Novora API
+2025-09-09 13:55:12 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:55:12 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:55:12 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:55:12 - app.main - INFO - Starting Novora API in development mode
+2025-09-09 13:55:12 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:55:12 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:55:12 - sqlalchemy.engine.Engine - INFO - [generated in 0.00020s] ()
+2025-09-09 13:55:12 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:55:12 - app.core.database - INFO - Database connection successful
+2025-09-09 13:55:12 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:55:12 - app.main - INFO - Database connection: OK
+2025-09-09 13:55:12 - app.main - INFO - Redis connection: FAILED
+2025-09-09 13:55:12 - app.main - WARNING - Redis connection failed on startup (optional)
+2025-09-09 13:55:12 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:57:17 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:57:17 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:57:17 - sqlalchemy.engine.Engine - INFO - [cached since 125.3s ago] ()
+2025-09-09 13:57:17 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:57:17 - app.core.database - INFO - Database connection successful
+2025-09-09 13:57:17 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:57:17 - app.core.monitoring - INFO - Request: GET http://localhost:8001/api/v1/health - Status: 200 - Time: 0.004s - IP: 127.0.0.1
+2025-09-09 13:57:40 - app.main - INFO - Shutting down Novora API
+2025-09-09 13:57:41 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:57:41 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:57:41 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:57:41 - app.main - INFO - Starting Novora API in development mode
+2025-09-09 13:57:41 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:57:41 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:57:41 - sqlalchemy.engine.Engine - INFO - [generated in 0.00017s] ()
+2025-09-09 13:57:41 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:57:41 - app.core.database - INFO - Database connection successful
+2025-09-09 13:57:41 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:57:41 - app.main - INFO - Database connection: OK
+2025-09-09 13:57:41 - app.main - INFO - Redis connection: FAILED
+2025-09-09 13:57:41 - app.main - WARNING - Redis connection failed on startup (optional)
+2025-09-09 13:57:41 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:57:47 - app.main - INFO - Shutting down Novora API
+2025-09-09 13:57:47 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:57:47 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:57:47 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:57:47 - app.main - INFO - Starting Novora API in development mode
+2025-09-09 13:57:47 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:57:47 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:57:47 - sqlalchemy.engine.Engine - INFO - [generated in 0.00023s] ()
+2025-09-09 13:57:47 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:57:47 - app.core.database - INFO - Database connection successful
+2025-09-09 13:57:47 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:57:47 - app.main - INFO - Database connection: OK
+2025-09-09 13:57:47 - app.main - INFO - Redis connection: FAILED
+2025-09-09 13:57:47 - app.main - WARNING - Redis connection failed on startup (optional)
+2025-09-09 13:57:47 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:58:30 - app.main - INFO - Shutting down Novora API
+2025-09-09 13:58:30 - app.core.monitoring - INFO - Logging system initialized
+2025-09-09 13:58:30 - app.core.monitoring - INFO - Monitoring system initialized
+2025-09-09 13:58:30 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:58:30 - app.main - INFO - Starting Novora API in development mode
+2025-09-09 13:58:30 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-09-09 13:58:30 - sqlalchemy.engine.Engine - INFO - SELECT 1
+2025-09-09 13:58:30 - sqlalchemy.engine.Engine - INFO - [generated in 0.00018s] ()
+2025-09-09 13:58:30 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-09-09 13:58:30 - app.core.database - INFO - Database connection successful
+2025-09-09 13:58:30 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:58:30 - app.main - INFO - Database connection: OK
+2025-09-09 13:58:30 - app.main - INFO - Redis connection: FAILED
+2025-09-09 13:58:30 - app.main - WARNING - Redis connection failed on startup (optional)
+2025-09-09 13:58:30 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.

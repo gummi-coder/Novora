@@ -1,0 +1,45 @@
+2025-09-09 13:29:29 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:29:50 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:30:05 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:30:22 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:31:11 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:31:31 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:31:58 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:32:18 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:32:35 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:33:38 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:33:55 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:34:57 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:34:57 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:34:57 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:40:10 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:40:10 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:40:10 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:40:46 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:42:53 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:50:11 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:50:11 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:50:11 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:50:20 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:50:37 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:50:37 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:50:37 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:52:35 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:52:35 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:52:35 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:55:04 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:55:04 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:55:04 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:55:12 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:55:12 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:55:12 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:57:17 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:57:41 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:57:41 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:57:41 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:57:47 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:57:47 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:57:47 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.
+2025-09-09 13:58:30 - app.services.cache_service - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:58:30 - app.core.database - ERROR - Failed to connect to Redis: Error 61 connecting to localhost:6379. Connection refused.
+2025-09-09 13:58:30 - app.main - ERROR - Failed to start auto-pilot scheduler: Table 'survey_tokens' is already defined for this MetaData instance.  Specify 'extend_existing=True' to redefine options and columns on an existing Table object.

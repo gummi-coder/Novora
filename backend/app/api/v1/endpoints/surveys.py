@@ -9,7 +9,9 @@ from datetime import datetime
 
 from app.core.database import get_db
 from app.models.base import Survey, Question, User, Response, Answer
+from app.models.responses import NumericResponse, Comment
 from app.api.deps import get_current_user
+from app.core.token_validation import validate_survey_token, mark_token_used, get_device_fingerprint
 
 router = APIRouter()
 
@@ -67,6 +69,8 @@ class AnswerSubmit(BaseModel):
 class ResponseSubmit(BaseModel):
     answers: List[AnswerSubmit]
     completed: bool = True
+    token: Optional[str] = None  # Survey token for validation
+    comment: Optional[str] = None  # Optional free-text comment
 
 @router.get("/", response_model=List[SurveyResponse])
 async def get_surveys(
@@ -184,11 +188,11 @@ async def get_survey_public(
 
 @router.post("/{survey_id}/responses")
 async def submit_survey_response(
-    survey_id: int,
+    survey_id: str,
     response_data: ResponseSubmit,
     db: Session = Depends(get_db)
 ):
-    """Submit a survey response (no authentication required)"""
+    """Submit a survey response with token validation"""
     # Check if survey exists and is active
     survey = db.query(Survey).filter(
         Survey.id == survey_id,
@@ -198,28 +202,79 @@ async def submit_survey_response(
     if not survey:
         raise HTTPException(status_code=404, detail="Survey not found or not active")
     
-    # Create response
-    response = Response(
+    # Token validation (required for anonymous responses)
+    if not response_data.token:
+        raise HTTPException(
+            status_code=400, 
+            detail="Survey token is required for anonymous responses"
+        )
+    
+    # Validate token and get team_id (without exposing employee_id)
+    team_id = validate_survey_token(response_data.token, survey_id, db, request)
+    
+    # Mark token as used (single-use enforcement)
+    mark_token_used(response_data.token, db)
+    
+    # Store numeric responses (0-10 scores)
+    for answer_data in response_data.answers:
+        if answer_data.question_id:  # Assuming question_id maps to driver_id
+            numeric_response = NumericResponse(
+                survey_id=survey_id,
+                team_id=team_id,
+                driver_id=str(answer_data.question_id),  # Map question_id to driver_id
+                score=int(answer_data.value) if answer_data.value.isdigit() else 0
+            )
+            db.add(numeric_response)
+    
+    # Store comments (if any)
+    if response_data.comment:
+        comment = Comment(
+            survey_id=survey_id,
+            team_id=team_id,
+            driver_id=None,  # General comment
+            text=response_data.comment
+        )
+        db.add(comment)
+    
+    db.commit()
+    
+    # Log survey submission
+    from app.services.audit_service import AuditService
+    audit_service = AuditService(db)
+    audit_service.log_survey_submission(
         survey_id=survey_id,
-        user_id=None,  # Anonymous response
-        completed=response_data.completed
+        team_id=team_id,
+        token=response_data.token,
+        ip_address=request.client.host if request else None,
+        user_agent=request.headers.get("user-agent") if request else None,
+        device_fingerprint=get_device_fingerprint(request) if request else None
     )
     
-    db.add(response)
-    db.commit()
-    db.refresh(response)
+    # Trigger real-time background tasks
+    from app.tasks.alert_tasks import evaluate_survey_alerts
+    from app.tasks.nlp_tasks import (
+        update_running_counters,
+        process_new_comments,
+        compute_trends
+    )
     
-    # Create answers
-    for answer_data in response_data.answers:
-        answer = Answer(
-            response_id=response.id,
-            question_id=answer_data.question_id,
-            value=answer_data.value,
-            comment=answer_data.comment
-        )
-        db.add(answer)
+    # Update running counters immediately
+    update_running_counters.delay(survey_id, team_id)
     
-    db.commit()
+    # Process comments if any
+    if response_data.comment:
+        # Queue individual comment for NLP processing
+        from app.tasks.nlp_tasks import queue_comment_for_processing
+        queue_comment_for_processing.delay(str(comment.id))
+        process_new_comments.delay(survey_id, team_id)
+    
+    # Compute trends (less frequent)
+    compute_trends.delay(survey_id, team_id)
+    
+    # Evaluate alerts
+    survey_creator = db.query(Survey).filter(Survey.id == survey_id).first()
+    if survey_creator:
+        evaluate_survey_alerts.delay(survey_id, team_id, survey_creator.creator_id)
     
     return {
         "message": "Response submitted successfully",
@@ -312,11 +367,11 @@ async def activate_survey(
 
 @router.post("/{survey_id}/close")
 async def close_survey(
-    survey_id: int,
+    survey_id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Close a survey (change status to closed)"""
+    """Close a survey and auto-expire unused tokens"""
     survey = db.query(Survey).filter(
         Survey.id == survey_id,
         Survey.creator_id == current_user.id
@@ -338,5 +393,9 @@ async def close_survey(
     survey.end_date = datetime.utcnow()
     survey.updated_at = datetime.utcnow()
     db.commit()
+    
+    # Auto-expire unused tokens
+    from app.tasks.nlp_tasks import auto_expire_survey_tokens
+    auto_expire_survey_tokens.delay(survey_id)
     
     return {"message": f"Survey {survey_id} closed successfully"}

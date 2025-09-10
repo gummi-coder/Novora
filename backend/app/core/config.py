@@ -4,6 +4,7 @@ Configuration settings for the FastAPI application
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List, Optional
 import os
+from pydantic import Field
 
 class Settings(BaseSettings):
     # Application
@@ -27,6 +28,9 @@ class Settings(BaseSettings):
     REDIS_DB: int = 0
     REDIS_PASSWORD: Optional[str] = None
     REDIS_URL: str = "redis://localhost:6379/0"
+    
+    # Redis Configuration for Caching (separate DB)
+    REDIS_CACHE_DB: int = 3  # Use DB 3 for caching
     
     # Celery Configuration
     CELERY_BROKER_URL: str = "redis://localhost:6379/1"
@@ -74,6 +78,31 @@ class Settings(BaseSettings):
     WORKER_CONCURRENCY: int = 4
     MAX_CONNECTIONS: int = 100
     
+    # MVP Feature Flags
+    PROFILE: str = "development"
+    FEATURE_ADVANCED: bool = False
+    FEATURE_EXPORTS: bool = False
+    FEATURE_INTEGRATIONS: bool = False
+    FEATURE_NLP_PII: bool = False
+    FEATURE_NLP_SENTIMENT: bool = False
+    FEATURE_AUTOPILOT: bool = False
+    FEATURE_ADMIN: bool = False
+    FEATURE_PRO: bool = False
+    FEATURE_PHOTO: bool = False
+    
+    # Integration Settings
+    SLACK_CLIENT_ID: str = Field(default="", env="SLACK_CLIENT_ID")
+    SLACK_CLIENT_SECRET: str = Field(default="", env="SLACK_CLIENT_SECRET")
+    SLACK_REDIRECT_URI: str = Field(default="", env="SLACK_REDIRECT_URI")
+    
+    TEAMS_CLIENT_ID: str = Field(default="", env="TEAMS_CLIENT_ID")
+    TEAMS_CLIENT_SECRET: str = Field(default="", env="TEAMS_CLIENT_SECRET")
+    TEAMS_REDIRECT_URI: str = Field(default="", env="TEAMS_REDIRECT_URI")
+    
+    ZOOM_CLIENT_ID: str = Field(default="", env="ZOOM_CLIENT_ID")
+    ZOOM_CLIENT_SECRET: str = Field(default="", env="ZOOM_CLIENT_SECRET")
+    ZOOM_REDIRECT_URI: str = Field(default="", env="ZOOM_REDIRECT_URI")
+    
     @property
     def is_production(self) -> bool:
         """Check if running in production environment"""
@@ -101,7 +130,8 @@ class Settings(BaseSettings):
     
     model_config = SettingsConfigDict(
         env_file=".env",
-        case_sensitive=True
+        case_sensitive=True,
+        extra="ignore"  # Allow extra environment variables
     )
 
 settings = Settings()

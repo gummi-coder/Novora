@@ -12,29 +12,8 @@ from .base import (
     FileAttachment
 )
 
-from .advanced import (
-    Department,
-    Team,
-    UserDepartment,
-    UserTeam,
-    AnonymousComment,
-    CommentAction,
-    SurveyBranching,
-    Permission,
-    Role,
-    RolePermission,
-    UserRole,
-    BrandingConfig,
-    SSOConfig,
-    APIKey,
-    Webhook,
-    SurveySchedule,
-    DashboardAlert,
-    TeamAnalytics,
-    Metric,
-    QuestionBank,
-    AutoPilotPlan,
-    AutoPilotSurvey
+from .settings import (
+    OrgSettings
 )
 
 __all__ = [
@@ -50,27 +29,6 @@ __all__ = [
     "Answer",
     "FileAttachment",
     
-    # Advanced models
-    "Department",
-    "Team",
-    "UserDepartment",
-    "UserTeam",
-    "AnonymousComment",
-    "CommentAction",
-    "SurveyBranching",
-    "Permission",
-    "Role",
-    "RolePermission",
-    "UserRole",
-    "BrandingConfig",
-    "SSOConfig",
-    "APIKey",
-    "Webhook",
-    "SurveySchedule",
-    "DashboardAlert",
-    "TeamAnalytics",
-    "Metric",
-    "QuestionBank",
-    "AutoPilotPlan",
-    "AutoPilotSurvey"
+    # Settings models
+    "OrgSettings"
 ]

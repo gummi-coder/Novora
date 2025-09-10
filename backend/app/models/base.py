@@ -8,7 +8,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     email = Column(String(120), unique=True, nullable=False)
     password_hash = Column(String(256), nullable=False)
-    role = Column(String(20), nullable=False, default='core')  # core, pro, enterprise, admin
+    role = Column(String(20), nullable=False, default='manager')  # admin, manager
     company_name = Column(String(120))
     created_at = Column(DateTime, default=datetime.utcnow)
     last_login = Column(DateTime)
@@ -63,6 +63,21 @@ class UserSession(Base):
     # Relationships
     user = relationship("User", back_populates="sessions")
 
+class Team(Base):
+    __tablename__ = "teams"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    department_id = Column(Integer, ForeignKey('departments.id'), nullable=False)
+    team_lead_id = Column(Integer, ForeignKey('users.id'), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    department = relationship("Department", back_populates="teams")
+    team_lead = relationship("User")
+    user_teams = relationship("UserTeam", back_populates="team")
+    comments = relationship("AnonymousComment", back_populates="team")
+
 class Survey(Base):
     __tablename__ = "surveys"
     id = Column(Integer, primary_key=True, index=True)
@@ -76,6 +91,8 @@ class Survey(Base):
     allow_comments = Column(Boolean, default=False)
     reminder_frequency = Column(String(20))  # daily, weekly, monthly
     category = Column(String(50), default='general')
+    company_size = Column(Integer, default=10)  # MVP: company size for submission limit
+    max_submissions = Column(Integer, default=10)  # MVP: max submissions allowed
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -232,4 +249,38 @@ class FileAttachment(Base):
             'uploaded_by': self.uploaded_by,
             'uploaded_at': self.uploaded_at.isoformat(),
             'description': self.description
+        }
+
+class SurveyToken(Base):
+    __tablename__ = "survey_tokens"
+    __table_args__ = {'extend_existing': True}
+    id = Column(Integer, primary_key=True)
+    token = Column(String(255), unique=True, nullable=False, index=True)
+    survey_id = Column(String(50), nullable=False, index=True)
+    used = Column(Boolean, default=False)
+    used_at = Column(DateTime)
+    expires_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Enhanced tracking fields
+    device_fingerprint = Column(String(255), index=True)
+    last_attempt_at = Column(DateTime)
+    attempt_failed = Column(Boolean, default=False)
+    ip_address = Column(String(45))  # IPv6 compatible
+    user_agent = Column(Text)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'token': self.token,
+            'survey_id': self.survey_id,
+            'used': self.used,
+            'used_at': self.used_at.isoformat() if self.used_at else None,
+            'expires_at': self.expires_at.isoformat() if self.expires_at else None,
+            'created_at': self.created_at.isoformat(),
+            'device_fingerprint': self.device_fingerprint,
+            'last_attempt_at': self.last_attempt_at.isoformat() if self.last_attempt_at else None,
+            'attempt_failed': self.attempt_failed,
+            'ip_address': self.ip_address,
+            'user_agent': self.user_agent
         } 

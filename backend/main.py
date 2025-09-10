@@ -130,87 +130,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 async def options_login():
     return {"message": "OK"}
 
-# Auth endpoints
-@app.post("/auth/login", response_model=Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = users_db.get(form_data.username)
-    if not user or not verify_password(form_data.password, user["hashed_password"]):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user["email"]}, expires_delta=access_token_expires
-    )
-    # Return both formats for compatibility
-    return {
-        "access_token": access_token, 
-        "token": access_token,  # For frontend compatibility
-        "token_type": "bearer",
-        "user": {
-            "id": user["id"],
-            "email": user["email"],
-            "name": user["name"],
-            "role": user["role"],
-            "is_active": user["is_active"],
-            "status": user["status"],
-            "createdAt": user["createdAt"],
-            "updatedAt": user["updatedAt"],
-            "lastLogin": user["lastLogin"]
-        }
-    }
+# Auth endpoints - Removed conflicting endpoints, using proper auth router instead
 
-@app.post("/api/v1/auth/login", response_model=Token)
-async def login_v1(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = users_db.get(form_data.username)
-    if not user or not verify_password(form_data.password, user["hashed_password"]):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user["email"]}, expires_delta=access_token_expires
-    )
-    # Return both formats for compatibility
-    return {
-        "access_token": access_token, 
-        "token": access_token,  # For frontend compatibility
-        "token_type": "bearer",
-        "user": {
-            "id": user["id"],
-            "email": user["email"],
-            "name": user["name"],
-            "role": user["role"],
-            "is_active": user["is_active"],
-            "status": user["status"],
-            "createdAt": user["createdAt"],
-            "updatedAt": user["updatedAt"],
-            "lastLogin": user["lastLogin"]
-        }
-    }
-
-@app.post("/auth/register", response_model=User)
-async def register(user: UserCreate):
-    if user.email in users_db:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
-        )
-    hashed_password = get_password_hash(user.password)
-    user_dict = user.dict()
-    user_dict.pop("password")
-    user_dict["hashed_password"] = hashed_password
-    user_dict["id"] = str(len(users_db) + 1)
-    users_db[user.email] = user_dict
-    return user_dict
-
-@app.get("/auth/me", response_model=User)
-async def read_users_me(current_user: User = Depends(get_current_user)):
-    return current_user
+# Auth endpoints - Removed conflicting endpoints, using proper auth router instead
 
 # User management endpoints
 @app.get("/users", response_model=dict)
