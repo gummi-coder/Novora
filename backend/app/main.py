@@ -4,6 +4,7 @@ FastAPI application entry point for Novora Survey Platform MVP
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ def create_app() -> FastAPI:
         """Basic health check endpoint"""
         return {
             "status": "healthy",
-            "environment": "production",
+            "environment": os.getenv("ENVIRONMENT", "production"),
             "version": "1.0.0",
             "message": "Novora MVP API is running"
         }
@@ -53,7 +54,8 @@ def create_app() -> FastAPI:
         return {
             "message": "Welcome to Novora MVP API",
             "docs": "/docs",
-            "health": "/health"
+            "health": "/health",
+            "api_health": "/api/v1/health"
         }
 
     return app
