@@ -1,74 +1,24 @@
+#!/usr/bin/env python3
 """
-FastAPI application entry point for Novora Survey Platform MVP
+Simple Flask app for Render deployment
 """
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-import logging
+from flask import Flask, jsonify
 import os
 
-logger = logging.getLogger(__name__)
+app = Flask(__name__)
 
-def create_app() -> FastAPI:
-    app = FastAPI(
-        title="Novora MVP Survey Platform API",
-        description="Backend API for MVP survey management platform",
-        version="1.0.0",
-        docs_url="/docs",
-        redoc_url="/redoc"
-    )
+@app.route('/')
+def root():
+    return jsonify({"message": "Novora MVP API is running!"})
 
-    # CORS middleware
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],  # Allow all origins for MVP
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+@app.route('/health')
+def health():
+    return jsonify({"status": "healthy", "message": "API is working"})
 
-    # Health check endpoint
-    @app.get("/health")
-    async def health_check():
-        """Basic health check endpoint"""
-        return {
-            "status": "healthy",
-            "environment": os.getenv("ENVIRONMENT", "production"),
-            "version": "1.0.0",
-            "message": "Novora MVP API is running"
-        }
+@app.route('/api/v1/health')
+def api_health():
+    return jsonify({"status": "healthy", "api_version": "v1"})
 
-    # API health check endpoint
-    @app.get("/api/v1/health")
-    async def api_health_check():
-        """API health check endpoint"""
-        return {
-            "status": "healthy",
-            "api_version": "v1",
-            "message": "Novora MVP API v1 is running"
-        }
-
-    # Root endpoint
-    @app.get("/")
-    async def root():
-        """Root endpoint"""
-        return {
-            "message": "Welcome to Novora MVP API",
-            "docs": "/docs",
-            "health": "/health",
-            "api_health": "/api/v1/health"
-        }
-
-    return app
-
-# Create the FastAPI app
-app = create_app()
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-        log_level="info"
-    )
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 8000))
+    app.run(host='0.0.0.0', port=port, debug=False)
