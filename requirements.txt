@@ -1,0 +1,28 @@
+# Core FastAPI dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+sqlalchemy==2.0.23
+alembic==1.12.1
+
+# Database
+psycopg2-binary==2.9.9
+
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# Data validation
+pydantic[email]==2.5.0
+pydantic-settings==2.1.0
+
+# Background tasks (optional for MVP)
+redis==5.0.1
+celery==5.3.4
+
+# Environment
+python-dotenv==1.0.0
+
+# System monitoring
+psutil==5.9.0
+prometheus-client==0.19.0
