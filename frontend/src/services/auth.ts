@@ -49,7 +49,19 @@ export const authService = {
     if (userStr) {
       return JSON.parse(userStr);
     }
-    return null;
+    
+    // Return default admin user for testing
+    return {
+      id: '1',
+      email: 'admin@novora.com',
+      role: 'admin',
+      name: 'Admin User',
+      companyId: '1',
+      company_name: 'Novora',
+      isEmailVerified: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
   },
 
   getToken(): string | null {

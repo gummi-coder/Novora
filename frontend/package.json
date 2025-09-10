@@ -14,6 +14,8 @@
     "build:development": "tsc && vite build --mode development",
     "build:staging": "tsc && vite build --mode staging",
     "build:production": "tsc && vite build --mode production",
+    "build:mvp": "tsc && vite build --mode mvp",
+    "dev:mvp": "vite --mode mvp",
     "preview": "vite preview",
     "preview:development": "vite preview --mode development",
     "preview:staging": "vite preview --mode staging",

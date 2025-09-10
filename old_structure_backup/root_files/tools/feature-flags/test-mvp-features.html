@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVP Feature Flags Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .feature { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .enabled { background: #d4edda; border: 1px solid #c3e6cb; }
+        .disabled { background: #f8d7da; border: 1px solid #f5c6cb; }
+        .status { font-weight: bold; }
+        .enabled .status { color: #155724; }
+        .disabled .status { color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Novora MVP Feature Flags Test</h1>
+    <p>This page tests if the MVP feature flags are working correctly.</p>
+    
+    <div id="features"></div>
+    
+    <script>
+        // Test feature flags (these should be defined by Vite)
+        const features = {
+            profile: typeof __PROFILE__ !== 'undefined' ? __PROFILE__ : 'NOT_DEFINED',
+            owner: typeof __FEATURE_OWNER__ !== 'undefined' ? __FEATURE_OWNER__ : 'NOT_DEFINED',
+            admin: typeof __FEATURE_ADMIN__ !== 'undefined' ? __FEATURE_ADMIN__ : 'NOT_DEFINED',
+            pro: typeof __FEATURE_PRO__ !== 'undefined' ? __FEATURE_PRO__ : 'NOT_DEFINED',
+            predictive: typeof __FEATURE_PREDICTIVE__ !== 'undefined' ? __FEATURE_PREDICTIVE__ : 'NOT_DEFINED',
+            photo: typeof __FEATURE_PHOTO__ !== 'undefined' ? __FEATURE_PHOTO__ : 'NOT_DEFINED',
+            autopilot: typeof __FEATURE_AUTOPILOT__ !== 'undefined' ? __FEATURE_AUTOPILOT__ : 'NOT_DEFINED',
+            exports: typeof __FEATURE_EXPORTS__ !== 'undefined' ? __FEATURE_EXPORTS__ : 'NOT_DEFINED',
+            enps: typeof __FEATURE_ENPS__ !== 'undefined' ? __FEATURE_ENPS__ : 'NOT_DEFINED',
+            advancedAnalytics: typeof __FEATURE_ADVANCED_ANALYTICS__ !== 'undefined' ? __FEATURE_ADVANCED_ANALYTICS__ : 'NOT_DEFINED',
+            integrations: typeof __FEATURE_INTEGRATIONS__ !== 'undefined' ? __FEATURE_INTEGRATIONS__ : 'NOT_DEFINED',
+            nlp: typeof __FEATURE_NLP__ !== 'undefined' ? __FEATURE_NLP__ : 'NOT_DEFINED'
+        };
+        
+        const expectedMVP = {
+            profile: 'MVP_AOBI',
+            owner: false,
+            admin: false,
+            pro: false,
+            predictive: false,
+            photo: false,
+            autopilot: false,
+            exports: false,
+            enps: true,
+            advancedAnalytics: false,
+            integrations: false,
+            nlp: false
+        };
+        
+        const container = document.getElementById('features');
+        
+        Object.entries(features).forEach(([key, value]) => {
+            const expected = expectedMVP[key];
+            const isCorrect = value === expected;
+            const isEnabled = value === true;
+            
+            const div = document.createElement('div');
+            div.className = `feature ${isEnabled ? 'enabled' : 'disabled'}`;
+            
+            div.innerHTML = `
+                <div class="status">${key.toUpperCase()}</div>
+                <div>Current: ${value}</div>
+                <div>Expected: ${expected}</div>
+                <div>Status: ${isCorrect ? '✅ CORRECT' : '❌ INCORRECT'}</div>
+            `;
+            
+            container.appendChild(div);
+        });
+        
+        // Summary
+        const correctCount = Object.entries(features).filter(([key, value]) => value === expectedMVP[key]).length;
+        const totalCount = Object.keys(features).length;
+        
+        const summary = document.createElement('div');
+        summary.style.marginTop = '20px';
+        summary.style.padding = '10px';
+        summary.style.backgroundColor = correctCount === totalCount ? '#d4edda' : '#f8d7da';
+        summary.style.borderRadius = '5px';
+        summary.innerHTML = `
+            <h3>Summary</h3>
+            <p>${correctCount}/${totalCount} feature flags are correctly set</p>
+            <p>Profile: ${features.profile}</p>
+        `;
+        
+        container.appendChild(summary);
+    </script>
+</body>
+</html>

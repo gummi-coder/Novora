@@ -1,77 +1,74 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React, { Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Index from "./pages/Index";
-import Features from "./pages/Features";
-import Pricing from "./pages/Pricing";
-import BookMeeting from "./pages/BookMeeting";
-import SignIn from "./pages/auth/SignIn";
+import MVPLanding from "./pages/MVPLanding";
+import MVPDashboard from "./pages/MVPDashboard";
+import MVPSignIn from "./pages/auth/MVPSignIn";
+import MVPSignUp from "./pages/auth/MVPSignUp";
+import MVPSurveyPage from "./pages/MVPSurveyPage";
 import SignUp from "./pages/auth/SignUp";
+import SignIn from "./pages/auth/SignIn";
 import ForgotPassword from "./pages/auth/ForgotPassword";
-import Dashboard from "./pages/Dashboard";
-import CreateSurvey from "./pages/CreateSurvey";
-import QuestionBank from "./pages/QuestionBank";
-import SurveysList from "./pages/SurveysList";
-import SurveyResponse from "./pages/SurveyResponse";
-import SurveyPreview from "./pages/SurveyPreview";
 import NotFound from "./pages/NotFound";
+import { Toaster } from "@/components/ui/sonner";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/book" element={<BookMeeting />} />
-          <Route path="/auth/signin" element={<SignIn />} />
-          <Route path="/auth/signup" element={<SignUp />} />
-          <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-          
-          {/* Dashboard Routes */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/overview" element={<Dashboard />} />
-          <Route path="/dashboard/trends" element={<Dashboard />} />
-          <Route path="/dashboard/feedback" element={<Dashboard />} />
-          <Route path="/dashboard/reports" element={<Dashboard />} />
-          <Route path="/dashboard/settings" element={<Dashboard />} />
-          
-          {/* Owner-specific routes */}
-          <Route path="/dashboard/culture-trends" element={<Dashboard />} />
-          <Route path="/dashboard/departments" element={<Dashboard />} />
-          <Route path="/dashboard/adoption-usage" element={<Dashboard />} />
-          <Route path="/dashboard/admin-activity" element={<Dashboard />} />
-          
-          {/* Admin-specific routes */}
-          <Route path="/dashboard/team-trends" element={<Dashboard />} />
-          <Route path="/dashboard/alerts" element={<Dashboard />} />
-          <Route path="/dashboard/employees" element={<Dashboard />} />
-          <Route path="/dashboard/surveys" element={<Dashboard />} />
-          <Route path="/dashboard/my-teams" element={<Dashboard />} />
-          
-          {/* Auto-Pilot routes */}
-          <Route path="/dashboard/auto-pilot" element={<Dashboard />} />
-          
-          {/* Survey Routes */}
-          <Route path="/surveys" element={<SurveysList />} />
-          <Route path="/surveys/create" element={<CreateSurvey />} />
-          <Route path="/question-bank" element={<QuestionBank />} />
-          <Route path="/survey/:surveyId" element={<SurveyResponse />} />
-          <Route path="/survey/preview" element={<SurveyPreview />} />
-          
-          {/* Catch all */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+// Simple test component
+const TestComponent = () => (
+  <div className="min-h-screen flex items-center justify-center bg-blue-50">
+    <div className="text-center">
+      <h1 className="text-3xl font-bold text-blue-600 mb-4">Test Page Working!</h1>
+      <p className="text-gray-600">If you see this, routing is working correctly</p>
+    </div>
+  </div>
 );
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Home Route - Redirect to MVP */}
+        <Route path="/" element={<Navigate to="/mvp" replace />} />
+        
+        {/* Auth Routes */}
+        <Route path="/auth/signup" element={<SignUp />} />
+        <Route path="/auth/signin" element={<SignIn />} />
+        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+        
+        {/* MVP Routes */}
+        <Route path="/mvp" element={
+          <LanguageProvider>
+            <MVPLanding />
+          </LanguageProvider>
+        } />
+        <Route path="/mvp-dashboard" element={
+          <LanguageProvider>
+            <MVPDashboard />
+          </LanguageProvider>
+        } />
+        <Route path="/mvp-signin" element={
+          <LanguageProvider>
+            <MVPSignIn />
+          </LanguageProvider>
+        } />
+        <Route path="/mvp-signup" element={
+          <LanguageProvider>
+            <MVPSignUp />
+          </LanguageProvider>
+        } />
+        <Route path="/survey/:token" element={
+          <LanguageProvider>
+            <MVPSurveyPage />
+          </LanguageProvider>
+        } />
+        
+        {/* 404 Route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      
+      {/* Toast notifications for MVP pages */}
+      <Toaster />
+    </BrowserRouter>
+  );
+};
 
 export default App;

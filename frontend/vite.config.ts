@@ -16,11 +16,23 @@ export default defineConfig(({ mode }) => {
   const enableProxy = env.VITE_DEV_PROXY === 'true' && isDevelopment;
   
   return {
-    // Environment variables
-    define: {
-      __APP_VERSION__: JSON.stringify(env.VITE_APP_VERSION || '1.0.0'),
-      __APP_ENVIRONMENT__: JSON.stringify(mode),
-    },
+      // Environment variables
+  define: {
+    __APP_VERSION__: JSON.stringify(env.VITE_APP_VERSION || '1.0.0'),
+    __APP_ENVIRONMENT__: JSON.stringify(mode),
+    __PROFILE__: JSON.stringify(env.VITE_PROFILE || 'FULL'),
+    __FEATURE_OWNER__: env.VITE_FEATURE_OWNER === 'true',
+    __FEATURE_ADMIN__: env.VITE_FEATURE_ADMIN === 'true',
+    __FEATURE_PRO__: env.VITE_FEATURE_PRO === 'true',
+    __FEATURE_PREDICTIVE__: env.VITE_FEATURE_PREDICTIVE === 'true',
+    __FEATURE_PHOTO__: env.VITE_FEATURE_PHOTO === 'true',
+    __FEATURE_AUTOPILOT__: env.VITE_FEATURE_AUTOPILOT === 'true',
+    __FEATURE_EXPORTS__: env.VITE_FEATURE_EXPORTS === 'true',
+    __FEATURE_ENPS__: env.VITE_FEATURE_ENPS === 'true',
+    __FEATURE_ADVANCED_ANALYTICS__: env.VITE_FEATURE_ADVANCED_ANALYTICS === 'true',
+    __FEATURE_INTEGRATIONS__: env.VITE_FEATURE_INTEGRATIONS === 'true',
+    __FEATURE_NLP__: env.VITE_FEATURE_NLP === 'true',
+  },
     
     server: {
       host: "localhost",
@@ -71,6 +83,14 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
       sourcemap: !isProduction,
       minify: isProduction,
+      rollupOptions: {
+        output: {
+          // Isolate the big builder so it never loads unless routed
+          manualChunks: { 
+            builder: ['src/components/survey/MultiStepSurveyBuilder.tsx'] 
+          }
+        }
+      }
     },
     
     // Environment-specific optimizations

@@ -2,8 +2,9 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'enterprise' | 'pro' | 'core';
+  role: 'admin' | 'manager';
   companyId: string;
+  company_name?: string;
   isEmailVerified: boolean;
   createdAt: string;
   updatedAt: string;

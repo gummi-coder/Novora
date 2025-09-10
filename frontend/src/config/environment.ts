@@ -52,7 +52,7 @@ export interface EnvironmentConfig {
 // Default configuration
 const defaultConfig: EnvironmentConfig = {
   api: {
-    baseUrl: 'http://localhost:8000',
+    baseUrl: 'http://127.0.0.1:8001',
     version: 'v1',
     timeout: 30000,
     retryAttempts: 3,
@@ -89,7 +89,7 @@ const defaultConfig: EnvironmentConfig = {
 const environmentConfigs: Record<Environment, Partial<EnvironmentConfig>> = {
   development: {
     api: {
-      baseUrl: 'http://localhost:8000',
+      baseUrl: 'http://127.0.0.1:8001',
       timeout: 60000, // Longer timeout for development
     },
     app: {
