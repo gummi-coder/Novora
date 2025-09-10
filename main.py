@@ -9,16 +9,17 @@ app = Flask(__name__)
 
 @app.route('/')
 def root():
-    return jsonify({"message": "Novora MVP API is running!"})
+    return "Novora MVP API is running!"
 
 @app.route('/health')
 def health():
-    return jsonify({"status": "healthy", "message": "API is working"})
+    return "API is working"
 
 @app.route('/api/v1/health')
 def api_health():
-    return jsonify({"status": "healthy", "api_version": "v1"})
+    return "API v1 is working"
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    print(f"Starting Flask app on port {port}")
+    app.run(host='0.0.0.0', port=port, debug=True)
