@@ -1,5 +1,1 @@
-# Ultra-minimal requirements - no Rust dependencies
-fastapi==0.65.2
-uvicorn==0.13.4
-pydantic==1.6.2
-python-dotenv==0.17.1
+# No external dependencies - using Python standard library only
