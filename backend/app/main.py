@@ -25,15 +25,6 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Try to include the full API router, fallback to basic health if it fails
-    try:
-        from app.api.v1.api import api_router
-        app.include_router(api_router, prefix="/api/v1")
-        logger.info("Full API router loaded successfully")
-    except Exception as e:
-        logger.warning(f"Failed to load full API router: {e}")
-        logger.info("Using basic health endpoints only")
-
     # Health check endpoint
     @app.get("/health")
     async def health_check():
@@ -55,6 +46,16 @@ def create_app() -> FastAPI:
             "message": "Novora MVP API v1 is running"
         }
 
+    # Root endpoint
+    @app.get("/")
+    async def root():
+        """Root endpoint"""
+        return {
+            "message": "Welcome to Novora MVP API",
+            "docs": "/docs",
+            "health": "/health"
+        }
+
     return app
 
 # Create the FastAPI app
@@ -63,7 +64,7 @@ app = create_app()
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
-        "app.main:app",
+        "backend.app.main:app",
         host="0.0.0.0",
         port=8000,
         reload=True,
