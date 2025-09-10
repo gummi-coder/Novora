@@ -5,7 +5,7 @@ services:
     plan: free
     region: frankfurt
     buildCommand: pip install -r requirements.txt
-    startCommand: python server.py
+    startCommand: python flask_app.py
     healthCheckPath: /api/v1/health
     envVars:
       - key: ENVIRONMENT
