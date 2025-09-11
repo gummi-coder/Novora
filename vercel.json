@@ -1,4 +1,7 @@
 {
+  "buildCommand": "echo 'No build needed - using static files'",
+  "outputDirectory": "static-frontend",
+  "installCommand": "echo 'No install needed'",
   "rewrites": [
     {
       "source": "/(.*)",
