@@ -24,8 +24,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Database path
-DB_PATH = "backend/mvp_surveys.db"
+# Database path - try multiple locations
+import os
+DB_PATHS = [
+    "backend/mvp_surveys.db",
+    "mvp_surveys.db", 
+    "/app/backend/mvp_surveys.db",
+    "/app/mvp_surveys.db"
+]
+
+def get_db_path():
+    for path in DB_PATHS:
+        if os.path.exists(path):
+            return path
+    # If no database found, return the first path as default
+    return DB_PATHS[0]
+
+DB_PATH = get_db_path()
 
 class SurveyResponse(BaseModel):
     id: int
@@ -52,6 +67,16 @@ async def api_health():
 async def get_surveys():
     """Get all surveys with survey links"""
     try:
+        # Debug: return database info
+        return {
+            "debug": {
+                "db_path": DB_PATH,
+                "db_exists": os.path.exists(DB_PATH),
+                "current_dir": os.getcwd(),
+                "files": os.listdir(".") if os.path.exists(".") else []
+            }
+        }
+        
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         
