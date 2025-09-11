@@ -93,6 +93,7 @@ class Survey(Base):
     category = Column(String(50), default='general')
     company_size = Column(Integer, default=10)  # MVP: company size for submission limit
     max_submissions = Column(Integer, default=10)  # MVP: max submissions allowed
+    token = Column(String(255), nullable=True)  # Survey token for sharing
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -103,6 +104,12 @@ class Survey(Base):
     attachments = relationship("FileAttachment", back_populates="survey", cascade="all, delete-orphan")
 
     def to_dict(self):
+        from app.core.config import settings
+        
+        survey_link = None
+        if self.token:
+            survey_link = f"{settings.FRONTEND_URL}/survey/{self.token}"
+        
         return {
             'id': self.id,
             'title': self.title,
@@ -115,6 +122,8 @@ class Survey(Base):
             'allow_comments': self.allow_comments,
             'reminder_frequency': self.reminder_frequency,
             'category': self.category,
+            'token': self.token,
+            'survey_link': survey_link,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat(),
             'questions': [q.to_dict() for q in self.questions],
