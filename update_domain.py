@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 """
-Simple script to update survey token in database
+Script to update survey token with correct domain
 """
 import sqlite3
 import random
 import string
 
-def update_survey_tokens():
-    """Update survey tokens in the database"""
+def update_survey_domain():
+    """Update survey tokens with the correct domain"""
     # Connect to the database
     db_path = "/Users/gudmundurfridgeirsson/NovoraSurveys/Novora/backend/mvp_surveys.db"
+    
+    # What's the correct frontend domain?
+    # Replace this with the actual domain
+    FRONTEND_URL = "https://novora-static.vercel.app"  # Update this if different
     
     try:
         conn = sqlite3.connect(db_path)
@@ -20,9 +24,11 @@ def update_survey_tokens():
         surveys = cursor.fetchall()
         
         print(f"Found {len(surveys)} surveys with existing tokens")
+        print(f"Updating to use domain: {FRONTEND_URL}")
+        print()
         
         for survey_id, title, old_token in surveys:
-            # Generate new token
+            # Generate new token with correct format
             random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
             new_token = f"mvp-user-{survey_id}_{random_string}"
             
@@ -30,7 +36,7 @@ def update_survey_tokens():
             cursor.execute("UPDATE surveys SET survey_token = ? WHERE id = ?", (new_token, survey_id))
             
             # Generate the new survey link
-            survey_link = f"https://novora-static.vercel.app/survey/{new_token}"
+            survey_link = f"{FRONTEND_URL}/survey/{new_token}"
             
             print(f"Survey {survey_id} ({title}):")
             print(f"  Old token: {old_token}")
@@ -49,8 +55,9 @@ def update_survey_tokens():
         conn.close()
 
 if __name__ == "__main__":
-    print("Updating survey tokens with correct Vercel URLs...")
-    print("Frontend URL: https://novora-static.vercel.app")
+    print("Updating survey tokens with correct domain...")
+    print("Current frontend URL: https://novora-static.vercel.app")
+    print("If this is wrong, edit the FRONTEND_URL variable in this script")
     print()
-    update_survey_tokens()
+    update_survey_domain()
     print("Done!")
