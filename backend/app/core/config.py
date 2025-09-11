@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
+    # Frontend URL
+    FRONTEND_URL: str = "https://novora-static.vercel.app"
+    
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://localhost:3000",
@@ -49,6 +52,7 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
         "http://127.0.0.1:8080",
         "http://127.0.0.1:5173",
+        "https://novora-static.vercel.app",
         "*"  # Allow all origins in development
     ]
     

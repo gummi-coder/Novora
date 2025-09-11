@@ -87,7 +87,8 @@ class EmailService:
         """Send email verification email"""
         subject = "Verify your Novora account"
         
-        verification_url = f"http://localhost:3000/verify-email?token={token}"
+        from app.core.config import settings
+        verification_url = f"{settings.FRONTEND_URL}/verify-email?token={token}"
         
         html_content = f"""
         <html>
@@ -125,7 +126,8 @@ class EmailService:
         """Send password reset email"""
         subject = "Reset your Novora password"
         
-        reset_url = f"http://localhost:3000/reset-password?token={token}"
+        from app.core.config import settings
+        reset_url = f"{settings.FRONTEND_URL}/reset-password?token={token}"
         
         html_content = f"""
         <html>

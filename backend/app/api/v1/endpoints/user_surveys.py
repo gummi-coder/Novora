@@ -73,10 +73,12 @@ async def generate_survey_token(
     survey.token = token
     db.commit()
     
+    from app.core.config import settings
+    
     return {
         "survey_id": survey_id,
         "token": token,
-        "survey_link": f"/survey/{token}",
+        "survey_link": f"{settings.FRONTEND_URL}/survey/{token}",
         "expires_at": None  # Tokens don't expire for MVP
     }
 
