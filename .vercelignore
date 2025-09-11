@@ -1,0 +1,17 @@
+node_modules
+.vite
+dist
+build
+*.log
+.git
+.gitignore
+README.md
+requirements*.txt
+backend/
+old_structure_backup/
+uploads/
+logs/
+*.db
+venv/
+__pycache__/
+*.pyc

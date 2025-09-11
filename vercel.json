@@ -1,8 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "echo 'No build needed'",
+  "buildCommand": "echo 'Static site - no build required'",
   "outputDirectory": ".",
-  "installCommand": "echo 'No install needed'",
+  "installCommand": "echo 'No dependencies to install'",
+  "framework": null,
   "builds": [
     {
       "src": "index.html",
