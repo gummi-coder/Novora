@@ -85,9 +85,11 @@ export default defineConfig(({ mode }) => {
       minify: isProduction,
       rollupOptions: {
         output: {
-          // Isolate the big builder so it never loads unless routed
-          manualChunks: { 
-            builder: ['src/components/survey/MultiStepSurveyBuilder.tsx'] 
+          // Simple chunking without specific file references
+          manualChunks: (id) => {
+            if (id.includes('node_modules')) {
+              return 'vendor';
+            }
           }
         }
       }
