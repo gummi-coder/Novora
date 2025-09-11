@@ -1,4 +1,10 @@
 {
   "buildCommand": "echo 'Static site - no build needed'",
-  "outputDirectory": "static-frontend"
+  "outputDirectory": "static-frontend",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
