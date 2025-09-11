@@ -58,6 +58,10 @@ def create_app() -> FastAPI:
             "api_health": "/api/v1/health"
         }
 
+    # Include API routes
+    from app.api.v1.api import api_router
+    app.include_router(api_router, prefix="/api/v1")
+
     return app
 
 # Create the FastAPI app
