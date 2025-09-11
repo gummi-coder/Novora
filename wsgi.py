@@ -1,28 +1,14 @@
 #!/usr/bin/env python3
 """
-WSGI application for Render deployment - now using FastAPI
+WSGI application for Render deployment - Flask with survey endpoints
 """
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Optional
+from flask import Flask, jsonify
+from flask_cors import CORS
 import sqlite3
 import os
 
-app = FastAPI(
-    title="Novora MVP Survey Platform API",
-    description="Backend API for MVP survey management platform",
-    version="1.0.0"
-)
-
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Database path - try multiple locations
 DB_PATHS = [
@@ -41,29 +27,20 @@ def get_db_path():
 
 DB_PATH = get_db_path()
 
-class SurveyResponse(BaseModel):
-    id: int
-    title: str
-    description: Optional[str]
-    survey_token: Optional[str]
-    survey_link: Optional[str]
-    status: str
-    created_at: str
+@app.route('/')
+def home():
+    return "Hello from Novora MVP API!"
 
-@app.get("/")
-async def root():
-    return {"message": "Novora MVP API is running!"}
+@app.route('/health')
+def health():
+    return "Health check OK"
 
-@app.get("/health")
-async def health():
-    return {"status": "healthy", "message": "API is working"}
+@app.route('/api/v1/health')
+def api_health():
+    return "API v1 health OK"
 
-@app.get("/api/v1/health")
-async def api_health():
-    return {"status": "healthy", "api_version": "v1", "message": "API v1 is working"}
-
-@app.get("/api/v1/surveys", response_model=List[SurveyResponse])
-async def get_surveys():
+@app.route('/api/v1/surveys')
+def get_surveys():
     """Get all surveys with survey links"""
     try:
         conn = sqlite3.connect(DB_PATH)
@@ -83,23 +60,61 @@ async def get_surveys():
             if survey_token:
                 survey_link = f"https://novorasurveys.com/survey/{survey_token}"
             
-            surveys.append(SurveyResponse(
-                id=survey_id,
-                title=title,
-                description=description,
-                survey_token=survey_token,
-                survey_link=survey_link,
-                status=status,
-                created_at=created_at
-            ))
+            surveys.append({
+                "id": survey_id,
+                "title": title,
+                "description": description,
+                "survey_token": survey_token,
+                "survey_link": survey_link,
+                "status": status,
+                "created_at": created_at
+            })
         
         conn.close()
-        return surveys
+        return jsonify(surveys)
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        return jsonify({"error": f"Database error: {str(e)}"}), 500
+
+@app.route('/api/v1/surveys/<int:survey_id>')
+def get_survey(survey_id):
+    """Get a specific survey by ID"""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT id, title, description, survey_token, status, created_at 
+            FROM surveys 
+            WHERE id = ?
+        """, (survey_id,))
+        
+        row = cursor.fetchone()
+        if not row:
+            return jsonify({"error": "Survey not found"}), 404
+        
+        survey_id, title, description, survey_token, status, created_at = row
+        
+        survey_link = None
+        if survey_token:
+            survey_link = f"https://novorasurveys.com/survey/{survey_token}"
+        
+        conn.close()
+        return jsonify({
+            "id": survey_id,
+            "title": title,
+            "description": description,
+            "survey_token": survey_token,
+            "survey_link": survey_link,
+            "status": status,
+            "created_at": created_at
+        })
+        
+    except Exception as e:
+        return jsonify({"error": f"Database error: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    import uvicorn
     port = int(os.environ.get('PORT', 8000))
-    uvicorn.run(app, host='0.0.0.0', port=port)
+    print(f"Starting Flask app on port {port}")
+    print(f"Database path: {DB_PATH}")
+    app.run(host='0.0.0.0', port=port, debug=True)

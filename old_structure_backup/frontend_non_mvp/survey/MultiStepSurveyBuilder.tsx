@@ -730,7 +730,7 @@ const MultiStepSurveyBuilder: React.FC<MultiStepSurveyBuilderProps> = ({
                   console.log('Preview data:', surveyDataForPreview);
                   
                   const encodedData = encodeURIComponent(JSON.stringify(surveyDataForPreview));
-                  const previewUrl = `${window.location.origin}/survey/preview?data=${encodedData}`;
+                  const previewUrl = `https://novorasurveys.com/survey/preview?data=${encodedData}`;
                   
                   console.log('Opening preview URL:', previewUrl);
                   const newWindow = window.open(previewUrl, '_blank');

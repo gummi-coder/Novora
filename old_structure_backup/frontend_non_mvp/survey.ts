@@ -264,7 +264,7 @@ class SurveyService {
 
   // Generate survey link
   generateSurveyLink(surveyId: string): string {
-    return `${window.location.origin}/survey/${surveyId}`;
+    return `https://novorasurveys.com/survey/${surveyId}`;
   }
 
   // Generate QR code for survey

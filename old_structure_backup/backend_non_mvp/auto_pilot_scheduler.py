@@ -252,7 +252,7 @@ class AutoPilotScheduler:
 
     async def _send_survey_email(self, db: Session, survey: Survey, users: List[User], plan: AutoPilotPlan):
         """Send survey via email"""
-        survey_link = f"http://localhost:3000/survey/{survey.id}"
+        survey_link = f"https://novorasurveys.com/survey/{survey.id}"
         
         for user in users:
             try:
@@ -269,13 +269,13 @@ class AutoPilotScheduler:
     async def _send_survey_link(self, db: Session, survey: Survey, users: List[User], plan: AutoPilotPlan):
         """Send survey via direct link"""
         # This would typically involve posting to Slack, Teams, etc.
-        survey_link = f"http://localhost:3000/survey/{survey.id}"
+        survey_link = f"https://novorasurveys.com/survey/{survey.id}"
         logger.info(f"Survey link generated: {survey_link}")
 
     async def _send_survey_qr(self, db: Session, survey: Survey, users: List[User], plan: AutoPilotPlan):
         """Send survey via QR code"""
         # This would typically involve generating QR codes and posting them
-        survey_link = f"http://localhost:3000/survey/{survey.id}"
+        survey_link = f"https://novorasurveys.com/survey/{survey.id}"
         logger.info(f"QR code generated for: {survey_link}")
 
     async def _process_reminders(self):
@@ -352,7 +352,7 @@ class AutoPilotScheduler:
                 message = base_message
 
             # Send reminder emails
-            survey_link = f"http://localhost:3000/survey/{survey.survey_id}"
+            survey_link = f"https://novorasurveys.com/survey/{survey.survey_id}"
             
             for user in non_responded_users:
                 try:

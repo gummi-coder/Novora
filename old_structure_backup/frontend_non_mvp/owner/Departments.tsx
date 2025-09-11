@@ -545,7 +545,7 @@ const Departments = ({ onViewDetail }: DepartmentsProps) => {
 
   const handleShare = async () => {
     try {
-      const shareUrl = `${window.location.origin}/departments`;
+      const shareUrl = `https://novorasurveys.com/departments`;
       await navigator.clipboard.writeText(shareUrl);
       toast({
         title: "Success",
