@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 """
-Script to update survey token with correct domain
+Script to update survey token with novorasurveys.com domain
 """
 import sqlite3
 import random
 import string
 
 def update_survey_domain():
-    """Update survey tokens with the correct domain"""
+    """Update survey tokens with novorasurveys.com domain"""
     # Connect to the database
     db_path = "/Users/gudmundurfridgeirsson/NovoraSurveys/Novora/backend/mvp_surveys.db"
     
-    # What's the correct frontend domain?
-    # Replace this with the actual domain
-    FRONTEND_URL = "https://novora-static.vercel.app"  # Update this if different
+    # New domain
+    FRONTEND_URL = "https://novorasurveys.com"
     
     try:
         conn = sqlite3.connect(db_path)
@@ -55,9 +54,7 @@ def update_survey_domain():
         conn.close()
 
 if __name__ == "__main__":
-    print("Updating survey tokens with correct domain...")
-    print("Current frontend URL: https://novora-static.vercel.app")
-    print("If this is wrong, edit the FRONTEND_URL variable in this script")
+    print("Updating survey tokens with novorasurveys.com domain...")
     print()
     update_survey_domain()
     print("Done!")

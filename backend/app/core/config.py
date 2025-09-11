@@ -42,7 +42,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
     # Frontend URL
-    FRONTEND_URL: str = "https://novora-static.vercel.app"
+    FRONTEND_URL: str = "https://novorasurveys.com"
     
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = [
@@ -52,7 +52,8 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
         "http://127.0.0.1:8080",
         "http://127.0.0.1:5173",
-        "https://novora-static.vercel.app",
+        "https://novorasurveys.com",
+        "https://www.novorasurveys.com",
         "*"  # Allow all origins in development
     ]
     
