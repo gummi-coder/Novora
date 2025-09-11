@@ -1,6 +1,0 @@
-<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
-  <rect width="120" height="120" fill="#ea580c"/>
-  <rect x="3" y="3" width="114" height="114" fill="none" stroke="white" stroke-width="3"/>
-  <text x="60" y="40" font-family="Arial" font-size="24" font-weight="bold" fill="white" text-anchor="middle">1</text>
-  <text x="60" y="60" font-family="Arial" font-size="12" fill="white" text-anchor="middle">Sad</text>
-</svg>
