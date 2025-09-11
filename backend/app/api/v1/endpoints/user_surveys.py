@@ -70,7 +70,7 @@ async def generate_survey_token(
     token = f"{current_user.id}_{survey_id}_{random_string}"
     
     # Store token in survey (you might want a separate tokens table)
-    survey.token = token
+    survey.survey_token = token
     db.commit()
     
     from app.core.config import settings

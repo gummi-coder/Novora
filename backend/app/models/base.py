@@ -93,7 +93,7 @@ class Survey(Base):
     category = Column(String(50), default='general')
     company_size = Column(Integer, default=10)  # MVP: company size for submission limit
     max_submissions = Column(Integer, default=10)  # MVP: max submissions allowed
-    token = Column(String(255), nullable=True)  # Survey token for sharing
+    survey_token = Column(String(255), nullable=True)  # Survey token for sharing
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -107,8 +107,8 @@ class Survey(Base):
         from app.core.config import settings
         
         survey_link = None
-        if self.token:
-            survey_link = f"{settings.FRONTEND_URL}/survey/{self.token}"
+        if self.survey_token:
+            survey_link = f"{settings.FRONTEND_URL}/survey/{self.survey_token}"
         
         return {
             'id': self.id,
@@ -122,7 +122,7 @@ class Survey(Base):
             'allow_comments': self.allow_comments,
             'reminder_frequency': self.reminder_frequency,
             'category': self.category,
-            'token': self.token,
+            'token': self.survey_token,
             'survey_link': survey_link,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat(),
