@@ -4,6 +4,7 @@
   "outputDirectory": ".",
   "installCommand": "echo 'No dependencies to install'",
   "framework": null,
+  "functions": {},
   "builds": [
     {
       "src": "index.html",
