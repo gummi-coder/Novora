@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WSGI application for Render deployment - Flask with survey endpoints
+WSGI application for Render deployment with authentication and surveys
 """
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -104,15 +104,15 @@ def init_database():
 # Initialize database on startup
 init_database()
 
-@app.route('/')
-def home():
-    return "Hello from Novora MVP API! Updated with authentication system!"
+@app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def root():
+    return "Novora MVP API with Authentication System! - WSGI VERSION"
 
-@app.route('/health')
+@app.route('/health', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def health():
     return "Health check OK"
 
-@app.route('/api/v1/health')
+@app.route('/api/v1/health', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def api_health():
     return "API v1 health OK"
 
@@ -258,52 +258,14 @@ def register():
     except Exception as e:
         return jsonify({"error": f"Registration error: {str(e)}"}), 500
 
-@app.route('/api/v1/auth/me', methods=['GET'])
-def get_current_user():
-    """Get current user information"""
-    try:
-        # Get token from Authorization header
-        auth_header = request.headers.get('Authorization')
-        if not auth_header or not auth_header.startswith('Bearer '):
-            return jsonify({"error": "Authorization token required"}), 401
-        
-        token = auth_header.split(' ')[1]
-        
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        
-        # Find user by token (simplified - in production use JWT)
-        cursor.execute("""
-            SELECT u.* FROM users u
-            JOIN user_sessions s ON u.id = s.user_id
-            WHERE s.refresh_token = ? AND s.is_revoked = 0 AND s.expires_at > CURRENT_TIMESTAMP
-        """, (token,))
-        
-        user = cursor.fetchone()
-        if not user:
-            conn.close()
-            return jsonify({"error": "Invalid token"}), 401
-        
-        user_id, user_email, password_hash, company_name, role, is_active, is_email_verified, created_at, last_login, failed_attempts, last_failed = user
-        
-        conn.close()
-        
-        return jsonify({
-            "id": str(user_id),
-            "email": user_email,
-            "firstName": user_email.split('@')[0].title(),
-            "lastName": "",
-            "role": role,
-            "is_active": bool(is_active),
-            "status": "active" if is_active else "inactive",
-            "createdAt": created_at,
-            "updatedAt": created_at
-        })
-        
-    except Exception as e:
-        return jsonify({"error": f"Authentication error: {str(e)}"}), 500
+@app.route('/api/v1/surveys', methods=['GET', 'POST'])
+def handle_surveys():
+    """Handle surveys - GET for listing, POST for creating"""
+    if request.method == 'POST':
+        return create_survey()
+    else:
+        return get_surveys()
 
-@app.route('/api/v1/surveys')
 def get_surveys():
     """Get all surveys with survey links - filtered by user if authenticated"""
     try:
@@ -370,7 +332,6 @@ def get_surveys():
     except Exception as e:
         return jsonify({"error": f"Database error: {str(e)}"}), 500
 
-@app.route('/api/v1/surveys', methods=['POST'])
 def create_survey():
     """Create a new survey for authenticated user"""
     try:
@@ -407,8 +368,8 @@ def create_survey():
         
         # Create survey
         cursor.execute("""
-            INSERT INTO surveys (title, description, survey_token, status, user_id, created_at)
-            VALUES (?, ?, ?, 'active', ?, CURRENT_TIMESTAMP)
+            INSERT INTO surveys (title, description, survey_token, status, user_id, created_at, company_size, max_submissions)
+            VALUES (?, ?, ?, 'active', ?, CURRENT_TIMESTAMP, 50, 100)
         """, (title, description, survey_token, user_id))
         
         survey_id = cursor.lastrowid
@@ -431,133 +392,13 @@ def create_survey():
     except Exception as e:
         return jsonify({"error": f"Survey creation error: {str(e)}"}), 500
 
-@app.route('/api/v1/surveys/<survey_token>/responses', methods=['POST'])
-def submit_survey_response(survey_token):
-    """Submit survey response"""
-    try:
-        data = request.get_json()
-        
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        
-        # Find survey by token
-        cursor.execute("SELECT id, user_id FROM surveys WHERE survey_token = ?", (survey_token,))
-        survey = cursor.fetchone()
-        
-        if not survey:
-            conn.close()
-            return jsonify({"error": "Survey not found"}), 404
-        
-        survey_id, survey_user_id = survey
-        
-        # Store response
-        cursor.execute("""
-            INSERT INTO responses (survey_id, response_data, submitted_at, ip_address)
-            VALUES (?, ?, CURRENT_TIMESTAMP, ?)
-        """, (survey_id, json.dumps(data), request.remote_addr))
-        
-        conn.commit()
-        conn.close()
-        
-        return jsonify({"message": "Response submitted successfully"})
-        
-    except Exception as e:
-        return jsonify({"error": f"Response submission error: {str(e)}"}), 500
+@app.errorhandler(404)
+def not_found(error):
+    return "Endpoint not found", 404
 
-@app.route('/api/v1/surveys/<int:survey_id>/responses')
-def get_survey_responses(survey_id):
-    """Get responses for a specific survey (authenticated users only)"""
-    try:
-        # Check authentication
-        auth_header = request.headers.get('Authorization')
-        if not auth_header or not auth_header.startswith('Bearer '):
-            return jsonify({"error": "Authentication required"}), 401
-        
-        token = auth_header.split(' ')[1]
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        
-        # Find user by token
-        cursor.execute("""
-            SELECT u.id FROM users u
-            JOIN user_sessions s ON u.id = s.user_id
-            WHERE s.refresh_token = ? AND s.is_revoked = 0 AND s.expires_at > CURRENT_TIMESTAMP
-        """, (token,))
-        
-        user = cursor.fetchone()
-        if not user:
-            conn.close()
-            return jsonify({"error": "Invalid token"}), 401
-        
-        user_id = user[0]
-        
-        # Check if user owns this survey
-        cursor.execute("SELECT user_id FROM surveys WHERE id = ?", (survey_id,))
-        survey = cursor.fetchone()
-        if not survey or survey[0] != user_id:
-            conn.close()
-            return jsonify({"error": "Survey not found or access denied"}), 404
-        
-        # Get responses
-        cursor.execute("""
-            SELECT id, response_data, submitted_at, ip_address
-            FROM responses 
-            WHERE survey_id = ?
-            ORDER BY submitted_at DESC
-        """, (survey_id,))
-        
-        responses = []
-        for row in cursor.fetchall():
-            response_id, response_data, submitted_at, ip_address = row
-            responses.append({
-                "id": response_id,
-                "response_data": json.loads(response_data) if response_data else {},
-                "submitted_at": submitted_at,
-                "ip_address": ip_address
-            })
-        
-        conn.close()
-        return jsonify(responses)
-        
-    except Exception as e:
-        return jsonify({"error": f"Error fetching responses: {str(e)}"}), 500
-
-@app.route('/api/v1/surveys/<int:survey_id>')
-def get_survey(survey_id):
-    """Get a specific survey by ID"""
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        
-        cursor.execute("""
-            SELECT id, title, description, survey_token, status, created_at 
-            FROM surveys 
-            WHERE id = ?
-        """, (survey_id,))
-        
-        row = cursor.fetchone()
-        if not row:
-            return jsonify({"error": "Survey not found"}), 404
-        
-        survey_id, title, description, survey_token, status, created_at = row
-        
-        survey_link = None
-        if survey_token:
-            survey_link = f"https://novorasurveys.com/survey/{survey_token}"
-        
-        conn.close()
-        return jsonify({
-            "id": survey_id,
-            "title": title,
-            "description": description,
-            "survey_token": survey_token,
-            "survey_link": survey_link,
-            "status": status,
-            "created_at": created_at
-        })
-        
-    except Exception as e:
-        return jsonify({"error": f"Database error: {str(e)}"}), 500
+@app.errorhandler(500)
+def internal_error(error):
+    return "Internal server error", 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8000))
