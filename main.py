@@ -258,7 +258,14 @@ def register():
     except Exception as e:
         return jsonify({"error": f"Registration error: {str(e)}"}), 500
 
-@app.route('/api/v1/surveys', methods=['GET'])
+@app.route('/api/v1/surveys', methods=['GET', 'POST'])
+def handle_surveys():
+    """Handle surveys - GET for listing, POST for creating"""
+    if request.method == 'POST':
+        return create_survey()
+    else:
+        return get_surveys()
+
 def get_surveys():
     """Get all surveys with survey links - filtered by user if authenticated"""
     try:
@@ -324,6 +331,66 @@ def get_surveys():
         
     except Exception as e:
         return jsonify({"error": f"Database error: {str(e)}"}), 500
+
+def create_survey():
+    """Create a new survey for authenticated user"""
+    try:
+        # Check authentication
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({"error": "Authentication required"}), 401
+        
+        token = auth_header.split(' ')[1]
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        
+        # Find user by token
+        cursor.execute("""
+            SELECT u.id FROM users u
+            JOIN user_sessions s ON u.id = s.user_id
+            WHERE s.refresh_token = ? AND s.is_revoked = 0 AND s.expires_at > CURRENT_TIMESTAMP
+        """, (token,))
+        
+        user = cursor.fetchone()
+        if not user:
+            conn.close()
+            return jsonify({"error": "Invalid token"}), 401
+        
+        user_id = user[0]
+        
+        # Get survey data
+        data = request.get_json()
+        title = data.get('title', 'New Survey')
+        description = data.get('description', '')
+        
+        # Generate survey token
+        survey_token = f"mvp-user-{user_id}_{create_token()}"
+        
+        # Create survey
+        cursor.execute("""
+            INSERT INTO surveys (title, description, survey_token, status, user_id, created_at, company_size, max_submissions)
+            VALUES (?, ?, ?, 'active', ?, CURRENT_TIMESTAMP, 50, 100)
+        """, (title, description, survey_token, user_id))
+        
+        survey_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        
+        survey_link = f"https://novorasurveys.com/survey/{survey_token}"
+        
+        return jsonify({
+            "id": survey_id,
+            "title": title,
+            "description": description,
+            "survey_token": survey_token,
+            "survey_link": survey_link,
+            "status": "active",
+            "user_id": user_id,
+            "created_at": datetime.utcnow().isoformat()
+        })
+        
+    except Exception as e:
+        return jsonify({"error": f"Survey creation error: {str(e)}"}), 500
 
 @app.errorhandler(404)
 def not_found(error):
