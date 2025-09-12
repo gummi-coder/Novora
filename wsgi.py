@@ -116,6 +116,22 @@ def health():
 def api_health():
     return "API v1 health OK"
 
+@app.route('/test-surveys')
+def test_surveys():
+    """Test endpoint to verify surveys functionality"""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT COUNT(*) FROM surveys")
+        count = cursor.fetchone()[0]
+        
+        conn.close()
+        return f"Database connected! Found {count} surveys in database."
+        
+    except Exception as e:
+        return f"Database error: {str(e)}"
+
 # Authentication endpoints
 @app.route('/api/v1/auth/login', methods=['POST'])
 def login():
