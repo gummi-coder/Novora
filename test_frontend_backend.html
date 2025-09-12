@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Frontend-Backend Connection</title>
+</head>
+<body>
+    <h1>Test Frontend-Backend Connection</h1>
+    
+    <div id="results"></div>
+    
+    <script>
+        async function testAPI() {
+            const results = document.getElementById('results');
+            
+            try {
+                // Test backend health
+                const healthResponse = await fetch('https://novora.onrender.com/api/v1/health');
+                const healthData = await healthResponse.text();
+                results.innerHTML += `<p>✅ Backend Health: ${healthData}</p>`;
+                
+                // Test registration
+                const registerResponse = await fetch('https://novora.onrender.com/api/v1/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'test@test.com',
+                        password: 'testpass',
+                        company_name: 'Test Company'
+                    })
+                });
+                
+                const registerData = await registerResponse.json();
+                results.innerHTML += `<p>✅ Registration: ${registerData.message}</p>`;
+                
+                // Test login
+                const loginResponse = await fetch('https://novora.onrender.com/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'test@test.com',
+                        password: 'testpass'
+                    })
+                });
+                
+                const loginData = await loginResponse.json();
+                results.innerHTML += `<p>✅ Login: ${loginData.message}</p>`;
+                results.innerHTML += `<p>Token: ${loginData.token}</p>`;
+                
+                // Test surveys
+                const surveysResponse = await fetch('https://novora.onrender.com/api/v1/surveys', {
+                    headers: {
+                        'Authorization': `Bearer ${loginData.token}`
+                    }
+                });
+                
+                const surveysData = await surveysResponse.json();
+                results.innerHTML += `<p>✅ Surveys: ${JSON.stringify(surveysData)}</p>`;
+                
+            } catch (error) {
+                results.innerHTML += `<p>❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Run test when page loads
+        testAPI();
+    </script>
+</body>
+</html>

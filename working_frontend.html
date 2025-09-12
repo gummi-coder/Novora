@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novora MVP - Working Version</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; }
+        input, textarea, button { width: 100%; padding: 10px; margin: 5px 0; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .survey { border: 1px solid #ddd; padding: 15px; margin: 10px 0; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Novora MVP - Working Version</h1>
+    
+    <div id="loginForm">
+        <h2>Login</h2>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="loginEmail" value="test@test.com">
+        </div>
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="loginPassword" value="testpass">
+        </div>
+        <button onclick="login()">Login</button>
+        <button onclick="register()">Register</button>
+        <div id="loginStatus"></div>
+    </div>
+    
+    <div id="dashboard" style="display: none;">
+        <h2>Dashboard</h2>
+        <button onclick="logout()">Logout</button>
+        
+        <h3>Create Survey</h3>
+        <div class="form-group">
+            <label>Survey Title:</label>
+            <input type="text" id="surveyTitle" placeholder="Enter survey title">
+        </div>
+        <div class="form-group">
+            <label>Survey Description:</label>
+            <textarea id="surveyDescription" placeholder="Enter survey description"></textarea>
+        </div>
+        <button onclick="createSurvey()">Create Survey</button>
+        
+        <h3>Your Surveys</h3>
+        <div id="surveysList"></div>
+    </div>
+    
+    <script>
+        const API_BASE = 'https://novora.onrender.com';
+        let currentToken = null;
+        
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentToken = data.token;
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    document.getElementById('loginStatus').innerHTML = '<span class="success">Login successful!</span>';
+                    loadSurveys();
+                } else {
+                    document.getElementById('loginStatus').innerHTML = `<span class="error">Error: ${data.error}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('loginStatus').innerHTML = `<span class="error">Connection error: ${error.message}</span>`;
+            }
+        }
+        
+        async function register() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email, 
+                        password, 
+                        company_name: 'Test Company' 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentToken = data.token;
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    document.getElementById('loginStatus').innerHTML = '<span class="success">Registration successful!</span>';
+                    loadSurveys();
+                } else {
+                    document.getElementById('loginStatus').innerHTML = `<span class="error">Error: ${data.error}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('loginStatus').innerHTML = `<span class="error">Connection error: ${error.message}</span>`;
+            }
+        }
+        
+        async function createSurvey() {
+            const title = document.getElementById('surveyTitle').value;
+            const description = document.getElementById('surveyDescription').value;
+            
+            if (!title) {
+                alert('Please enter a survey title');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/surveys`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    },
+                    body: JSON.stringify({ 
+                        title, 
+                        description,
+                        questions: [
+                            { type: 'text', question: 'What is your name?' },
+                            { type: 'rating', question: 'How satisfied are you?', scale: '1-10' }
+                        ]
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('surveyTitle').value = '';
+                    document.getElementById('surveyDescription').value = '';
+                    document.getElementById('loginStatus').innerHTML = '<span class="success">Survey created successfully!</span>';
+                    loadSurveys();
+                } else {
+                    document.getElementById('loginStatus').innerHTML = `<span class="error">Error: ${data.error}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('loginStatus').innerHTML = `<span class="error">Connection error: ${error.message}</span>`;
+            }
+        }
+        
+        async function loadSurveys() {
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/surveys`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const surveysList = document.getElementById('surveysList');
+                    surveysList.innerHTML = '';
+                    
+                    data.surveys.forEach(survey => {
+                        const surveyDiv = document.createElement('div');
+                        surveyDiv.className = 'survey';
+                        surveyDiv.innerHTML = `
+                            <h4>${survey.title}</h4>
+                            <p>${survey.description}</p>
+                            <p><strong>Survey Link:</strong> <a href="${survey.survey_link}" target="_blank">${survey.survey_link}</a></p>
+                        `;
+                        surveysList.appendChild(surveyDiv);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading surveys:', error);
+            }
+        }
+        
+        function logout() {
+            currentToken = null;
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loginStatus').innerHTML = '';
+        }
+        
+        // Test backend connection on load
+        fetch(`${API_BASE}/api/v1/health`)
+            .then(response => response.text())
+            .then(data => {
+                console.log('Backend is working:', data);
+            })
+            .catch(error => {
+                console.error('Backend connection failed:', error);
+                document.getElementById('loginStatus').innerHTML = '<span class="error">Backend connection failed. Check console for details.</span>';
+            });
+    </script>
+</body>
+</html>
