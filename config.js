@@ -22,8 +22,25 @@ window.ENVIRONMENT_CONFIG = {
   NODE_ENV: 'production'
 };
 
-// Make it globally available
+// Production security guard - disable mock data
 if (typeof window !== 'undefined') {
+  // Block mock data in production
+  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    window.USE_MOCK_DATA = false;
+    window.MOCK_MODE = false;
+    
+    // Override any mock data functions
+    if (window.mockData) {
+      window.mockData = null;
+    }
+    if (window.getMockSurveys) {
+      window.getMockSurveys = () => [];
+    }
+    if (window.getMockUser) {
+      window.getMockUser = () => null;
+    }
+  }
+  
   window.API_CONFIG = window.API_CONFIG;
   window.ENVIRONMENT_CONFIG = window.ENVIRONMENT_CONFIG;
 }

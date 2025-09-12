@@ -11,6 +11,14 @@
   ],
   "routes": [
     {
+      "src": "/dashboard(.*)",
+      "dest": "/maintenance.html"
+    },
+    {
+      "src": "/api/(?!health)(.*)",
+      "dest": "/maintenance.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
