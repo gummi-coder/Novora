@@ -106,7 +106,7 @@ init_database()
 
 @app.route('/')
 def home():
-    return "Hello from Novora MVP API!"
+    return "Hello from Novora MVP API! Updated with authentication system!"
 
 @app.route('/health')
 def health():
