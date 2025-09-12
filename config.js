@@ -1,7 +1,7 @@
 // API Configuration
 window.API_CONFIG = {
-  // Your actual Render backend URL
-  BASE_URL: 'https://novora.onrender.com',
+  // Temporary backend URL - using a different service
+  BASE_URL: 'https://novora-backend.vercel.app',
   
   // Frontend URL for survey links
   FRONTEND_URL: 'https://novorasurveys.com',
@@ -17,7 +17,7 @@ window.API_CONFIG = {
 
 // Override hardcoded localhost URLs
 window.ENVIRONMENT_CONFIG = {
-  VITE_API_URL: 'https://novora.onrender.com',
+  VITE_API_URL: 'https://novora-backend.vercel.app',
   VITE_FRONTEND_URL: 'https://novorasurveys.com',
   NODE_ENV: 'production'
 };
@@ -45,8 +45,8 @@ if (typeof window !== 'undefined') {
     window.fetch = function(url, options) {
       if (typeof url === 'string') {
         // Replace localhost:8000 with production backend
-        url = url.replace('http://localhost:8000', 'https://novora.onrender.com');
-        url = url.replace('https://localhost:8000', 'https://novora.onrender.com');
+        url = url.replace('http://localhost:8000', 'https://novora-backend.vercel.app');
+        url = url.replace('https://localhost:8000', 'https://novora-backend.vercel.app');
         // Replace localhost:3000 with production frontend
         url = url.replace('http://localhost:3000', 'https://novorasurveys.com');
         url = url.replace('https://localhost:3000', 'https://novorasurveys.com');
@@ -58,8 +58,8 @@ if (typeof window !== 'undefined') {
     const originalXHROpen = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function(method, url, ...args) {
       if (typeof url === 'string') {
-        url = url.replace('http://localhost:8000', 'https://novora.onrender.com');
-        url = url.replace('https://localhost:8000', 'https://novora.onrender.com');
+        url = url.replace('http://localhost:8000', 'https://novora-backend.vercel.app');
+        url = url.replace('https://localhost:8000', 'https://novora-backend.vercel.app');
         url = url.replace('http://localhost:3000', 'https://novorasurveys.com');
         url = url.replace('https://localhost:3000', 'https://novorasurveys.com');
       }
