@@ -100,7 +100,7 @@ const Reports: React.FC = () => {
   };
 
   const generateLink = () => {
-    const link = `${window.location.origin}/reports/shared/${Math.random().toString(36).slice(2, 8)}`;
+    const link = `https://novorasurveys.com/reports/shared/${Math.random().toString(36).slice(2, 8)}`;
     setShareLink(link);
     toast({ title: "Link Generated", description: "Share link has been created successfully!" });
   };

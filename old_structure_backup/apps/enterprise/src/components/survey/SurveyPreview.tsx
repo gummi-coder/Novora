@@ -21,7 +21,7 @@ export function SurveyPreview({ survey, onShare }: SurveyPreviewProps) {
 
   React.useEffect(() => {
     // Generate a shareable link
-    const baseUrl = window.location.origin;
+    const baseUrl = 'https://novorasurveys.com';
     const link = `${baseUrl}/surveys/${survey.id}`;
     setShareLink(link);
   }, [survey.id]);
