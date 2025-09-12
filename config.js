@@ -22,7 +22,7 @@ window.ENVIRONMENT_CONFIG = {
   NODE_ENV: 'production'
 };
 
-// Production security guard - disable mock data
+// Production security guard - disable mock data and fix localhost URLs
 if (typeof window !== 'undefined') {
   // Block mock data in production
   if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
@@ -39,6 +39,32 @@ if (typeof window !== 'undefined') {
     if (window.getMockUser) {
       window.getMockUser = () => null;
     }
+    
+    // CRITICAL: Override hardcoded localhost URLs in compiled JS
+    const originalFetch = window.fetch;
+    window.fetch = function(url, options) {
+      if (typeof url === 'string') {
+        // Replace localhost:8000 with production backend
+        url = url.replace('http://localhost:8000', 'https://novora.onrender.com');
+        url = url.replace('https://localhost:8000', 'https://novora.onrender.com');
+        // Replace localhost:3000 with production frontend
+        url = url.replace('http://localhost:3000', 'https://novorasurveys.com');
+        url = url.replace('https://localhost:3000', 'https://novorasurveys.com');
+      }
+      return originalFetch(url, options);
+    };
+    
+    // Override XMLHttpRequest as well
+    const originalXHROpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function(method, url, ...args) {
+      if (typeof url === 'string') {
+        url = url.replace('http://localhost:8000', 'https://novora.onrender.com');
+        url = url.replace('https://localhost:8000', 'https://novora.onrender.com');
+        url = url.replace('http://localhost:3000', 'https://novorasurveys.com');
+        url = url.replace('https://localhost:3000', 'https://novorasurveys.com');
+      }
+      return originalXHROpen.call(this, method, url, ...args);
+    };
   }
   
   window.API_CONFIG = window.API_CONFIG;
