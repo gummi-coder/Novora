@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: novora-api
+    env: python
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        value: "postgresql://novora_db_user:11T0qiA5RTFdXzzjlF2OAyPrGObV52h0@dpg-d31uurumcj7s73942u9g-a.frankfurt-postgres.render.com/novora_db"
+      - key: SECRET_KEY
+        value: "h4T3Psu8SRQ2bgSStItUgvBUr1Q_C1Guz8oyvtncVkA"
+      - key: BACKEND_CORS_ORIGINS
+        value: "https://novora-frontend.vercel.app,http://localhost:3000,http://localhost:5173"

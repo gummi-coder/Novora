@@ -1,0 +1,335 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Base model for common fields
+model BaseModel {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("base_models")
+}
+
+// User model
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("user")
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  posts     Post[]
+  comments  Comment[]
+  notifications           Notification[]
+  notificationPreferences NotificationPreferences?
+  pushSubscriptions       PushSubscription[]
+
+  @@unique([email, tenantId])
+  @@index([tenantId])
+  @@map("users")
+}
+
+// Post model
+model Post {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String
+  comments  Comment[]
+
+  @@map("posts")
+}
+
+// Comment model
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  author    User   @relation(fields: [authorId], references: [id])
+  authorId  String
+  post      Post   @relation(fields: [postId], references: [id])
+  postId    String
+
+  @@map("comments")
+}
+
+model EmailTemplate {
+  id          String   @id @default(uuid())
+  name        String
+  category    String
+  subject     String
+  html        String
+  text        String
+  variables   String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  emails      Email[]
+}
+
+model Email {
+  id          String   @id @default(uuid())
+  template    EmailTemplate @relation(fields: [templateId], references: [id])
+  templateId  String
+  to          String
+  cc          String[]
+  bcc         String[]
+  subject     String
+  html        String
+  text        String
+  status      String
+  sentAt      DateTime?
+  deliveredAt DateTime?
+  events      EmailEvent[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EmailEvent {
+  id        String   @id @default(uuid())
+  email     Email    @relation(fields: [emailId], references: [id])
+  emailId   String
+  type      String
+  metadata  Json?
+  createdAt DateTime @default(now())
+}
+
+model FeatureFlagUsage {
+  id              String   @id @default(cuid())
+  flagName        String
+  userId          String?
+  email           String?
+  subscriptionTier String?
+  isEnabled       Boolean
+  timestamp       DateTime @default(now())
+
+  @@index([flagName])
+  @@index([userId])
+  @@index([email])
+  @@index([timestamp])
+}
+
+model FeatureFlagVariantUsage {
+  id              String   @id @default(cuid())
+  flagName        String
+  variantName     String
+  userId          String?
+  email           String?
+  subscriptionTier String?
+  timestamp       DateTime @default(now())
+
+  @@index([flagName])
+  @@index([variantName])
+  @@index([userId])
+  @@index([email])
+  @@index([timestamp])
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  title       String
+  message     String
+  data        Json?
+  channels    String[]
+  priority    String
+  read        Boolean  @default(false)
+  processed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime?
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([read])
+}
+
+model NotificationPreferences {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  channels  Json     // { in_app: { enabled: boolean }, email: { enabled: boolean }, push: { enabled: boolean } }
+  types     Json     // { survey_created: { enabled: boolean }, ... }
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model PushSubscription {
+  id            String   @id @default(cuid())
+  userId        String
+  endpoint      String
+  keys          Json     // { p256dh: string, auth: string }
+  createdAt     DateTime @default(now())
+  lastUsed      DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, endpoint])
+  @@index([userId])
+}
+
+model AnalyticsEvent {
+  id          String   @id @default(cuid())
+  userId      String?
+  type        String
+  category    String
+  action      String
+  properties  Json
+  timestamp   DateTime @default(now())
+  sessionId   String?
+  page        String?
+  duration    Int?
+  metadata    Json?
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([type])
+  @@index([timestamp])
+  @@index([sessionId])
+}
+
+model AnalyticsDailyMetrics {
+  id           String   @id @default(cuid())
+  date         DateTime
+  type         String
+  count        Int      @default(0)
+  uniqueUsers  Int      @default(0)
+  metadata     Json?
+
+  @@unique([date, type])
+  @@index([date])
+  @@index([type])
+}
+
+model PerformanceMetric {
+  id        String   @id @default(cuid())
+  type      String
+  name      String
+  value     Float
+  unit      String
+  timestamp DateTime @default(now())
+  metadata  Json?
+
+  @@index([type])
+  @@index([timestamp])
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  query       Json
+  schedule    String?  // Cron expression for scheduled reports
+  format      String   @default("csv") // csv, json, pdf
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String
+  isPublic    Boolean  @default(false)
+  metadata    Json?
+
+  @@index([createdBy])
+  @@index([createdAt])
+}
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  subdomain String   @unique
+  plan      String   // core, pro, enterprise
+  status    String   // active, suspended, trial
+  settings  Json     // features, limits, branding, regional settings
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users     User[]
+  surveys   Survey[]
+  files     File[]
+  apiCalls  ApiCall[]
+
+  @@index([slug])
+  @@index([subdomain])
+  @@index([status])
+}
+
+// Update Survey model to include tenant
+model Survey {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  status      String
+  tenantId    String
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  creator     User     @relation(fields: [createdBy], references: [id])
+  questions   Question[]
+  responses   Response[]
+
+  @@index([tenantId])
+  @@index([createdBy])
+}
+
+// Add API call tracking
+model ApiCall {
+  id        String   @id @default(cuid())
+  tenantId  String
+  endpoint  String
+  method    String
+  status    Int
+  duration  Int
+  timestamp DateTime @default(now())
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@index([timestamp])
+}
+
+// Add file storage tracking
+model File {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  size      Int
+  path      String
+  tenantId  String
+  uploadedBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  uploader  User     @relation(fields: [uploadedBy], references: [id])
+
+  @@index([tenantId])
+  @@index([uploadedBy])
+} 
