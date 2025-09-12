@@ -106,7 +106,7 @@ init_database()
 
 @app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def root():
-    return "Novora MVP API with Authentication System!"
+    return "Novora MVP API with Authentication System! - DEPLOYMENT TEST"
 
 @app.route('/health', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def health():
