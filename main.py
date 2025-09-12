@@ -139,7 +139,7 @@ init_database()
 
 @app.route('/', methods=['GET'])
 def root():
-    return "Novora MVP API is running!"
+    return "Novora MVP API v2.0 with Authentication is running!"
 
 @app.route('/health', methods=['GET'])
 def health():
