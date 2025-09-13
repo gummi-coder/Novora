@@ -744,189 +744,238 @@
                   </div>
                 </div>
 
-                <!-- Survey Pages (3 tabs) -->
+                <!-- Unified Survey Management Window -->
                 <div class="border border-gray-200 bg-white shadow-md rounded-xl p-6">
-                  <div class="mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Survey Pages</h3>
-                    <p class="text-sm text-gray-600">Manage your active surveys</p>
-                  </div>
-                  <div class="flex space-x-1 mb-4">
-                    <button class="px-4 py-2 bg-novora-600 text-white rounded-lg text-sm font-medium">Team Pulse</button>
-                    <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">Engagement</button>
-                    <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">Feedback</button>
-                  </div>
-                  <div class="p-4 bg-gray-50 rounded-lg">
-                    <h4 class="font-medium text-gray-900 mb-2">Team Pulse Survey</h4>
-                    <p class="text-sm text-gray-600 mb-3">Monthly team satisfaction check</p>
-                    <div class="flex items-center gap-4 text-sm">
-                      <span class="text-green-600">● Active</span>
-                      <span>47 responses</span>
-                      <span>85% completion</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Share & Collect (3 pages for 3 surveys) -->
-                <div class="border border-gray-200 bg-white shadow-md rounded-xl p-6">
-                  <div class="mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Share & Collect Responses</h3>
-                    <p class="text-sm text-gray-600">Share your surveys with team members</p>
+                  <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">Survey Management</h3>
+                    <p class="text-sm text-gray-600">Manage, share, and send reminders for your surveys</p>
                   </div>
                   
-                  <!-- Survey Pages Navigation -->
-                  <div class="flex space-x-1 mb-6">
-                    <button onclick="showSurveyPage(1)" class="px-4 py-2 bg-novora-600 text-white rounded-lg text-sm font-medium survey-tab" data-survey="1">Team Pulse</button>
-                    <button onclick="showSurveyPage(2)" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium survey-tab" data-survey="2">Engagement</button>
-                    <button onclick="showSurveyPage(3)" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium survey-tab" data-survey="3">Feedback</button>
+                  <!-- Arrow Navigation -->
+                  <div class="flex items-center justify-between mb-6">
+                    <button onclick="previousSurvey()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                      <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                      Previous
+                    </button>
+                    
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm text-gray-600">Survey</span>
+                      <span id="current-survey-number" class="text-lg font-semibold text-novora-600">1</span>
+                      <span class="text-sm text-gray-600">of 3</span>
+                    </div>
+                    
+                    <button onclick="nextSurvey()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                      Next
+                      <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
                   </div>
 
-                  <!-- Survey 1: Team Pulse -->
-                  <div id="survey-page-1" class="survey-content">
-                    <div class="space-y-4">
-                      <div class="flex items-center gap-3">
-                        <input type="text" value="https://novorasurveys.com/survey/team-pulse-123" readonly class="flex-1 px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-sm">
-                        <button onclick="copyToClipboard('https://novorasurveys.com/survey/team-pulse-123')" class="px-4 py-2 bg-novora-600 text-white rounded-lg text-sm font-medium hover:bg-novora-700 transition-colors">
-                          Copy Link
-                        </button>
+                  <!-- Survey Content Container -->
+                  <div class="space-y-6">
+                    <!-- Survey Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div class="p-4 border rounded-lg text-center">
+                        <div class="text-2xl font-bold text-novora-600">3</div>
+                        <div class="text-sm text-gray-600">Active Surveys</div>
                       </div>
-                      <div class="flex gap-3">
-                        <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
-                          <i data-lucide="message-circle" class="w-4 h-4"></i>
-                          Share via WhatsApp
-                        </button>
-                        <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                          <i data-lucide="mail" class="w-4 h-4"></i>
-                          Share via Email
-                        </button>
-                        <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
-                          <i data-lucide="smartphone" class="w-4 h-4"></i>
-                          Share via SMS
-                        </button>
+                      <div class="p-4 border rounded-lg text-center">
+                        <div class="text-2xl font-bold text-green-600">12</div>
+                        <div class="text-sm text-gray-600">Total Responses</div>
+                      </div>
+                      <div class="p-4 border rounded-lg text-center">
+                        <div class="text-2xl font-bold text-blue-600">85%</div>
+                        <div class="text-sm text-gray-600">Completion Rate</div>
                       </div>
                     </div>
-                  </div>
 
-                  <!-- Survey 2: Engagement -->
-                  <div id="survey-page-2" class="survey-content hidden">
-                    <div class="space-y-4">
-                      <div class="flex items-center gap-3">
-                        <input type="text" value="https://novorasurveys.com/survey/engagement-456" readonly class="flex-1 px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-sm">
-                        <button onclick="copyToClipboard('https://novorasurveys.com/survey/engagement-456')" class="px-4 py-2 bg-novora-600 text-white rounded-lg text-sm font-medium hover:bg-novora-700 transition-colors">
-                          Copy Link
-                        </button>
-                      </div>
-                      <div class="flex gap-3">
-                        <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
-                          <i data-lucide="message-circle" class="w-4 h-4"></i>
-                          Share via WhatsApp
-                        </button>
-                        <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                          <i data-lucide="mail" class="w-4 h-4"></i>
-                          Share via Email
-                        </button>
-                        <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
-                          <i data-lucide="smartphone" class="w-4 h-4"></i>
-                          Share via SMS
-                        </button>
+                    <!-- Survey 1: Team Pulse -->
+                    <div id="unified-survey-1" class="unified-survey-content">
+                      <div class="space-y-6">
+                        <!-- Survey Info -->
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                          <h4 class="font-medium text-gray-900 mb-2">Team Pulse Survey</h4>
+                          <p class="text-sm text-gray-600 mb-3">Monthly team satisfaction check</p>
+                          <div class="flex items-center gap-4 text-sm">
+                            <span class="text-green-600">● Active</span>
+                            <span>47 responses</span>
+                            <span>85% completion</span>
+                          </div>
+                        </div>
+
+                        <!-- Share & Collect Section -->
+                        <div>
+                          <h4 class="text-md font-semibold text-gray-900 mb-3">Share & Collect Responses</h4>
+                          <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                              <input type="text" value="https://novorasurveys.com/survey/team-pulse-123" readonly class="flex-1 px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-sm">
+                              <button onclick="copyToClipboard('https://novorasurveys.com/survey/team-pulse-123')" class="px-4 py-2 bg-novora-600 text-white rounded-lg text-sm font-medium hover:bg-novora-700 transition-colors">
+                                Copy Link
+                              </button>
+                            </div>
+                            <div class="flex gap-3">
+                              <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                Share via WhatsApp
+                              </button>
+                              <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                                <i data-lucide="mail" class="w-4 h-4"></i>
+                                Share via Email
+                              </button>
+                              <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
+                                <i data-lucide="smartphone" class="w-4 h-4"></i>
+                                Share via SMS
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Send Reminders Section -->
+                        <div>
+                          <h4 class="text-md font-semibold text-gray-900 mb-3">Send Reminders</h4>
+                          <div class="flex gap-3">
+                            <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
+                              <i data-lucide="message-circle" class="w-4 h-4"></i>
+                              WhatsApp Reminder
+                            </button>
+                            <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                              <i data-lucide="mail" class="w-4 h-4"></i>
+                              Email Reminder
+                            </button>
+                            <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
+                              <i data-lucide="smartphone" class="w-4 h-4"></i>
+                              SMS Reminder
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <!-- Survey 3: Feedback -->
-                  <div id="survey-page-3" class="survey-content hidden">
-                    <div class="space-y-4">
-                      <div class="flex items-center gap-3">
-                        <input type="text" value="https://novorasurveys.com/survey/feedback-789" readonly class="flex-1 px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-sm">
-                        <button onclick="copyToClipboard('https://novorasurveys.com/survey/feedback-789')" class="px-4 py-2 bg-novora-600 text-white rounded-lg text-sm font-medium hover:bg-novora-700 transition-colors">
-                          Copy Link
-                        </button>
+                    <!-- Survey 2: Engagement -->
+                    <div id="unified-survey-2" class="unified-survey-content hidden">
+                      <div class="space-y-6">
+                        <!-- Survey Info -->
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                          <h4 class="font-medium text-gray-900 mb-2">Engagement Survey</h4>
+                          <p class="text-sm text-gray-600 mb-3">Employee engagement and satisfaction</p>
+                          <div class="flex items-center gap-4 text-sm">
+                            <span class="text-green-600">● Active</span>
+                            <span>32 responses</span>
+                            <span>78% completion</span>
+                          </div>
+                        </div>
+
+                        <!-- Share & Collect Section -->
+                        <div>
+                          <h4 class="text-md font-semibold text-gray-900 mb-3">Share & Collect Responses</h4>
+                          <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                              <input type="text" value="https://novorasurveys.com/survey/engagement-456" readonly class="flex-1 px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-sm">
+                              <button onclick="copyToClipboard('https://novorasurveys.com/survey/engagement-456')" class="px-4 py-2 bg-novora-600 text-white rounded-lg text-sm font-medium hover:bg-novora-700 transition-colors">
+                                Copy Link
+                              </button>
+                            </div>
+                            <div class="flex gap-3">
+                              <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                Share via WhatsApp
+                              </button>
+                              <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                                <i data-lucide="mail" class="w-4 h-4"></i>
+                                Share via Email
+                              </button>
+                              <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
+                                <i data-lucide="smartphone" class="w-4 h-4"></i>
+                                Share via SMS
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Send Reminders Section -->
+                        <div>
+                          <h4 class="text-md font-semibold text-gray-900 mb-3">Send Reminders</h4>
+                          <div class="flex gap-3">
+                            <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
+                              <i data-lucide="message-circle" class="w-4 h-4"></i>
+                              WhatsApp Reminder
+                            </button>
+                            <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                              <i data-lucide="mail" class="w-4 h-4"></i>
+                              Email Reminder
+                            </button>
+                            <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
+                              <i data-lucide="smartphone" class="w-4 h-4"></i>
+                              SMS Reminder
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                      <div class="flex gap-3">
-                        <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
-                          <i data-lucide="message-circle" class="w-4 h-4"></i>
-                          Share via WhatsApp
-                        </button>
-                        <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                          <i data-lucide="mail" class="w-4 h-4"></i>
-                          Share via Email
-                        </button>
-                        <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
-                          <i data-lucide="smartphone" class="w-4 h-4"></i>
-                          Share via SMS
-                        </button>
+                    </div>
+
+                    <!-- Survey 3: Feedback -->
+                    <div id="unified-survey-3" class="unified-survey-content hidden">
+                      <div class="space-y-6">
+                        <!-- Survey Info -->
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                          <h4 class="font-medium text-gray-900 mb-2">Feedback Survey</h4>
+                          <p class="text-sm text-gray-600 mb-3">General feedback and suggestions</p>
+                          <div class="flex items-center gap-4 text-sm">
+                            <span class="text-green-600">● Active</span>
+                            <span>28 responses</span>
+                            <span>92% completion</span>
+                          </div>
+                        </div>
+
+                        <!-- Share & Collect Section -->
+                        <div>
+                          <h4 class="text-md font-semibold text-gray-900 mb-3">Share & Collect Responses</h4>
+                          <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                              <input type="text" value="https://novorasurveys.com/survey/feedback-789" readonly class="flex-1 px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-sm">
+                              <button onclick="copyToClipboard('https://novorasurveys.com/survey/feedback-789')" class="px-4 py-2 bg-novora-600 text-white rounded-lg text-sm font-medium hover:bg-novora-700 transition-colors">
+                                Copy Link
+                              </button>
+                            </div>
+                            <div class="flex gap-3">
+                              <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                Share via WhatsApp
+                              </button>
+                              <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                                <i data-lucide="mail" class="w-4 h-4"></i>
+                                Share via Email
+                              </button>
+                              <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
+                                <i data-lucide="smartphone" class="w-4 h-4"></i>
+                                Share via SMS
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Send Reminders Section -->
+                        <div>
+                          <h4 class="text-md font-semibold text-gray-900 mb-3">Send Reminders</h4>
+                          <div class="flex gap-3">
+                            <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
+                              <i data-lucide="message-circle" class="w-4 h-4"></i>
+                              WhatsApp Reminder
+                            </button>
+                            <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                              <i data-lucide="mail" class="w-4 h-4"></i>
+                              Email Reminder
+                            </button>
+                            <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
+                              <i data-lucide="smartphone" class="w-4 h-4"></i>
+                              SMS Reminder
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Send Reminders (3 pages for 3 surveys) -->
-                <div class="border border-gray-200 bg-white shadow-md rounded-xl p-6">
-                  <div class="mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Send Reminders</h3>
-                    <p class="text-sm text-gray-600">Encourage team participation for each survey</p>
-                  </div>
-                  
-                  <!-- Survey Pages Navigation -->
-                  <div class="flex space-x-1 mb-6">
-                    <button onclick="showReminderPage(1)" class="px-4 py-2 bg-novora-600 text-white rounded-lg text-sm font-medium reminder-tab" data-survey="1">Team Pulse</button>
-                    <button onclick="showReminderPage(2)" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium reminder-tab" data-survey="2">Engagement</button>
-                    <button onclick="showReminderPage(3)" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium reminder-tab" data-survey="3">Feedback</button>
-                  </div>
-
-                  <!-- Reminder Page 1: Team Pulse -->
-                  <div id="reminder-page-1" class="reminder-content">
-                    <div class="flex gap-3">
-                      <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
-                        <i data-lucide="message-circle" class="w-4 h-4"></i>
-                        WhatsApp Reminder
-                      </button>
-                      <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                        <i data-lucide="mail" class="w-4 h-4"></i>
-                        Email Reminder
-                      </button>
-                      <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
-                        <i data-lucide="smartphone" class="w-4 h-4"></i>
-                        SMS Reminder
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- Reminder Page 2: Engagement -->
-                  <div id="reminder-page-2" class="reminder-content hidden">
-                    <div class="flex gap-3">
-                      <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
-                        <i data-lucide="message-circle" class="w-4 h-4"></i>
-                        WhatsApp Reminder
-                      </button>
-                      <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                        <i data-lucide="mail" class="w-4 h-4"></i>
-                        Email Reminder
-                      </button>
-                      <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
-                        <i data-lucide="smartphone" class="w-4 h-4"></i>
-                        SMS Reminder
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- Reminder Page 3: Feedback -->
-                  <div id="reminder-page-3" class="reminder-content hidden">
-                    <div class="flex gap-3">
-                      <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
-                        <i data-lucide="message-circle" class="w-4 h-4"></i>
-                        WhatsApp Reminder
-                      </button>
-                      <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                        <i data-lucide="mail" class="w-4 h-4"></i>
-                        Email Reminder
-                      </button>
-                      <button class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
-                        <i data-lucide="smartphone" class="w-4 h-4"></i>
-                        SMS Reminder
-                      </button>
-                    </div>
-                  </div>
-                </div>
 
                 <!-- Question Breakdown (4 questions across 3 surveys) -->
                 <div class="border border-gray-200 bg-white shadow-md rounded-xl p-6">
@@ -1000,48 +1049,34 @@
         });
       }
 
-      // Survey page switching
-      function showSurveyPage(surveyNumber) {
+      // Unified survey navigation
+      let currentSurvey = 1;
+      const totalSurveys = 3;
+
+      function showSurvey(surveyNumber) {
         // Hide all survey content
-        document.querySelectorAll('.survey-content').forEach(content => {
+        document.querySelectorAll('.unified-survey-content').forEach(content => {
           content.classList.add('hidden');
-        });
-        
-        // Remove active class from all tabs
-        document.querySelectorAll('.survey-tab').forEach(tab => {
-          tab.classList.remove('bg-novora-600', 'text-white');
-          tab.classList.add('bg-gray-100', 'text-gray-700');
         });
         
         // Show selected survey content
-        document.getElementById(`survey-page-${surveyNumber}`).classList.remove('hidden');
+        document.getElementById(`unified-survey-${surveyNumber}`).classList.remove('hidden');
         
-        // Add active class to selected tab
-        const activeTab = document.querySelector(`[data-survey="${surveyNumber}"].survey-tab`);
-        activeTab.classList.remove('bg-gray-100', 'text-gray-700');
-        activeTab.classList.add('bg-novora-600', 'text-white');
+        // Update current survey number
+        currentSurvey = surveyNumber;
+        document.getElementById('current-survey-number').textContent = surveyNumber;
       }
 
-      // Reminder page switching
-      function showReminderPage(surveyNumber) {
-        // Hide all reminder content
-        document.querySelectorAll('.reminder-content').forEach(content => {
-          content.classList.add('hidden');
-        });
-        
-        // Remove active class from all tabs
-        document.querySelectorAll('.reminder-tab').forEach(tab => {
-          tab.classList.remove('bg-novora-600', 'text-white');
-          tab.classList.add('bg-gray-100', 'text-gray-700');
-        });
-        
-        // Show selected reminder content
-        document.getElementById(`reminder-page-${surveyNumber}`).classList.remove('hidden');
-        
-        // Add active class to selected tab
-        const activeTab = document.querySelector(`[data-survey="${surveyNumber}"].reminder-tab`);
-        activeTab.classList.remove('bg-gray-100', 'text-gray-700');
-        activeTab.classList.add('bg-novora-600', 'text-white');
+      function nextSurvey() {
+        if (currentSurvey < totalSurveys) {
+          showSurvey(currentSurvey + 1);
+        }
+      }
+
+      function previousSurvey() {
+        if (currentSurvey > 1) {
+          showSurvey(currentSurvey - 1);
+        }
       }
 
       function logout() {
